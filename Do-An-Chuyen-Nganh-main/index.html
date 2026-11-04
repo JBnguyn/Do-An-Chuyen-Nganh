@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3H AUTO - Chuyên Phụ Tùng Ô Tô Chính Hãng Giá Tốt</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#0F75BC',
+              dark: '#0A558C',
+              light: '#EBF5FF',
+              red: '#0F75BC',
+              darkred: '#0A558C',
+              blue: '#0F75BC',
+              navy: '#0F172A',
+              accent: '#38BDF8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+    html,
+    body {
+      font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .hero-dark-overlay {
+      background: linear-gradient(180deg, rgba(3, 7, 18, 0.88) 0%, rgba(3, 7, 18, 0.72) 55%, rgba(3, 7, 18, 0.45) 100%);
+    }
+
+    @media (min-width: 1024px) {
+      .hero-dark-overlay {
+        background: linear-gradient(90deg, rgba(3, 7, 18, 0.92) 0%, rgba(3, 7, 18, 0.82) 35%, rgba(3, 7, 18, 0.45) 52%, rgba(3, 7, 18, 0) 68%);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased overflow-x-hidden">
+
+  <!-- ================= TOPBAR ================= -->
+  <div class="bg-brand-navy text-gray-300 text-[11px] sm:text-xs border-b border-gray-800 py-2">
+    <div class="container mx-auto px-3 sm:px-4 flex flex-wrap justify-between items-center gap-x-4 gap-y-1">
+      <div class="flex items-center space-x-4 sm:space-x-6 min-w-0">
+        <span class="flex items-center gap-1.5 truncate">
+          <i class="fa-solid fa-location-dot text-sky-400 shrink-0"></i>
+          <span class="truncate">467 An Dương Vương, P. Chợ Quán, Quận 5, TP.HCM</span>
+        </span>
+        <span class="hidden md:flex items-center gap-1.5 shrink-0">
+          <i class="fa-regular fa-clock text-sky-400"></i>
+          T2 - T7: 08:00 - 17:30 (Chủ Nhật nghỉ)
+        </span>
+      </div>
+      <div class="flex items-center space-x-3 sm:space-x-5 shrink-0">
+        <a href="tel:0973333217" class="hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-phone-volume text-sky-400 animate-pulse"></i>
+          Hotline: <strong class="text-white">097 3333 217</strong>
+        </a>
+        <span class="text-gray-600 hidden sm:inline">|</span>
+        <a href="#lookup" class="hover:text-white transition hidden sm:inline">Tra cứu đơn hàng</a>
+        <span class="text-gray-600 hidden sm:inline">|</span>
+        <a href="#contact" class="hover:text-white transition">Hỗ trợ kỹ thuật</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HEADER CHÍNH ================= -->
+  <header class="bg-white shadow-sm sticky top-0 z-50 w-full">
+    <div class="container mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+
+      <!-- Logo thương hiệu -->
+      <a href="#" class="flex items-center gap-2 sm:gap-3 min-w-0 group">
+        <img src="logo.png" alt="3H AUTO Logo"
+          class="h-9 sm:h-12 md:h-14 w-auto object-contain shrink-0 transition-transform group-hover:scale-105">
+        <div class="border-l-2 border-gray-200 pl-2 sm:pl-3 min-w-0">
+          <span class="block text-base sm:text-xl md:text-2xl font-black tracking-tight uppercase leading-tight truncate">
+            <span class="text-gray-900">3H</span> <span class="text-brand-primary">AUTO</span>
+          </span>
+          <span class="block text-[9px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-tight sm:tracking-wider truncate">Phụ Tùng Ô Tô Chính
+            Hãng</span>
+        </div>
+      </a>
+
+      <!-- Thanh tìm kiếm thông minh -->
+      <div class="hidden lg:flex flex-1 max-w-2xl mx-6">
+        <form id="headerSearchForm"
+          class="flex w-full rounded-md border-2 border-brand-primary overflow-hidden focus-within:ring-2 focus-within:ring-sky-200">
+          <select id="headerSearchCategory"
+            class="bg-gray-100 text-xs font-medium text-gray-700 px-3 border-r border-gray-300 focus:outline-none">
+            <option value="all">Tất cả danh mục</option>
+            <option value="Phụ tùng Gầm">Phụ tùng Gầm</option>
+            <option value="Bộ Côn Ly Hợp">Bộ Côn Ly Hợp</option>
+            <option value="Má Phanh / Bố Thắng">Hệ thống Phanh</option>
+            <option value="Giảm Xóc KYB">Giảm Xóc KYB</option>
+          </select>
+          <input id="headerSearchInput" type="text" placeholder="Tìm theo tên phụ tùng, mã phụ tùng (Part number), dòng xe..."
+            class="flex-1 px-4 py-2.5 text-sm focus:outline-none placeholder-gray-400">
+          <button type="submit"
+            class="bg-brand-primary hover:bg-brand-dark text-white px-6 font-medium text-sm flex items-center gap-2 transition">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Tìm kiếm</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Hotline, Giỏ hàng & Đăng nhập Admin -->
+      <div class="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
+        <div class="hidden xl:flex items-center gap-3 border-r border-gray-200 pr-4">
+          <div class="w-10 h-10 rounded-full bg-sky-50 text-brand-primary flex items-center justify-center text-lg">
+            <i class="fa-solid fa-headset"></i>
+          </div>
+          <div>
+            <div class="text-[11px] text-gray-500 font-medium">Tư vấn kỹ thuật 24/7</div>
+            <a href="tel:0973333217" class="text-sm font-bold text-brand-primary hover:underline">097 3333 217</a>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2.5">
+          <!-- Nút Giỏ hàng -->
+          <a href="#products"
+            class="relative p-2 sm:p-2.5 rounded-lg border border-gray-200 hover:border-brand-primary hover:text-brand-primary transition"
+            title="Giỏ hàng">
+            <i class="fa-solid fa-cart-shopping text-lg sm:text-xl text-gray-700"></i>
+            <span
+              class="absolute -top-1 -right-1 bg-brand-primary text-white text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+
+          <!-- Nút Đăng nhập (Khi chưa đăng nhập) -->
+          <button id="adminLoginBtn" type="button" onclick="openAdminLoginModal()"
+            class="flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg border border-brand-primary/30 bg-sky-50 hover:bg-brand-primary text-brand-primary hover:text-white font-bold text-xs uppercase transition shadow-sm">
+            <i class="fa-solid fa-user text-sm"></i>
+            <span class="hidden sm:inline">ĐĂNG NHẬP</span>
+          </button>
+
+          <!-- Cụm nút Quản trị Admin (Khi đã đăng nhập) -->
+          <div id="adminLoggedGroup" class="hidden items-center gap-1.5 sm:gap-2">
+            <button type="button" onclick="openProductModal()"
+              class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg bg-brand-primary hover:bg-brand-dark text-white font-bold text-xs transition shadow-sm"
+              title="Thêm sản phẩm mới">
+              <i class="fa-solid fa-plus"></i>
+              <span class="hidden sm:inline">Thêm SP</span>
+            </button>
+            <button type="button" onclick="handleAdminLogout()"
+              class="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg border border-gray-300 bg-gray-100 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-700 font-semibold text-xs transition"
+              title="Đăng xuất tài khoản Admin">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span class="hidden md:inline">Thoát Admin</span>
+            </button>
+          </div>
+
+          <button id="mobileMenuBtn" class="lg:hidden p-2 sm:p-2.5 rounded-lg border border-gray-200 hover:bg-gray-100">
+            <i class="fa-solid fa-bars text-lg sm:text-xl text-gray-700"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Thanh tìm kiếm trên thiết bị di động -->
+    <div class="px-3 py-2.5 bg-gray-100 lg:hidden border-t border-gray-200">
+      <form id="mobileSearchForm" class="flex rounded-lg border border-gray-300 overflow-hidden bg-white">
+        <input id="mobileSearchInput" type="text" placeholder="Nhập tên phụ tùng, mã OEM, đời xe..."
+          class="flex-1 px-3 py-2 text-xs focus:outline-none min-w-0">
+        <button type="submit" class="bg-brand-primary text-white px-4 text-xs font-semibold shrink-0">
+          <i class="fa-solid fa-search"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Menu điều hướng trên di động (Ẩn/Hiện khi bấm nút 3 gạch) -->
+    <div id="mobileMenuDropdown" class="hidden lg:hidden bg-brand-navy text-white border-t border-gray-800">
+      <ul class="divide-y divide-gray-800 text-xs font-semibold">
+        <li><a href="#" class="block px-4 py-3 hover:bg-brand-primary transition">Trang chủ</a></li>
+        <li><a href="#products" class="block px-4 py-3 hover:bg-brand-primary transition">Sản phẩm nổi bật</a></li>
+        <li><a href="#selector" class="block px-4 py-3 hover:bg-brand-primary transition">Tra cứu nhanh theo xe</a></li>
+        <li><a href="#brands" class="block px-4 py-3 hover:bg-brand-primary transition">Thương hiệu đối tác</a></li>
+        <li><a href="#news" class="block px-4 py-3 hover:bg-brand-primary transition">Cẩm nang kỹ thuật</a></li>
+        <li><a href="#contact" class="block px-4 py-3 hover:bg-brand-primary transition">Liên hệ</a></li>
+      </ul>
+    </div>
+
+    <!-- ================= THANH MENU ĐIỀU HƯỚNG (NAVBAR) ================= -->
+    <nav class="bg-brand-primary text-white hidden lg:block shadow">
+      <div class="container mx-auto px-4 flex items-center justify-between">
+        <div class="flex items-center">
+
+          <!-- Dropdown Danh mục -->
+          <div class="relative group">
+            <button
+              class="bg-brand-navy hover:bg-black text-white px-5 py-3 font-bold text-sm flex items-center gap-2.5 transition">
+              <i class="fa-solid fa-bars-staggered"></i>
+              <span>DANH MỤC PHỤ TÙNG</span>
+              <i class="fa-solid fa-chevron-down text-xs ml-1 group-hover:rotate-180 transition-transform"></i>
+            </button>
+
+            <!-- Menu con đa cấp -->
+            <div
+              class="absolute left-0 top-full w-64 bg-white text-gray-800 shadow-xl border border-gray-100 hidden group-hover:block z-50 rounded-b-md">
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-gears w-5 text-gray-500"></i> Phụ tùng Động cơ
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-car-side w-5 text-gray-500"></i> Phụ tùng Gầm xe
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-shield-halved w-5 text-gray-500"></i> Hệ thống Phanh (Bố, đĩa...)
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-arrows-up-down w-5 text-gray-500"></i> Giảm xóc - Phuộc nhún
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-oil-can w-5 text-gray-500"></i> Dầu nhớt & Nước làm mát
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary border-b border-gray-100 text-sm font-medium transition">
+                <i class="fa-solid fa-bolt w-5 text-gray-500"></i> Hệ thống Điện - Điện tử
+              </a>
+              <a href="#"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-sky-50 hover:text-brand-primary text-sm font-medium transition">
+                <i class="fa-solid fa-snowflake w-5 text-gray-500"></i> Hệ thống Điều hòa
+              </a>
+            </div>
+          </div>
+
+          <!-- Các liên kết trang -->
+          <ul class="flex items-center font-medium text-sm">
+            <li><a href="#" class="px-4 py-3 hover:bg-brand-dark block transition active">Trang chủ</a></li>
+            <li><a href="#about" class="px-4 py-3 hover:bg-brand-dark block transition">Giới thiệu</a></li>
+            <li><a href="#products" class="px-4 py-3 hover:bg-brand-dark block transition">Sản phẩm</a></li>
+            <li><a href="#selector" class="px-4 py-3 hover:bg-brand-dark block transition">Tra cứu theo xe</a></li>
+            <li><a href="#brands" class="px-4 py-3 hover:bg-brand-dark block transition">Thương hiệu</a></li>
+            <li><a href="#news" class="px-4 py-3 hover:bg-brand-dark block transition">Cẩm nang kỹ thuật</a></li>
+            <li><a href="#contact" class="px-4 py-3 hover:bg-brand-dark block transition">Liên hệ</a></li>
+          </ul>
+        </div>
+
+        <div class="text-xs font-semibold uppercase tracking-wider text-yellow-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-certificate"></i> Phụ tùng chính hãng 100%
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ================= HERO & BỘ LỌC TRA CỨU XE ================= -->
+  <section class="relative overflow-hidden bg-brand-navy text-white py-10 md:py-16 w-full">
+    <!-- Video nền Hero (độ mờ 45%) -->
+    <video autoplay loop muted playsinline webkit-playsinline
+      class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+      style="opacity: 0.45;">
+      <source src="Trailer.mp4" type="video/mp4">
+    </video>
+
+    <!-- Dải mờ đen chuyển sắc (dọc trên di động, trái sang phải trên máy tính) -->
+    <div class="absolute inset-0 pointer-events-none hero-dark-overlay"></div>
+
+    <div class="container mx-auto px-3 sm:px-4 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+        <!-- Nội dung giới thiệu banner -->
+        <div class="lg:col-span-7 space-y-4 sm:space-y-5">
+          <span
+            class="inline-block px-3 py-1 bg-sky-500/20 text-sky-300 border border-sky-400/30 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
+            Uy tín hàng đầu tại TP. Hồ Chí Minh
+          </span>
+          <h1 class="text-2xl sm:text-3xl md:text-5xl font-black leading-tight drop-shadow-md">
+            TỔNG KHO PHỤ TÙNG Ô TÔ <br class="hidden sm:inline">
+            <span class="text-sky-400">3H AUTO CHÍNH HÃNG</span>
+          </h1>
+          <p class="text-gray-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-xl drop-shadow">
+            Cung cấp linh kiện phụ tùng gầm, động cơ, phanh, giảm xóc cho các dòng xe Nhật, Hàn, Mỹ, Châu Âu: Toyota,
+            Honda, Mazda, Hyundai, Kia, Ford, Mitsubishi... Cam kết đúng chuẩn kỹ thuật, bảo hành uy tín.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-2">
+            <a href="#products"
+              class="bg-brand-primary hover:bg-brand-dark text-white px-6 py-3 rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg shadow-sky-900/40 transition">
+              <span>Xem bảng giá phụ tùng</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="tel:0973333217"
+              class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
+              <i class="fa-solid fa-phone"></i>
+              <span>Yêu cầu báo giá</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Khung tra cứu nhanh theo xe (Vehicle Selector) -->
+        <div class="lg:col-span-5" id="selector">
+          <div class="bg-white text-gray-800 rounded-xl p-6 shadow-2xl border-t-4 border-brand-primary">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 rounded bg-sky-100 text-brand-primary flex items-center justify-center font-bold">
+                <i class="fa-solid fa-car-tunnel"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-gray-900">TRA CỨU NHANH THEO XE</h3>
+                <p class="text-xs text-gray-500">Chọn thông tin xe để tìm chính xác phụ tùng</p>
+              </div>
+            </div>
+
+            <form class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">1. Hãng sản xuất xe</label>
+                <select
+                  class="w-full text-sm border border-gray-300 rounded-md p-2.5 focus:border-brand-primary focus:outline-none bg-gray-50">
+                  <option value="">-- Chọn Hãng xe --</option>
+                  <option>Toyota</option>
+                  <option>Honda</option>
+                  <option>Mazda</option>
+                  <option>Hyundai</option>
+                  <option>Kia</option>
+                  <option>Ford</option>
+                  <option>Mitsubishi</option>
+                  <option>Nissan</option>
+                  <option>Chevrolet</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">2. Dòng xe (Model)</label>
+                  <select
+                    class="w-full text-sm border border-gray-300 rounded-md p-2.5 focus:border-brand-primary focus:outline-none bg-gray-50">
+                    <option value="">-- Chọn Model --</option>
+                    <option>Vios</option>
+                    <option>Innova</option>
+                    <option>Fortuner</option>
+                    <option>Camry</option>
+                    <option>Corolla Cross</option>
+                    <option>Ranger</option>
+                    <option>Accent</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1">3. Năm sản xuất</label>
+                  <select
+                    class="w-full text-sm border border-gray-300 rounded-md p-2.5 focus:border-brand-primary focus:outline-none bg-gray-50">
+                    <option value="">-- Chọn Năm --</option>
+                    <option>2024</option>
+                    <option>2023</option>
+                    <option>2022</option>
+                    <option>2021</option>
+                    <option>2020</option>
+                    <option>2018 - 2019</option>
+                    <option>2015 - 2017</option>
+                    <option>2010 - 2014</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">4. Hệ thống cần tìm</label>
+                <select
+                  class="w-full text-sm border border-gray-300 rounded-md p-2.5 focus:border-brand-primary focus:outline-none bg-gray-50">
+                  <option value="">-- Tất cả bộ phận phụ tùng --</option>
+                  <option>Phụ tùng Gầm (Rô-tuyn, Càng A, Cao su gầm)</option>
+                  <option>Phuộc nhún / Giảm xóc</option>
+                  <option>Hệ thống Phanh (Má phanh, Đĩa phanh)</option>
+                  <option>Bộ Côn Ly hợp (Lá côn, Bàn ép, Bi T)</option>
+                  <option>Hệ thống Động cơ & Dây Curoa</option>
+                  <option>Bơm nước & Bơm trợ lực lái</option>
+                </select>
+              </div>
+
+              <button type="button"
+                class="w-full bg-brand-primary hover:bg-brand-dark text-white py-3 rounded-md font-bold text-sm uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-filter"></i> Lọc Phụ Tùng Phù Hợp
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHÍNH SÁCH CAM KẾT ================= -->
+  <section class="bg-white border-b border-gray-200 py-6">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+          <div
+            class="w-12 h-12 rounded-full bg-sky-50 text-brand-primary flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-certificate"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">100% Chính Hãng</h4>
+            <p class="text-xs text-gray-500">Nguồn gốc xuất xứ rõ ràng</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+          <div
+            class="w-12 h-12 rounded-full bg-sky-50 text-brand-primary flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-truck-fast"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Giao Hàng Toàn Quốc</h4>
+            <p class="text-xs text-gray-500">Hỏa tốc khu vực TP.HCM</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+          <div
+            class="w-12 h-12 rounded-full bg-sky-50 text-brand-primary flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Đổi Trả Thuận Tiện</h4>
+            <p class="text-xs text-gray-500">Nếu phát hiện sai quy cách</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+          <div
+            class="w-12 h-12 rounded-full bg-sky-50 text-brand-primary flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-wrench"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Tư Vấn Kỹ Thuật</h4>
+            <p class="text-xs text-gray-500">Đội ngũ thợ kinh nghiệm sâu</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NHÓM DANH MỤC NỔI BẬT ================= -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <span class="text-brand-primary font-bold text-xs uppercase tracking-wider">Hệ thống sản phẩm</span>
+          <h2 class="text-2xl md:text-3xl font-black text-gray-900 mt-1">DANH MỤC PHỤ TÙNG CHÍNH</h2>
+        </div>
+        <a href="#all" class="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
+          Xem tất cả <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+        <!-- Item 1 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-sky-50 text-brand-primary rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-car-on"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Phụ Tùng Gầm</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Rô-tuyn, càng A, bạc đạn</p>
+        </a>
+
+        <!-- Item 2 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-gears"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Động Cơ & Curoa</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Bơm nước, mô-bin, lọc dầu</p>
+        </a>
+
+        <!-- Item 3 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-sky-50 text-brand-primary rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-compact-disc"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Hệ Thống Phanh</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Bố thắng, đĩa phanh, heo dầu</p>
+        </a>
+
+        <!-- Item 4 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-arrows-up-down"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Phuộc & Treo</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Phuộc nhún, tăm-bua, nhíp</p>
+        </a>
+
+        <!-- Item 5 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-oil-can"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Dầu & Làm Mát</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Dầu hộp số, nước giải nhiệt</p>
+        </a>
+
+        <!-- Item 6 -->
+        <a href="#"
+          class="bg-white p-5 rounded-xl border border-gray-200 hover:border-brand-primary hover:shadow-lg transition text-center group">
+          <div
+            class="w-16 h-16 mx-auto mb-3 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-ring"></i>
+          </div>
+          <h3 class="text-sm font-bold text-gray-800 group-hover:text-brand-primary transition">Bộ Côn Ly Hợp</h3>
+          <p class="text-[11px] text-gray-400 mt-1">Mâm ép, lá côn, bi T Aisin</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SẢN PHẨM NỔI BẬT ================= -->
+  <section class="py-12 bg-gray-100" id="products">
+    <div class="container mx-auto px-4">
+
+      <!-- Thanh Quản Trị Admin (Hiển thị khi đăng nhập Admin) -->
+      <div id="adminToolbar"
+        class="hidden mb-6 bg-gradient-to-r from-brand-navy to-brand-dark text-white rounded-xl p-4 shadow-lg border border-sky-400/30 flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300 text-lg shrink-0">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-sm uppercase tracking-wider text-white">Chế độ Quản trị viên (Admin)</h3>
+              <span class="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Đang hoạt động</span>
+            </div>
+            <p class="text-xs text-gray-300 mt-0.5">Bạn có thể thêm sản phẩm mới, chỉnh sửa hoặc xóa sản phẩm trực tiếp bên dưới.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          <button type="button" onclick="openProductModal()"
+            class="flex-1 sm:flex-initial bg-sky-500 hover:bg-sky-400 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 shadow transition">
+            <i class="fa-solid fa-circle-plus"></i> Thêm Sản Phẩm Mới
+          </button>
+          <button type="button" onclick="resetDefaultProducts()"
+            class="bg-white/10 hover:bg-white/20 text-gray-200 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 border border-white/15 transition"
+            title="Khôi phục danh sách sản phẩm gốc">
+            <i class="fa-solid fa-rotate-left"></i> Khôi phục gốc
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-gray-200 gap-4">
+        <div>
+          <span class="text-brand-primary font-bold text-xs uppercase tracking-wider">Hàng mới về & Giá tốt</span>
+          <h2 class="text-2xl md:text-3xl font-black text-gray-900 mt-1">SẢN PHẨM NỔI BẬT</h2>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div id="productFilterTabs" class="flex flex-wrap gap-2 text-xs font-semibold">
+          <button type="button" data-category="all" onclick="filterProductsByCategory('all')"
+            class="filter-tab px-4 py-2 bg-brand-primary text-white rounded-md shadow-sm transition">Tất cả</button>
+          <button type="button" data-category="Phụ tùng Gầm" onclick="filterProductsByCategory('Phụ tùng Gầm')"
+            class="filter-tab px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 rounded-md transition">Phụ tùng Gầm</button>
+          <button type="button" data-category="Bộ Côn Ly Hợp" onclick="filterProductsByCategory('Bộ Côn Ly Hợp')"
+            class="filter-tab px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 rounded-md transition">Bộ Côn Ly Hợp</button>
+          <button type="button" data-category="Má Phanh / Bố Thắng" onclick="filterProductsByCategory('Má Phanh / Bố Thắng')"
+            class="filter-tab px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 rounded-md transition">Má Phanh / Bố Thắng</button>
+          <button type="button" data-category="Giảm Xóc KYB" onclick="filterProductsByCategory('Giảm Xóc KYB')"
+            class="filter-tab px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 rounded-md transition">Giảm Xóc KYB</button>
+        </div>
+      </div>
+
+      <!-- Danh sách Product Cards -->
+      <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-8">
+
+        <!-- Sản phẩm 1 -->
+        <div
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div class="relative p-4 bg-gray-50 text-center">
+            <span
+              class="absolute top-2 left-2 bg-brand-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">CHÍNH
+              HÃNG</span>
+            <div class="h-44 flex items-center justify-center overflow-hidden">
+              <i
+                class="fa-solid fa-arrows-up-down text-6xl text-gray-300 group-hover:scale-110 transition-transform"></i>
+            </div>
+            <span class="inline-block text-[11px] font-semibold text-gray-500 uppercase">Thương hiệu: KYB (Nhật
+              Bản)</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400 font-mono">Mã: 333338-KYB</div>
+              <h4 class="text-sm font-bold text-gray-900 mt-1 line-clamp-2 group-hover:text-brand-primary transition">
+                Phuộc nhún trước Toyota Vios 2014 - 2021 KYB Gas Shock
+              </h4>
+              <div class="flex items-center text-yellow-400 text-xs mt-1.5 space-x-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span class="text-gray-400 text-[11px] ml-1">(28 đánh giá)</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-gray-400 block">Giá tham khảo</span>
+                <span class="text-brand-primary font-black text-base">Liên hệ báo giá</span>
+              </div>
+              <button class="bg-brand-primary hover:bg-brand-dark text-white p-2.5 rounded-lg transition"
+                title="Liên hệ đặt mua">
+                <i class="fa-solid fa-phone"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sản phẩm 2 -->
+        <div
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div class="relative p-4 bg-gray-50 text-center">
+            <span class="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">CÒN
+              HÀNG</span>
+            <div class="h-44 flex items-center justify-center overflow-hidden">
+              <i class="fa-solid fa-ring text-6xl text-gray-300 group-hover:scale-110 transition-transform"></i>
+            </div>
+            <span class="inline-block text-[11px] font-semibold text-gray-500 uppercase">Thương hiệu: AISIN (Nhật
+              Bản)</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400 font-mono">Mã: DTX-136</div>
+              <h4 class="text-sm font-bold text-gray-900 mt-1 line-clamp-2 group-hover:text-brand-primary transition">
+                Bộ ly hợp mâm ép lá côn Toyota Innova 2.0 Aisin Chính Hãng
+              </h4>
+              <div class="flex items-center text-yellow-400 text-xs mt-1.5 space-x-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star-half-stroke"></i>
+                <span class="text-gray-400 text-[11px] ml-1">(42 đánh giá)</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-gray-400 block">Giá ưu đãi</span>
+                <span class="text-brand-primary font-black text-base">Liên hệ báo giá</span>
+              </div>
+              <button class="bg-brand-primary hover:bg-brand-dark text-white p-2.5 rounded-lg transition"
+                title="Liên hệ đặt mua">
+                <i class="fa-solid fa-phone"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sản phẩm 3 -->
+        <div
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div class="relative p-4 bg-gray-50 text-center">
+            <span
+              class="absolute top-2 left-2 bg-brand-dark text-white text-[10px] font-bold px-2 py-0.5 rounded">ADVICS</span>
+            <div class="h-44 flex items-center justify-center overflow-hidden">
+              <i
+                class="fa-solid fa-shield-halved text-6xl text-gray-300 group-hover:scale-110 transition-transform"></i>
+            </div>
+            <span class="inline-block text-[11px] font-semibold text-gray-500 uppercase">Thương hiệu: ADVICS</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400 font-mono">Mã: SN856P</div>
+              <h4 class="text-sm font-bold text-gray-900 mt-1 line-clamp-2 group-hover:text-brand-primary transition">
+                Bố thắng má phanh trước Mazda 3, Mazda 6, CX-5 Advics
+              </h4>
+              <div class="flex items-center text-yellow-400 text-xs mt-1.5 space-x-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span class="text-gray-400 text-[11px] ml-1">(15 đánh giá)</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-gray-400 block">Giá tốt nhất</span>
+                <span class="text-brand-primary font-black text-base">Liên hệ báo giá</span>
+              </div>
+              <button class="bg-brand-primary hover:bg-brand-dark text-white p-2.5 rounded-lg transition"
+                title="Liên hệ đặt mua">
+                <i class="fa-solid fa-phone"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sản phẩm 4 -->
+        <div
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div class="relative p-4 bg-gray-50 text-center">
+            <span class="absolute top-2 left-2 bg-brand-navy text-white text-[10px] font-bold px-2 py-0.5 rounded">555
+              JAPAN</span>
+            <div class="h-44 flex items-center justify-center overflow-hidden">
+              <i class="fa-solid fa-car-side text-6xl text-gray-300 group-hover:scale-110 transition-transform"></i>
+            </div>
+            <span class="inline-block text-[11px] font-semibold text-gray-500 uppercase">Thương hiệu: 555 THREE
+              FIVE</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400 font-mono">Mã: SB-3842</div>
+              <h4 class="text-sm font-bold text-gray-900 mt-1 line-clamp-2 group-hover:text-brand-primary transition">
+                Rô-tuyn trụ dưới Honda City, Jazz chính hãng 555 Sankei
+              </h4>
+              <div class="flex items-center text-yellow-400 text-xs mt-1.5 space-x-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span class="text-gray-400 text-[11px] ml-1">(31 đánh giá)</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-gray-400 block">Sẵn kho Sài Gòn</span>
+                <span class="text-brand-primary font-black text-base">Liên hệ báo giá</span>
+              </div>
+              <button class="bg-brand-primary hover:bg-brand-dark text-white p-2.5 rounded-lg transition"
+                title="Liên hệ đặt mua">
+                <i class="fa-solid fa-phone"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ĐỐI TÁC THƯƠNG HIỆU PHÂN PHỐI ================= -->
+  <section class="py-12 bg-white" id="brands">
+    <div class="container mx-auto px-4">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-brand-primary font-bold text-xs uppercase tracking-wider">Hợp tác thương hiệu quốc tế</span>
+        <h2 class="text-2xl md:text-3xl font-black text-gray-900 mt-1">ĐỐI TÁC CUNG CẤP UY TÍN</h2>
+        <p class="text-gray-500 text-sm mt-2">3H AUTO tự hào là đơn vị phân phối các thương hiệu phụ tùng ô tô OEM &
+          Aftermarket hàng đầu thế giới</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          AISIN
+        </div>
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          KYB
+        </div>
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          ADVICS
+        </div>
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          555 SANKEI
+        </div>
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          GSP
+        </div>
+        <div
+          class="border border-gray-200 rounded-lg p-5 flex items-center justify-center hover:border-brand-primary hover:shadow-md transition bg-gray-50 font-bold text-gray-700 text-base">
+          MK KASHIYAMA
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CẨM NĂNG KỸ THUẬT & TIN TỨC ================= -->
+  <section class="py-12 bg-gray-50" id="news">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <span class="text-brand-primary font-bold text-xs uppercase tracking-wider">Kinh nghiệm & Hướng dẫn</span>
+          <h2 class="text-2xl md:text-3xl font-black text-gray-900 mt-1">CẨM NĂNG BẢO DƯỠNG & PHỤ TÙNG</h2>
+        </div>
+        <a href="#" class="text-sm font-semibold text-brand-primary hover:underline">Xem thêm tin tức</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Bài 1 -->
+        <article class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
+          <div class="h-44 bg-slate-800 flex items-center justify-center text-white">
+            <i class="fa-solid fa-wrench text-4xl opacity-50"></i>
+          </div>
+          <div class="p-5">
+            <span class="text-xs text-brand-primary font-semibold">Tư vấn kỹ thuật • 12/10/2026</span>
+            <h3 class="font-bold text-base text-gray-900 mt-1 line-clamp-2 hover:text-brand-primary cursor-pointer">
+              Dấu hiệu nhận biết phuộc nhún ô tô bị chảy dầu và cần thay thế kịp thời
+            </h3>
+            <p class="text-xs text-gray-500 mt-2 line-clamp-3">
+              Phuộc nhún đóng vai trò quan trọng trong việc giữ cân bằng xe và sự êm ái khi di chuyển. Cùng 3H AUTO tìm
+              hiểu các triệu chứng hỏng hóc...
+            </p>
+          </div>
+        </article>
+
+        <!-- Bài 2 -->
+        <article class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
+          <div class="h-44 bg-slate-700 flex items-center justify-center text-white">
+            <i class="fa-solid fa-shield-halved text-4xl opacity-50"></i>
+          </div>
+          <div class="p-5">
+            <span class="text-xs text-brand-primary font-semibold">Kinh nghiệm phân biệt • 08/10/2026</span>
+            <h3 class="font-bold text-base text-gray-900 mt-1 line-clamp-2 hover:text-brand-primary cursor-pointer">
+              Cách phân biệt bố thắng (má phanh) ô tô chính hãng và hàng nhái kém chất lượng
+            </h3>
+            <p class="text-xs text-gray-500 mt-2 line-clamp-3">
+              Sử dụng má phanh giả gây nguy hiểm trực tiếp đến an toàn vận hành xe. Những chi tiết dập nổi, tem chống
+              hàng giả từ các thương hiệu lớn...
+            </p>
+          </div>
+        </article>
+
+        <!-- Bài 3 -->
+        <article class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
+          <div class="h-44 bg-slate-900 flex items-center justify-center text-white">
+            <i class="fa-solid fa-car-tunnel text-4xl opacity-50"></i>
+          </div>
+          <div class="p-5">
+            <span class="text-xs text-brand-primary font-semibold">Bảo dưỡng định kỳ • 02/10/2026</span>
+            <h3 class="font-bold text-base text-gray-900 mt-1 line-clamp-2 hover:text-brand-primary cursor-pointer">
+              Bao lâu nên kiểm tra hệ thống gầm: Rô-tuyn, càng A và bạc đạn bánh xe?
+            </h3>
+            <p class="text-xs text-gray-500 mt-2 line-clamp-3">
+              Hệ thống gầm xe tiếp xúc trực tiếp với bùn đất và địa hình xấu. Thời điểm vàng để kiểm tra và bảo dưỡng
+              thay thế phụ tùng...
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-brand-navy text-gray-300 pt-14 pb-8" id="contact">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-gray-800">
+
+        <!-- Cột 1: Thông tin công ty -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="bg-white px-2.5 py-1.5 rounded-lg shadow-sm flex items-center justify-center">
+              <img src="logo.png" alt="3H AUTO Logo" class="h-9 w-auto object-contain">
+            </div>
+            <span class="text-xl font-black text-white">3H <span class="text-sky-400">AUTO</span></span>
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">
+            <strong>CÔNG TY TNHH MỘT THÀNH VIÊN PHỤ TÙNG Ô TÔ 3H AUTO</strong><br>
+            Nhà cung cấp phụ tùng ô tô uy tín hàng đầu cho đại lý, gara sửa chữa và chủ xe trên toàn quốc.
+          </p>
+          <ul class="space-y-2 text-xs">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-location-dot text-sky-400 mt-1"></i>
+              <span>467 An Dương Vương, P. Chợ Quán, Quận 5, TP. Hồ Chí Minh</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-phone text-sky-400"></i>
+              <span>Hotline / Zalo: <strong class="text-white">097 3333 217 - 0916 040 797</strong></span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-envelope text-sky-400"></i>
+              <span>phutungoto3hauto@gmail.com</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-globe text-sky-400"></i>
+              <span>phutungoto3hauto.com</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Cột 2: Danh mục chính -->
+        <div>
+          <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider border-l-2 border-brand-primary pl-2.5">
+            Danh Mục Sản Phẩm
+          </h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#" class="hover:text-white transition">Phụ tùng gầm ô tô (Rô-tuyn, Càng A)</a></li>
+            <li><a href="#" class="hover:text-white transition">Phụ tùng động cơ xe hơi</a></li>
+            <li><a href="#" class="hover:text-white transition">Hệ thống phanh: Bố thắng, Đĩa phanh</a></li>
+            <li><a href="#" class="hover:text-white transition">Bộ côn ly hợp (Lá côn, Mâm ép)</a></li>
+            <li><a href="#" class="hover:text-white transition">Phuộc nhún giảm xóc ô tô</a></li>
+            <li><a href="#" class="hover:text-white transition">Dầu nhớt và nước làm mát cao cấp</a></li>
+          </ul>
+        </div>
+
+        <!-- Cột 3: Hỗ trợ & Chính sách -->
+        <div>
+          <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider border-l-2 border-brand-primary pl-2.5">
+            Chính Sách & Hỗ Trợ
+          </h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#" class="hover:text-white transition">Chính sách bảo hành & bảo dưỡng</a></li>
+            <li><a href="#" class="hover:text-white transition">Chính sách giao nhận và thanh toán</a></li>
+            <li><a href="#" class="hover:text-white transition">Chính sách đổi trả hàng hóa</a></li>
+            <li><a href="#" class="hover:text-white transition">Chính sách bảo mật thông tin</a></li>
+            <li><a href="#" class="hover:text-white transition">Hướng dẫn tra mã phụ tùng OEM</a></li>
+            <li><a href="#" class="hover:text-white transition">Dành cho Gara sửa chữa & Đại lý</a></li>
+          </ul>
+        </div>
+
+        <!-- Cột 4: Đăng ký & Kết nối -->
+        <div>
+          <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider border-l-2 border-brand-primary pl-2.5">
+            Bản Tin Báo Giá
+          </h4>
+          <p class="text-xs text-gray-400 mb-3">Đăng ký để nhận báo giá sỉ phụ tùng và chương trình ưu đãi mới nhất từ
+            3H AUTO.</p>
+          <form class="space-y-2">
+            <input type="email" placeholder="Nhập email của bạn..."
+              class="w-full bg-gray-800 text-xs px-3 py-2.5 rounded border border-gray-700 focus:outline-none focus:border-brand-primary text-white">
+            <button type="submit"
+              class="w-full bg-brand-primary hover:bg-brand-dark text-white py-2 rounded text-xs font-bold uppercase transition">
+              Đăng ký ngay
+            </button>
+          </form>
+          <div class="mt-5">
+            <span class="block text-xs font-semibold text-gray-400 mb-2">Kết nối với chúng tôi:</span>
+            <div class="flex space-x-3 text-base">
+              <a href="#"
+                class="w-8 h-8 rounded-full bg-gray-800 hover:bg-brand-primary flex items-center justify-center text-white transition"><i
+                  class="fa-brands fa-facebook-f"></i></a>
+              <a href="#"
+                class="w-8 h-8 rounded-full bg-gray-800 hover:bg-brand-primary flex items-center justify-center text-white transition"><i
+                  class="fa-brands fa-youtube"></i></a>
+              <a href="https://zalo.me/0973333217" target="_blank"
+                class="w-8 h-8 rounded-full bg-gray-800 hover:bg-brand-primary flex items-center justify-center text-white transition font-bold text-xs">Zalo</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-6 text-center text-xs text-gray-500">
+        <p>© 2026 Phụ Tùng Ô Tô 3H AUTO (phutungoto3hauto.com). Tất cả quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= FLOATING CONTACT BUTTONS (HOTLINE / ZALO) ================= -->
+  <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+    <!-- Nút Zalo -->
+    <a href="https://zalo.me/0973333217" target="_blank"
+      class="w-13 h-13 p-3 bg-brand-dark hover:bg-brand-navy text-white rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-110"
+      title="Chat Zalo ngay">
+      <span class="font-bold text-xs">ZALO</span>
+    </a>
+    <!-- Nút Gọi Ngay -->
+    <a href="tel:0973333217"
+      class="w-13 h-13 p-3 bg-brand-primary hover:bg-brand-dark text-white rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-110 animate-bounce"
+      title="Gọi hotline">
+      <i class="fa-solid fa-phone text-lg"></i>
+    </a>
+  </div>
+
+  <!-- ================= MODAL ĐĂNG NHẬP ADMIN ================= -->
+  <div id="adminLoginModal"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
+      <div class="bg-gradient-to-r from-brand-navy to-brand-primary p-5 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-base uppercase tracking-wide">Đăng Nhập Quản Trị</h3>
+            <p class="text-xs text-sky-200">Hệ thống quản lý sản phẩm 3H AUTO</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminLoginModal()"
+          class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
+        <div id="adminLoginError"
+          class="hidden bg-red-50 border border-red-200 text-red-600 text-xs font-medium px-3.5 py-2.5 rounded-lg flex items-center gap-2">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Tên đăng nhập hoặc mật khẩu không chính xác!</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Tài khoản</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input id="adminUsername" type="text" required placeholder="Nhập tài khoản..."
+              class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-sky-100">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Mật khẩu</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input id="adminPassword" type="password" required placeholder="Nhập mật khẩu..."
+              class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-sky-100">
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeAdminLoginModal()"
+            class="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-bold transition">
+            Hủy bỏ
+          </button>
+          <button type="submit"
+            class="px-5 py-2.5 rounded-lg bg-brand-primary hover:bg-brand-dark text-white text-xs font-bold uppercase shadow-md flex items-center gap-2 transition">
+            <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL THÊM / CHỈNH SỬA SẢN PHẨM ================= -->
+  <div id="productModal"
+    class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-gray-100 my-8">
+      <div class="bg-gradient-to-r from-brand-navy to-brand-primary p-5 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <h3 id="productModalTitle" class="font-black text-base uppercase tracking-wide">Thêm Sản Phẩm Mới</h3>
+            <p class="text-xs text-sky-200">Tùy chỉnh thông tin phụ tùng hiển thị trên website</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeProductModal()"
+          class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="productForm" onsubmit="handleSaveProduct(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scroll">
+        <input type="hidden" id="prodId">
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Tên phụ tùng / sản phẩm <span class="text-red-500">*</span></label>
+          <input id="prodName" type="text" required
+            placeholder="VD: Phuộc nhún trước Toyota Vios 2014 - 2021 KYB Gas Shock"
+            class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Mã phụ tùng (OEM / Part Number) <span class="text-red-500">*</span></label>
+            <input id="prodCode" type="text" required placeholder="VD: 333338-KYB"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Danh mục sản phẩm <span class="text-red-500">*</span></label>
+            <select id="prodCategory"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary bg-white">
+              <option value="Giảm Xóc KYB">Giảm Xóc KYB</option>
+              <option value="Phụ tùng Gầm">Phụ tùng Gầm</option>
+              <option value="Bộ Côn Ly Hợp">Bộ Côn Ly Hợp</option>
+              <option value="Má Phanh / Bố Thắng">Má Phanh / Bố Thắng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Thương hiệu <span class="text-red-500">*</span></label>
+            <input id="prodBrand" type="text" required placeholder="VD: KYB (Nhật Bản)"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Giá bán / Báo giá <span class="text-red-500">*</span></label>
+            <input id="prodPrice" type="text" required placeholder="VD: Liên hệ báo giá hoặc 1.250.000đ" value="Liên hệ báo giá"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary font-semibold text-brand-primary">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Nhãn góc (Badge)</label>
+            <input id="prodBadge" type="text" placeholder="VD: CHÍNH HÃNG" value="CHÍNH HÃNG"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Màu nhãn góc</label>
+            <select id="prodBadgeColor"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary bg-white">
+              <option value="bg-brand-primary">Xanh 3H AUTO</option>
+              <option value="bg-emerald-600">Xanh lá (Còn hàng)</option>
+              <option value="bg-brand-dark">Xanh đậm</option>
+              <option value="bg-brand-navy">Đen Navy</option>
+              <option value="bg-amber-600">Vàng cam (Mới về)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Ghi chú giá</label>
+            <input id="prodPriceNote" type="text" placeholder="VD: Sẵn kho Sài Gòn" value="Giá tham khảo"
+              class="w-full px-3.5 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary">
+          </div>
+        </div>
+
+        <!-- Hình ảnh hoặc Icon phụ tùng -->
+        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-3">
+          <label class="block text-xs font-bold text-gray-700 uppercase">Hình ảnh sản phẩm (Tùy chọn)</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div>
+              <label class="block text-[11px] text-gray-500 mb-1">Tải ảnh từ máy tính:</label>
+              <input id="prodImageFile" type="file" accept="image/*" onchange="handleProductImageUpload(event)"
+                class="w-full text-xs text-gray-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-brand-primary hover:file:bg-sky-200 cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-500 mb-1">Hoặc dán link ảnh (URL):</label>
+              <input id="prodImageUrl" type="text" placeholder="https://..." oninput="updateImagePreviewFromUrl()"
+                class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary bg-white">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-4 pt-1">
+            <div class="flex-1">
+              <label class="block text-[11px] text-gray-500 mb-1">Icon hiển thị (nếu không dùng ảnh):</label>
+              <select id="prodIcon"
+                class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-brand-primary bg-white">
+                <option value="fa-arrows-up-down">Giảm xóc / Phuộc nhún</option>
+                <option value="fa-ring">Bộ côn / Ly hợp / Bạc đạn</option>
+                <option value="fa-shield-halved">Má phanh / Đĩa phanh</option>
+                <option value="fa-car-side">Phụ tùng Gầm / Rô-tuyn</option>
+                <option value="fa-gears">Phụ tùng Động cơ</option>
+                <option value="fa-oil-can">Dầu nhớt & Làm mát</option>
+                <option value="fa-bolt">Hệ thống Điện / Mô-bin</option>
+              </select>
+            </div>
+            <div id="prodImagePreviewWrap" class="hidden items-center gap-2 bg-white p-1.5 rounded-lg border border-gray-200">
+              <img id="prodImagePreview" src="" alt="Preview" class="w-12 h-12 object-contain rounded">
+              <button type="button" onclick="clearProductImage()" class="text-xs text-red-500 hover:underline px-1" title="Xóa ảnh">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-gray-200 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeProductModal()"
+            class="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-bold transition">
+            Hủy bỏ
+          </button>
+          <button type="submit"
+            class="px-5 py-2.5 rounded-lg bg-brand-primary hover:bg-brand-dark text-white text-xs font-bold shadow-md flex items-center gap-2 transition">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu Sản Phẩm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Thông báo Toast -->
+  <div id="toastNotification"
+    class="fixed bottom-6 left-6 z-50 hidden items-center gap-2.5 bg-brand-navy text-white px-4 py-3 rounded-xl shadow-2xl border border-sky-400/30 text-xs font-semibold">
+    <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMessage">Đã cập nhật thành công!</span>
+  </div>
+
+  <script>
+    // Toggle mobile menu dropdown
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileDropdown = document.getElementById('mobileMenuDropdown');
+    if (mobileBtn && mobileDropdown) {
+      mobileBtn.addEventListener('click', () => {
+        mobileDropdown.classList.toggle('hidden');
+      });
+      mobileDropdown.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileDropdown.classList.add('hidden');
+        });
+      });
+    }
+
+    // Tìm kiếm trên di động
+    const mobileSearchForm = document.getElementById('mobileSearchForm');
+    if (mobileSearchForm) {
+      mobileSearchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const q = document.getElementById('mobileSearchInput').value;
+        currentSearchQuery = q;
+        filterProductsByCategory('all');
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    // ================= DỮ LIỆU & QUẢN TRỊ SẢN PHẨM (ADMIN) =================
+    const STORAGE_KEY_PRODUCTS = '3hauto_products_v1';
+    const STORAGE_KEY_ADMIN = '3hauto_is_admin';
+
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 'sp-1',
+        name: 'Phuộc nhún trước Toyota Vios 2014 - 2021 KYB Gas Shock',
+        code: '333338-KYB',
+        brand: 'KYB (Nhật Bản)',
+        category: 'Giảm Xóc KYB',
+        badge: 'CHÍNH HÃNG',
+        badgeColor: 'bg-brand-primary',
+        priceNote: 'Giá tham khảo',
+        price: 'Liên hệ báo giá',
+        reviews: 28,
+        icon: 'fa-arrows-up-down',
+        image: ''
+      },
+      {
+        id: 'sp-2',
+        name: 'Bộ ly hợp mâm ép lá côn Toyota Innova 2.0 Aisin Chính Hãng',
+        code: 'DTX-136',
+        brand: 'AISIN (Nhật Bản)',
+        category: 'Bộ Côn Ly Hợp',
+        badge: 'CÒN HÀNG',
+        badgeColor: 'bg-emerald-600',
+        priceNote: 'Giá ưu đãi',
+        price: 'Liên hệ báo giá',
+        reviews: 42,
+        icon: 'fa-ring',
+        image: ''
+      },
+      {
+        id: 'sp-3',
+        name: 'Bố thắng má phanh trước Mazda 3, Mazda 6, CX-5 Advics',
+        code: 'SN856P',
+        brand: 'ADVICS',
+        category: 'Má Phanh / Bố Thắng',
+        badge: 'ADVICS',
+        badgeColor: 'bg-brand-dark',
+        priceNote: 'Giá tốt nhất',
+        price: 'Liên hệ báo giá',
+        reviews: 15,
+        icon: 'fa-shield-halved',
+        image: ''
+      },
+      {
+        id: 'sp-4',
+        name: 'Rô-tuyn trụ dưới Honda City, Jazz chính hãng 555 Sankei',
+        code: 'SB-3842',
+        brand: '555 THREE FIVE',
+        category: 'Phụ tùng Gầm',
+        badge: '555 JAPAN',
+        badgeColor: 'bg-brand-navy',
+        priceNote: 'Sẵn kho Sài Gòn',
+        price: 'Liên hệ báo giá',
+        reviews: 31,
+        icon: 'fa-car-side',
+        image: ''
+      }
+    ];
+
+    let products = [];
+    let isAdmin = false;
+    let currentCategoryFilter = 'all';
+    let currentSearchQuery = '';
+    let uploadedImageDataUrl = '';
+
+    function loadInitialData() {
+      try {
+        const savedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+        if (savedProducts) {
+          products = JSON.parse(savedProducts);
+        } else {
+          products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+          localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+        }
+        isAdmin = localStorage.getItem(STORAGE_KEY_ADMIN) === 'true';
+      } catch (e) {
+        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+      }
+      updateAdminUI();
+      renderProducts();
+    }
+
+    function saveProductsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      } catch (e) {
+        alert('Dung lượng ảnh quá lớn đối với bộ nhớ trình duyệt, vui lòng chọn ảnh nhẹ hơn hoặc dùng link URL ảnh.');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 3200);
+    }
+
+    function updateAdminUI() {
+      const loginBtn = document.getElementById('adminLoginBtn');
+      const loggedGroup = document.getElementById('adminLoggedGroup');
+      const adminToolbar = document.getElementById('adminToolbar');
+
+      if (isAdmin) {
+        loginBtn.classList.add('hidden');
+        loggedGroup.classList.remove('hidden');
+        loggedGroup.classList.add('flex');
+        adminToolbar.classList.remove('hidden');
+        adminToolbar.classList.add('flex');
+      } else {
+        loginBtn.classList.remove('hidden');
+        loggedGroup.classList.add('hidden');
+        loggedGroup.classList.remove('flex');
+        adminToolbar.classList.add('hidden');
+        adminToolbar.classList.remove('flex');
+      }
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      if (!grid) return;
+
+      const filtered = products.filter(p => {
+        const matchCat = currentCategoryFilter === 'all' || p.category === currentCategoryFilter;
+        const q = currentSearchQuery.trim().toLowerCase();
+        const matchSearch = !q ||
+          p.name.toLowerCase().includes(q) ||
+          p.code.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q);
+        return matchCat && matchSearch;
+      });
+
+      let html = filtered.map(p => {
+        const mediaHtml = p.image
+          ? `<img src="${p.image}" alt="${p.name}" class="h-full w-full object-contain group-hover:scale-105 transition-transform">`
+          : `<i class="fa-solid ${p.icon || 'fa-gears'} text-6xl text-gray-300 group-hover:scale-110 transition-transform"></i>`;
+
+        const adminActionsHtml = isAdmin ? `
+          <div class="absolute top-2 right-2 flex items-center gap-1.5 z-10">
+            <button type="button" onclick="openProductModal('${p.id}')"
+              class="w-7 h-7 rounded-md bg-white/95 hover:bg-brand-primary text-gray-700 hover:text-white shadow border border-gray-200 flex items-center justify-center text-xs transition"
+              title="Chỉnh sửa sản phẩm">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button type="button" onclick="handleDeleteProduct('${p.id}')"
+              class="w-7 h-7 rounded-md bg-white/95 hover:bg-red-600 text-red-600 hover:text-white shadow border border-gray-200 flex items-center justify-center text-xs transition"
+              title="Xóa sản phẩm">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        ` : '';
+
+        return `
+          <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div class="relative p-4 bg-gray-50 text-center">
+              <span class="absolute top-2 left-2 ${p.badgeColor || 'bg-brand-primary'} text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
+                ${p.badge || 'CHÍNH HÃNG'}
+              </span>
+              ${adminActionsHtml}
+              <div class="h-44 flex items-center justify-center overflow-hidden p-2">
+                ${mediaHtml}
+              </div>
+              <span class="inline-block text-[11px] font-semibold text-gray-500 uppercase">Thương hiệu: ${p.brand}</span>
+            </div>
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="text-[11px] text-gray-400 font-mono">Mã: ${p.code}</div>
+                <h4 class="text-sm font-bold text-gray-900 mt-1 line-clamp-2 group-hover:text-brand-primary transition">
+                  ${p.name}
+                </h4>
+                <div class="flex items-center text-yellow-400 text-xs mt-1.5 space-x-1">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <span class="text-gray-400 text-[11px] ml-1">(${p.reviews || 20} đánh giá)</span>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-gray-400 block">${p.priceNote || 'Giá tham khảo'}</span>
+                  <span class="text-brand-primary font-black text-base">${p.price}</span>
+                </div>
+                <a href="tel:0973333217" class="bg-brand-primary hover:bg-brand-dark text-white p-2.5 rounded-lg transition"
+                  title="Liên hệ đặt mua">
+                  <i class="fa-solid fa-phone"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (isAdmin) {
+        html += `
+          <button type="button" onclick="openProductModal()"
+            class="min-h-[320px] rounded-xl border-2 border-dashed border-brand-primary/40 hover:border-brand-primary bg-sky-50/40 hover:bg-sky-50 transition flex flex-col items-center justify-center p-6 text-center group cursor-pointer">
+            <div class="w-14 h-14 rounded-full bg-brand-primary/10 group-hover:bg-brand-primary text-brand-primary group-hover:text-white flex items-center justify-center text-2xl transition mb-3">
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <span class="font-bold text-sm text-brand-primary">Thêm Sản Phẩm Mới</span>
+            <span class="text-xs text-gray-500 mt-1">Nhấn để thêm phụ tùng vào danh sách</span>
+          </button>
+        `;
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function filterProductsByCategory(category) {
+      currentCategoryFilter = category;
+      const tabs = document.querySelectorAll('#productFilterTabs .filter-tab');
+      tabs.forEach(btn => {
+        if (btn.getAttribute('data-category') === category) {
+          btn.className = 'filter-tab px-4 py-2 bg-brand-primary text-white rounded-md shadow-sm transition';
+        } else {
+          btn.className = 'filter-tab px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 rounded-md transition';
+        }
+      });
+      renderProducts();
+    }
+
+    // Tìm kiếm trên Header
+    const headerSearchForm = document.getElementById('headerSearchForm');
+    if (headerSearchForm) {
+      headerSearchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const cat = document.getElementById('headerSearchCategory').value;
+        const q = document.getElementById('headerSearchInput').value;
+        currentSearchQuery = q;
+        filterProductsByCategory(cat);
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    // Modal Đăng nhập Admin
+    function openAdminLoginModal() {
+      document.getElementById('adminLoginForm').reset();
+      document.getElementById('adminLoginError').classList.add('hidden');
+      const modal = document.getElementById('adminLoginModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('adminUsername').focus();
+    }
+
+    function closeAdminLoginModal() {
+      const modal = document.getElementById('adminLoginModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('adminUsername').value.trim();
+      const pass = document.getElementById('adminPassword').value.trim();
+
+      if (user === 'admin' && pass === 'admin123') {
+        isAdmin = true;
+        localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
+        closeAdminLoginModal();
+        updateAdminUI();
+        renderProducts();
+        showToast('Đăng nhập Admin thành công! Bạn có thể thêm/sửa sản phẩm.');
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.getElementById('adminLoginError').classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLogout() {
+      isAdmin = false;
+      localStorage.removeItem(STORAGE_KEY_ADMIN);
+      updateAdminUI();
+      renderProducts();
+      showToast('Đã đăng xuất khỏi chế độ Admin.');
+    }
+
+    // Modal Thêm / Sửa Sản phẩm
+    function openProductModal(productId = null) {
+      if (!isAdmin) {
+        openAdminLoginModal();
+        return;
+      }
+      const modal = document.getElementById('productModal');
+      const title = document.getElementById('productModalTitle');
+      const form = document.getElementById('productForm');
+      form.reset();
+      clearProductImage();
+
+      if (productId) {
+        const prod = products.find(p => p.id === productId);
+        if (!prod) return;
+        title.textContent = 'Chỉnh Sửa Sản Phẩm';
+        document.getElementById('prodId').value = prod.id;
+        document.getElementById('prodName').value = prod.name;
+        document.getElementById('prodCode').value = prod.code;
+        document.getElementById('prodCategory').value = prod.category || 'Giảm Xóc KYB';
+        document.getElementById('prodBrand').value = prod.brand;
+        document.getElementById('prodPrice').value = prod.price;
+        document.getElementById('prodBadge').value = prod.badge || 'CHÍNH HÃNG';
+        document.getElementById('prodBadgeColor').value = prod.badgeColor || 'bg-brand-primary';
+        document.getElementById('prodPriceNote').value = prod.priceNote || 'Giá tham khảo';
+        document.getElementById('prodIcon').value = prod.icon || 'fa-arrows-up-down';
+
+        if (prod.image) {
+          uploadedImageDataUrl = prod.image;
+          if (!prod.image.startsWith('data:')) {
+            document.getElementById('prodImageUrl').value = prod.image;
+          }
+          showImagePreview(prod.image);
+        }
+      } else {
+        title.textContent = 'Thêm Sản Phẩm Mới';
+        document.getElementById('prodId').value = '';
+        document.getElementById('prodPrice').value = 'Liên hệ báo giá';
+        document.getElementById('prodBadge').value = 'CHÍNH HÃNG';
+        document.getElementById('prodPriceNote').value = 'Giá tham khảo';
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProductModal() {
+      const modal = document.getElementById('productModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleProductImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        uploadedImageDataUrl = evt.target.result;
+        document.getElementById('prodImageUrl').value = '';
+        showImagePreview(uploadedImageDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateImagePreviewFromUrl() {
+      const url = document.getElementById('prodImageUrl').value.trim();
+      if (url) {
+        uploadedImageDataUrl = url;
+        showImagePreview(url);
+      } else {
+        clearProductImage();
+      }
+    }
+
+    function showImagePreview(src) {
+      const wrap = document.getElementById('prodImagePreviewWrap');
+      const img = document.getElementById('prodImagePreview');
+      img.src = src;
+      wrap.classList.remove('hidden');
+      wrap.classList.add('flex');
+    }
+
+    function clearProductImage() {
+      uploadedImageDataUrl = '';
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('prodImageUrl').value = '';
+      const wrap = document.getElementById('prodImagePreviewWrap');
+      wrap.classList.add('hidden');
+      wrap.classList.remove('flex');
+    }
+
+    function handleSaveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('prodId').value;
+      const productData = {
+        id: id || ('sp-' + Date.now()),
+        name: document.getElementById('prodName').value.trim(),
+        code: document.getElementById('prodCode').value.trim(),
+        category: document.getElementById('prodCategory').value,
+        brand: document.getElementById('prodBrand').value.trim(),
+        price: document.getElementById('prodPrice').value.trim(),
+        badge: document.getElementById('prodBadge').value.trim() || 'CHÍNH HÃNG',
+        badgeColor: document.getElementById('prodBadgeColor').value,
+        priceNote: document.getElementById('prodPriceNote').value.trim() || 'Giá tham khảo',
+        icon: document.getElementById('prodIcon').value,
+        image: uploadedImageDataUrl,
+        reviews: Math.floor(Math.random() * 35) + 12
+      };
+
+      if (id) {
+        const idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          productData.reviews = products[idx].reviews || productData.reviews;
+          products[idx] = productData;
+        }
+        showToast('Đã cập nhật thông tin sản phẩm!');
+      } else {
+        products.unshift(productData);
+        showToast('Đã thêm sản phẩm mới thành công!');
+      }
+
+      saveProductsToStorage();
+      closeProductModal();
+      renderProducts();
+    }
+
+    function handleDeleteProduct(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (!prod) return;
+      if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${prod.name}" không?`)) {
+        products = products.filter(p => p.id !== productId);
+        saveProductsToStorage();
+        renderProducts();
+        showToast('Đã xóa sản phẩm khỏi danh sách.');
+      }
+    }
+
+    function resetDefaultProducts() {
+      if (confirm('Khôi phục lại 4 sản phẩm mặc định ban đầu?')) {
+        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+        saveProductsToStorage();
+        renderProducts();
+        showToast('Đã khôi phục danh sách sản phẩm mặc định.');
+      }
+    }
+
+    // Khởi chạy khi trang tải xong
+    document.addEventListener('DOMContentLoaded', loadInitialData);
+  </script>
+</body>
+
+</html>
