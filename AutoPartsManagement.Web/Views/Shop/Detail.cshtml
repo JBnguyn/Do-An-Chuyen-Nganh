@@ -1,0 +1,141 @@
+@model ShopDetailViewModel
+@{
+    var p = Model.Product;
+    ViewData["Title"] = p.Name;
+    var price = p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    var outOfStock = p.Stock <= 0;
+    var low = !outOfStock && p.Stock <= InventoryRules.LowStockThreshold;
+}
+
+<div class="container">
+    <nav class="shop-breadcrumb" aria-label="breadcrumb">
+        <a asp-action="Index">Trang chủ</a> <i class="bi bi-chevron-right"></i>
+        @if (p.Category != null)
+        {
+            <a asp-action="Search" asp-route-categoryId="@p.CategoryId">@p.Category.Name</a> <i class="bi bi-chevron-right"></i>
+        }
+        <span>@p.Name</span>
+    </nav>
+
+    <section class="shop-section">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="pd-gallery">
+                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                    {
+                        <img src="@p.ImageUrl" alt="@p.Name" />
+                    }
+                    else
+                    {
+                        <i class="bi @ShopUi.CategoryIcon(p.Category?.Name)"></i>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <a class="pcard-brand" asp-action="Search" asp-route-brandId="@p.BrandId">@p.Brand?.Name</a>
+                <h1 class="pd-title mt-1">@p.Name</h1>
+                <div class="pd-meta">
+                    <span>Mã phụ tùng: <b>@p.PartNumber</b></span>
+                    <span>Danh mục: <b>@p.Category?.Name</b></span>
+                    @if (p.Brand?.Country != null)
+                    {
+                        <span>Xuất xứ hãng: <b>@p.Brand.Country</b></span>
+                    }
+                </div>
+
+                <div class="pd-price">
+                    <strong>@Format.Money(p.Price)</strong>
+                    <div class="mt-1">
+                        @if (outOfStock)
+                        {
+                            <span class="pd-stock out"><i class="bi bi-x-circle"></i> Tạm hết hàng</span>
+                        }
+                        else if (low)
+                        {
+                            <span class="pd-stock low"><i class="bi bi-exclamation-circle"></i> Chỉ còn @p.Stock sản phẩm</span>
+                        }
+                        else
+                        {
+                            <span class="pd-stock in"><i class="bi bi-check-circle"></i> Còn hàng</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    @if (!outOfStock)
+                    {
+                        <div class="pd-qty">
+                            <button type="button" data-step="-1" data-target="#qty" aria-label="Giảm">−</button>
+                            <input id="qty" type="number" value="1" min="1" max="@p.Stock" aria-label="Số lượng" />
+                            <button type="button" data-step="1" data-target="#qty" aria-label="Tăng">+</button>
+                        </div>
+                    }
+                    <button type="button" class="btn btn-shop btn-lg px-4" @(outOfStock ? "disabled" : "")
+                            data-add-to-cart data-qty-input="#qty" data-id="@p.Id" data-name="@p.Name" data-price="@price" data-img="@p.ImageUrl" data-max="@p.Stock">
+                        <i class="bi bi-cart-plus"></i> @(outOfStock ? "Tạm hết hàng" : "Thêm vào giỏ")
+                    </button>
+                    <span class="btn btn-outline-dark btn-lg"><i class="bi bi-telephone"></i> @ShopUi.Hotline</span>
+                </div>
+
+                <ul class="pd-perks">
+                    <li><i class="bi bi-shield-check"></i> Bảo hành @(p.WarrantyMonths.HasValue ? $"{p.WarrantyMonths} tháng" : "theo chính sách hãng")</li>
+                    <li><i class="bi bi-patch-check"></i> Hàng chính hãng, rõ nguồn gốc</li>
+                    <li><i class="bi bi-truck"></i> Giao hàng toàn quốc</li>
+                    <li><i class="bi bi-headset"></i> Tư vấn chọn đúng phụ tùng</li>
+                </ul>
+
+                @if (User.IsInRole(AppRoles.Admin))
+                {
+                    <div class="mt-3">
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@p.Id"><i class="bi bi-pencil"></i> Sửa sản phẩm (Admin)</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="shop-section">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <h2 class="shop-section-title mb-3">Mô tả sản phẩm</h2>
+                @if (!string.IsNullOrWhiteSpace(p.Description))
+                {
+                    <p class="text-pre-line mb-0" style="white-space:pre-line">@p.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Chưa có mô tả cho sản phẩm này. Vui lòng gọi @ShopUi.Hotline để được tư vấn.</p>
+                }
+            </div>
+            <div class="col-lg-5">
+                <h2 class="shop-section-title mb-3">Thông số</h2>
+                <table class="table table-sm pd-spec mb-0">
+                    <tbody>
+                        <tr><th>Mã phụ tùng</th><td>@p.PartNumber</td></tr>
+                        <tr><th>Thương hiệu</th><td>@p.Brand?.Name</td></tr>
+                        <tr><th>Danh mục</th><td>@p.Category?.Name</td></tr>
+                        <tr><th>Bảo hành</th><td>@(p.WarrantyMonths.HasValue ? $"{p.WarrantyMonths} tháng" : "—")</td></tr>
+                        <tr><th>Tình trạng</th><td>@(outOfStock ? "Tạm hết hàng" : "Còn hàng")</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    @if (Model.Related.Count > 0)
+    {
+        <section class="shop-section">
+            <div class="shop-section-head">
+                <h2 class="shop-section-title">Sản phẩm cùng danh mục</h2>
+                <a class="shop-more" asp-action="Search" asp-route-categoryId="@p.CategoryId">Xem thêm <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="shop-grid">
+                @foreach (var r in Model.Related)
+                {
+                    <partial name="_ProductCard" model="r" />
+                }
+            </div>
+        </section>
+    }
+</div>

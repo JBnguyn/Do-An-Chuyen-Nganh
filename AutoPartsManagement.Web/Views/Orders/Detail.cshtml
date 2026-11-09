@@ -1,0 +1,74 @@
+@model Order
+@using AutoPartsManagement.Data.Models.Enums
+@{
+    ViewData["Title"] = $"Đơn hàng #{Model.Id}";
+    var locked = Model.Status is OrderStatus.Cancelled or OrderStatus.Delivered;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Đơn hàng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">#@Model.Id</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0">Đơn hàng #@Model.Id</h2>
+    <span class="badge fs-6 @OrderUi.Badge(Model.Status)"><i class="bi @OrderUi.Icon(Model.Status)"></i> @OrderUi.Label(Model.Status)</span>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Sản phẩm</div>
+            <partial name="_OrderItems" model="Model" />
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header fw-semibold">Khách hàng</div>
+            <div class="card-body">
+                <p class="mb-1 fw-semibold">@Model.Customer?.Name</p>
+                <p class="mb-1"><i class="bi bi-telephone"></i> @Model.Customer?.Phone</p>
+                @if (!string.IsNullOrWhiteSpace(Model.Customer?.Email))
+                {
+                    <p class="mb-1"><i class="bi bi-envelope"></i> @Model.Customer.Email</p>
+                }
+                <p class="mb-1"><i class="bi bi-geo-alt"></i> @Model.Customer?.Address</p>
+                <p class="mb-0 small text-muted">Đặt lúc @Format.DateAndTime(Model.OrderDate)</p>
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <hr />
+                    <p class="mb-0 small" style="white-space:pre-line"><b>Ghi chú:</b> @Model.Notes</p>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Cập nhật trạng thái</div>
+            <div class="card-body">
+                @if (locked)
+                {
+                    <p class="text-muted mb-0">Đơn đã @(Model.Status == OrderStatus.Cancelled ? "bị hủy" : "giao xong"), không thể đổi trạng thái.</p>
+                }
+                else
+                {
+                    <div class="d-grid gap-2">
+                        @foreach (var s in Enum.GetValues<OrderStatus>().Where(s => s != Model.Status && s != OrderStatus.Pending))
+                        {
+                            <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post"
+                                  onsubmit="@(s == OrderStatus.Cancelled ? "return confirm('Hủy đơn này? Tồn kho sẽ được cộng lại.');" : "")">
+                                <input type="hidden" name="status" value="@s" />
+                                <button type="submit" class="btn w-100 @(s == OrderStatus.Cancelled ? "btn-outline-danger" : "btn-outline-primary")">
+                                    <i class="bi @OrderUi.Icon(s)"></i> Chuyển sang "@OrderUi.Label(s)"
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    <p class="small text-muted mt-2 mb-0">Khi hủy đơn, số lượng sản phẩm sẽ được cộng lại vào tồn kho.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

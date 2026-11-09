@@ -1,0 +1,19 @@
+@model Brand
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+<div class="mb-3">
+    <label asp-for="Name" class="form-label">Tên hãng <span class="text-danger">*</span></label>
+    <input asp-for="Name" class="form-control" placeholder="Vd: Bosch" />
+    <span asp-validation-for="Name" class="text-danger small"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Country" class="form-label">Quốc gia</label>
+    <input asp-for="Country" class="form-control" placeholder="Vd: Đức" />
+    <span asp-validation-for="Country" class="text-danger small"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="LogoUrl" class="form-label">Link logo</label>
+    <input asp-for="LogoUrl" class="form-control" placeholder="https://..." />
+    <span asp-validation-for="LogoUrl" class="text-danger small"></span>
+</div>

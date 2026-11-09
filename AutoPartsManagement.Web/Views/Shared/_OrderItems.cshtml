@@ -1,0 +1,48 @@
+@model Order
+@* Bảng sản phẩm trong đơn + tổng tiền (dùng chung cho khách và Admin) *@
+<div class="table-responsive">
+    <table class="table align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Sản phẩm</th>
+                <th class="text-end">Đơn giá</th>
+                <th class="text-center">SL</th>
+                <th class="text-end">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model.OrderDetails)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="order-thumb">
+                                @if (!string.IsNullOrEmpty(d.Product?.ImageUrl))
+                                {
+                                    <img src="@d.Product.ImageUrl" alt="" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-box-seam"></i>
+                                }
+                            </div>
+                            <div>
+                                <div class="fw-semibold">@d.Product?.Name</div>
+                                <small class="text-muted">Mã: @d.Product?.PartNumber</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-end text-nowrap">@Format.Money(d.UnitPrice)</td>
+                    <td class="text-center">@d.Quantity</td>
+                    <td class="text-end text-nowrap fw-semibold">@Format.Money(d.Quantity * d.UnitPrice)</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Tổng cộng</td>
+                <td class="text-end text-nowrap fw-bold fs-5 text-danger">@Format.Money(Model.TotalAmount)</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

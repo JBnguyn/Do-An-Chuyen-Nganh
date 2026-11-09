@@ -1,0 +1,58 @@
+@model PagedResult<SupplierListItem>
+@{
+    ViewData["Title"] = "Nhà cung cấp";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0"><i class="bi bi-truck"></i> Nhà cung cấp</h2>
+    @if (User.IsInRole(AppRoles.Admin))
+    {
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> Thêm nhà cung cấp</a>
+    }
+</div>
+
+<partial name="_SearchBox" model="@("Tìm theo tên, số điện thoại, email, địa chỉ...")" />
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width:70px">#</th>
+                    <th>Tên nhà cung cấp</th>
+                    <th>Điện thoại</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th class="text-center">Phiếu nhập</th>
+                    <th class="text-end" style="width:140px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Không có nhà cung cấp nào.</td></tr>
+                }
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td class="fw-semibold">@item.Name</td>
+                        <td>@item.Phone</td>
+                        <td>@item.Email</td>
+                        <td class="text-muted">@item.Address</td>
+                        <td class="text-center"><span class="badge bg-secondary">@item.ImportCount</span></td>
+                        <td class="text-end">
+                            @if (User.IsInRole(AppRoles.Admin))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<partial name="_Pagination" model="Model" />

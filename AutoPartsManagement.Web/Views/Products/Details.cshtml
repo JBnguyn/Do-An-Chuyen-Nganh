@@ -1,0 +1,81 @@
+@model Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Phụ tùng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.PartNumber</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="image-preview">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" />
+                    }
+                    else
+                    {
+                        <span class="text-muted"><i class="bi bi-image fs-1"></i></span>
+                    }
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h3>@Model.Name</h3>
+                <p class="mb-3">
+                    <code class="fs-6">@Model.PartNumber</code>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success ms-2">Đang kinh doanh</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary ms-2">Ngừng kinh doanh</span>
+                    }
+                </p>
+
+                <dl class="row">
+                    <dt class="col-sm-4">Giá bán</dt>
+                    <dd class="col-sm-8 fs-5 fw-bold text-danger">@Format.Money(Model.Price)</dd>
+
+                    <dt class="col-sm-4">Tồn kho</dt>
+                    <dd class="col-sm-8"><partial name="_StockBadge" model="Model.Stock" /></dd>
+
+                    <dt class="col-sm-4">Danh mục</dt>
+                    <dd class="col-sm-8">@Model.Category?.Name</dd>
+
+                    <dt class="col-sm-4">Hãng sản xuất</dt>
+                    <dd class="col-sm-8">@Model.Brand?.Name @(Model.Brand?.Country is string c ? $"({c})" : "")</dd>
+
+                    <dt class="col-sm-4">Bảo hành</dt>
+                    <dd class="col-sm-8">@(Model.WarrantyMonths.HasValue ? $"{Model.WarrantyMonths} tháng" : "—")</dd>
+
+                    <dt class="col-sm-4">Ngày tạo</dt>
+                    <dd class="col-sm-8">@Format.DateAndTime(Model.CreatedAt)</dd>
+
+                    <dt class="col-sm-4">Cập nhật lần cuối</dt>
+                    <dd class="col-sm-8">@Format.DateAndTime(Model.UpdatedAt)</dd>
+                </dl>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <h6>Mô tả</h6>
+                    <p class="text-pre-line">@Model.Description</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        @if (User.IsInRole(AppRoles.Admin))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil"></i> Sửa</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+    </div>
+</div>

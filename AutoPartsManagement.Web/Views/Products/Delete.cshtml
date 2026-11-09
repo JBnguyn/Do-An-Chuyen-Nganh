@@ -1,0 +1,36 @@
+@model Product
+@{
+    ViewData["Title"] = "Xóa phụ tùng";
+}
+
+<h2 class="mb-3 text-danger">Xóa phụ tùng</h2>
+
+<div class="card shadow-sm" style="max-width:720px">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Mã phụ tùng</dt>
+            <dd class="col-sm-8"><code>@Model.PartNumber</code></dd>
+            <dt class="col-sm-4">Tên phụ tùng</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+            <dt class="col-sm-4">Danh mục / Hãng</dt>
+            <dd class="col-sm-8">@Model.Category?.Name / @Model.Brand?.Name</dd>
+            <dt class="col-sm-4">Tồn kho</dt>
+            <dd class="col-sm-8"><partial name="_StockBadge" model="Model.Stock" /></dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <p class="mb-2">
+            Bạn có chắc muốn xóa phụ tùng này?
+            <br />
+            <small class="text-muted">
+                Nếu phụ tùng đã có trong phiếu nhập hoặc đơn hàng, hệ thống sẽ không xóa hẳn mà chuyển sang
+                <strong>Ngừng kinh doanh</strong> để giữ lịch sử giao dịch.
+            </small>
+        </p>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+        </form>
+    </div>
+</div>

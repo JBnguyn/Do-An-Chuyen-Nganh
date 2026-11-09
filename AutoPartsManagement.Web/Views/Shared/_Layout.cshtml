@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 3H AUTO</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AutoPartsManagement.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        string Active(string name) => string.Equals(controller, name, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    }
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Shop" asp-action="Index">
+                    <i class="bi bi-gear-wide-connected text-danger"></i> 3H AUTO
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Mở menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index"><i class="bi bi-shop"></i> Cửa hàng</a>
+                        </li>
+                        @if (User.IsInRole(AppRoles.Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Orders")" asp-area="" asp-controller="Orders" asp-action="Index">
+                                    <i class="bi bi-clipboard-check"></i> Đơn hàng
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Products")" asp-area="" asp-controller="Products" asp-action="Index">
+                                <i class="bi bi-box-seam"></i> Phụ tùng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Categories")" asp-area="" asp-controller="Categories" asp-action="Index">
+                                <i class="bi bi-tags"></i> Danh mục
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Brands")" asp-area="" asp-controller="Brands" asp-action="Index">
+                                <i class="bi bi-award"></i> Hãng sản xuất
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Suppliers")" asp-area="" asp-controller="Suppliers" asp-action="Index">
+                                <i class="bi bi-truck"></i> Nhà cung cấp
+                            </a>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <partial name="_Alerts" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - 3H AUTO - Hệ thống quản lý kho phụ tùng ô tô
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

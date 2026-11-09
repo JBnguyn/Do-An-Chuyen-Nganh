@@ -1,0 +1,22 @@
+@model Product
+@{
+    ViewData["Title"] = "Sửa phụ tùng";
+}
+
+<h2 class="mb-3">Sửa phụ tùng</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <partial name="_Form" model="Model" />
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu thay đổi</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ImagePreviewScript" />
+}

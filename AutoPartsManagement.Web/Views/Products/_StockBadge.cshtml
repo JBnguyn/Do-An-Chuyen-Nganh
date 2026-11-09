@@ -1,0 +1,13 @@
+@model int
+@if (Model == 0)
+{
+    <span class="badge bg-danger">Hết hàng</span>
+}
+else if (Model <= InventoryRules.LowStockThreshold)
+{
+    <span class="badge bg-warning text-dark">@Format.Number(Model) – sắp hết</span>
+}
+else
+{
+    <span class="badge bg-success">@Format.Number(Model)</span>
+}

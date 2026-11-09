@@ -1,0 +1,218 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    var currentSearch = Context.Request.Query["search"].ToString();
+    var isAdmin = User.IsInRole(AppRoles.Admin);
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 3H AUTO</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+</head>
+<body class="shop">
+    @* ===== Thanh trên cùng ===== *@
+    <div class="shop-topbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-patch-check"></i> Phụ tùng ô tô chính hãng – Giá niêm yết rõ ràng</span>
+            <span class="d-none d-md-flex gap-3">
+                <span><i class="bi bi-truck"></i> Giao hàng toàn quốc</span>
+                <span><i class="bi bi-clock"></i> 8:00 – 17:30, Thứ 2 – Thứ 7</span>
+            </span>
+        </div>
+    </div>
+
+    @* ===== Header ===== *@
+    <header class="shop-header">
+        <div class="container d-flex align-items-center gap-3 gap-lg-4">
+            <a asp-controller="Shop" asp-action="Index" class="shop-logo">
+                <span class="shop-logo-icon"><i class="bi bi-gear-wide-connected"></i></span>
+                <span>3H <b>AUTO</b></span>
+            </a>
+
+            <form class="shop-search d-none d-md-flex" method="get" asp-controller="Shop" asp-action="Search">
+                <input type="search" name="search" value="@currentSearch" class="form-control" placeholder="Tìm theo tên, mã phụ tùng hoặc dòng xe (vd: Vios, bugi, IK20TT)" />
+                <button type="submit" class="btn" aria-label="Tìm kiếm"><i class="bi bi-search"></i></button>
+            </form>
+
+            <div class="shop-actions ms-auto">
+                <div class="shop-hotline d-none d-xl-flex">
+                    <i class="bi bi-headset"></i>
+                    <div><small>Hotline đặt hàng</small><strong>@ShopUi.Hotline</strong></div>
+                </div>
+
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div class="dropdown">
+                        <button class="shop-icon-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="d-none d-sm-inline">@User.Identity?.Name</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li class="dropdown-header">
+                                Vai trò:
+                                @if (isAdmin)
+                                {
+                                    <span class="badge bg-danger">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Khách hàng</span>
+                                }
+                            </li>
+                            <li><a class="dropdown-item" asp-controller="MyOrders" asp-action="Index"><i class="bi bi-receipt"></i> Đơn hàng của tôi</a></li>
+                            @if (isAdmin)
+                            {
+                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index"><i class="bi bi-clipboard-check"></i> Quản lý đơn hàng</a></li>
+                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index"><i class="bi bi-speedometer2"></i> Trang quản trị</a></li>
+                            }
+                            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="bi bi-gear"></i> Tài khoản</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+                                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a class="shop-icon-btn" asp-area="Identity" asp-page="/Account/Login"><i class="bi bi-person-circle"></i> <span class="d-none d-sm-inline">Đăng nhập</span></a>
+                }
+
+                <button type="button" class="shop-cart" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-label="Giỏ hàng">
+                    <i class="bi bi-cart3"></i>
+                    <span class="d-none d-sm-inline">Giỏ hàng</span>
+                    <span class="shop-cart-count" data-cart-count>0</span>
+                </button>
+            </div>
+        </div>
+
+        @* Ô tìm kiếm trên điện thoại *@
+        <div class="container d-md-none mt-2">
+            <form class="shop-search d-flex" method="get" asp-controller="Shop" asp-action="Search">
+                <input type="search" name="search" value="@currentSearch" class="form-control" placeholder="Tìm phụ tùng..." />
+                <button type="submit" class="btn" aria-label="Tìm kiếm"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+    </header>
+
+    @* ===== Menu danh mục ===== *@
+    <nav class="shop-nav">
+        <div class="container d-flex align-items-center">
+            <a asp-controller="Shop" asp-action="Search" class="shop-nav-all"><i class="bi bi-list"></i> Tất cả sản phẩm</a>
+            <div class="shop-nav-links">
+                <a asp-controller="Shop" asp-action="Index">Trang chủ</a>
+                <a asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a>
+                <a asp-controller="Shop" asp-action="Search" asp-route-stockStatus="low">Sắp hết hàng</a>
+                <a asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a>
+                <a asp-controller="MyOrders" asp-action="Index">Đơn hàng của tôi</a>
+                @if (isAdmin)
+                {
+                    <a asp-controller="Products" asp-action="Index" class="shop-nav-admin"><i class="bi bi-speedometer2"></i> Quản trị</a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <main class="shop-main">
+        <div class="container">
+            <partial name="_Alerts" />
+        </div>
+        @RenderBody()
+    </main>
+
+    @* ===== Cam kết ===== *@
+    <section class="shop-benefits">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-patch-check"></i><div><b>Chính hãng</b><small>Nguồn gốc rõ ràng</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-shield-check"></i><div><b>Bảo hành</b><small>Theo chính sách hãng</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-truck"></i><div><b>Giao hàng</b><small>Toàn quốc</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-headset"></i><div><b>Tư vấn</b><small>Chọn đúng phụ tùng cho xe</small></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    @* ===== Footer ===== *@
+    <footer class="shop-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="shop-logo mb-2"><span class="shop-logo-icon"><i class="bi bi-gear-wide-connected"></i></span><span>3H <b>AUTO</b></span></div>
+                    <p class="mb-0">Cửa hàng phụ tùng ô tô: động cơ, hệ thống phanh, hệ thống điện, lọc – dầu nhớt, ly hợp và nhiều nhóm hàng khác.</p>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6>Mua sắm</h6>
+                    <ul>
+                        <li><a asp-controller="Shop" asp-action="Search">Tất cả sản phẩm</a></li>
+                        <li><a asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a></li>
+                        <li><a asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <h6>Hỗ trợ khách hàng</h6>
+                    <ul>
+                        <li>Hướng dẫn mua hàng</li>
+                        <li>Chính sách bảo hành</li>
+                        <li>Chính sách đổi trả</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6>Liên hệ</h6>
+                    <ul>
+                        <li><i class="bi bi-telephone"></i> @ShopUi.Hotline</li>
+                        <li><i class="bi bi-envelope"></i> Email cửa hàng</li>
+                        <li><i class="bi bi-geo-alt"></i> Địa chỉ cửa hàng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="shop-copy">&copy; 2026 3H AUTO</div>
+        </div>
+    </footer>
+
+    @* ===== Giỏ hàng (lưu trên trình duyệt) ===== *@
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" id="cartDrawerLabel"><i class="bi bi-cart3"></i> Giỏ hàng</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div data-cart-items class="flex-grow-1"></div>
+            <div class="cart-summary">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tạm tính</span>
+                    <strong class="text-danger fs-5" data-cart-total>0 ₫</strong>
+                </div>
+                <a class="btn btn-shop btn-lg w-100 mb-2" asp-controller="Checkout" asp-action="Index" data-cart-checkout><i class="bi bi-bag-check"></i> Đặt hàng</a>
+                <p class="small text-muted mb-2">Thanh toán khi nhận hàng. Hotline hỗ trợ: <b>@ShopUi.Hotline</b></p>
+                <button type="button" class="btn btn-outline-secondary w-100" data-cart-clear>Xóa giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 start-0 p-3">
+        <div id="cartToast" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite">
+            <div class="d-flex">
+                <div class="toast-body"><i class="bi bi-check-circle text-success"></i> <span data-toast-text>Đã thêm vào giỏ hàng</span></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/shop.js" asp-append-version="true"></script>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <partial name="_ChatWidget" />
+        <script src="~/js/chat.js" asp-append-version="true"></script>
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,21 @@
+@model Product
+@{
+    ViewData["Title"] = "Thêm phụ tùng";
+}
+
+<h2 class="mb-3">Thêm phụ tùng</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <partial name="_Form" model="Model" />
+            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ImagePreviewScript" />
+}

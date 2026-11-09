@@ -1,0 +1,86 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Đặt hàng";
+}
+
+<div class="container">
+    <nav class="shop-breadcrumb" aria-label="breadcrumb">
+        <a asp-controller="Shop" asp-action="Index">Trang chủ</a> <i class="bi bi-chevron-right"></i> <span>Đặt hàng</span>
+    </nav>
+
+    @* Hiện khi giỏ trống (JavaScript bật / tắt) *@
+    <div class="shop-empty d-none" data-checkout-empty>
+        <i class="bi bi-cart-x"></i>
+        Giỏ hàng của bạn đang trống.
+        <div class="mt-3"><a class="btn btn-shop" asp-controller="Shop" asp-action="Search">Tiếp tục mua sắm</a></div>
+    </div>
+
+    <form method="post" asp-action="Index" data-checkout-form novalidate>
+        <input type="hidden" asp-for="CartJson" data-checkout-cart />
+        <div class="row g-4">
+            @* ===== Thông tin nhận hàng ===== *@
+            <div class="col-lg-7">
+                <section class="shop-section mb-0">
+                    <h2 class="shop-section-title mb-3">Thông tin nhận hàng</h2>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label fw-semibold"></label>
+                            <input asp-for="Name" class="form-control" autocomplete="name" placeholder="Nguyễn Văn A" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-semibold"></label>
+                            <input asp-for="Phone" class="form-control" autocomplete="tel" inputmode="tel" placeholder="0912345678" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label fw-semibold"></label>
+                            <input asp-for="Address" class="form-control" autocomplete="street-address" placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control" autocomplete="email" placeholder="email@vidu.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Dòng xe, đời xe, thời gian nhận hàng..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-pay mt-4">
+                        <div class="fw-semibold mb-2">Phương thức thanh toán</div>
+                        <label class="checkout-option">
+                            <input type="radio" checked disabled />
+                            <i class="bi bi-cash-coin"></i>
+                            <span><b>Thanh toán khi nhận hàng (COD)</b><br /><small class="text-muted">Cửa hàng sẽ gọi xác nhận đơn trước khi giao.</small></span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            @* ===== Tóm tắt đơn ===== *@
+            <div class="col-lg-5">
+                <section class="shop-section mb-0 checkout-summary">
+                    <h2 class="shop-section-title mb-3">Đơn hàng của bạn</h2>
+                    <div data-checkout-items></div>
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-2">
+                        <span class="fw-semibold">Tạm tính</span>
+                        <strong class="text-danger fs-4" data-checkout-total>0 ₫</strong>
+                    </div>
+                    <p class="small text-muted mt-2 mb-3">Phí giao hàng sẽ được cửa hàng báo khi gọi xác nhận. Giá cuối cùng tính theo giá hiện tại trên hệ thống.</p>
+                    <button type="submit" class="btn btn-shop btn-lg w-100"><i class="bi bi-bag-check"></i> Đặt hàng</button>
+                    <a class="btn btn-link w-100 mt-1" asp-controller="Shop" asp-action="Search">← Tiếp tục mua sắm</a>
+                </section>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

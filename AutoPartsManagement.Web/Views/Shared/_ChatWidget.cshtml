@@ -1,0 +1,36 @@
+@* Khung chat trợ lý ở góc phải màn hình cửa hàng *@
+<div class="chat-widget" data-chat data-ask-url="@Url.Action("Ask", "Chat")">
+    @Html.AntiForgeryToken()
+
+    <button type="button" class="chat-fab" data-chat-toggle aria-label="Mở trợ lý hỏi đáp">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span class="chat-fab-label">Hỏi đáp</span>
+    </button>
+
+    <section class="chat-panel" data-chat-panel role="dialog" aria-label="Trợ lý 3H AUTO" hidden>
+        <header class="chat-head">
+            <span class="chat-avatar"><i class="bi bi-robot"></i></span>
+            <div class="flex-grow-1">
+                <b>Trợ lý 3H AUTO</b>
+                <small>Tư vấn phụ tùng, giá và cách đặt hàng</small>
+            </div>
+            <button type="button" class="chat-icon" data-chat-reset title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới"><i class="bi bi-arrow-counterclockwise"></i></button>
+            <button type="button" class="chat-icon" data-chat-toggle aria-label="Đóng"><i class="bi bi-x-lg"></i></button>
+        </header>
+
+        <div class="chat-body" data-chat-body aria-live="polite"></div>
+
+        <div class="chat-suggest" data-chat-suggest>
+            <button type="button" data-chat-quick>Má phanh cho Vios</button>
+            <button type="button" data-chat-quick>Bugi Iridium giá bao nhiêu?</button>
+            <button type="button" data-chat-quick>Nước làm mát</button>
+            <button type="button" data-chat-quick>Cách đặt hàng?</button>
+        </div>
+
+        <form class="chat-input" data-chat-form>
+            <input type="text" maxlength="500" placeholder="Nhập câu hỏi..." aria-label="Câu hỏi" data-chat-text autocomplete="off" />
+            <button type="submit" aria-label="Gửi"><i class="bi bi-send-fill"></i></button>
+        </form>
+        <div class="chat-note">Trợ lý có thể nhầm lẫn. Vui lòng kiểm tra lại giá và độ tương thích trước khi mua.</div>
+    </section>
+</div>

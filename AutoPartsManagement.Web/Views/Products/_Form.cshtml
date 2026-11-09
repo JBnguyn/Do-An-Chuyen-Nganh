@@ -1,0 +1,101 @@
+@model Product
+@{
+    var isEdit = Model.Id > 0;
+}
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Tên phụ tùng <span class="text-danger">*</span></label>
+            <input asp-for="Name" class="form-control" placeholder="Vd: Má phanh trước Toyota Vios" />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="PartNumber" class="form-label">Mã phụ tùng <span class="text-danger">*</span></label>
+                <input asp-for="PartNumber" class="form-control text-uppercase" placeholder="Vd: 04465-0D020" />
+                <span asp-validation-for="PartNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Price" class="form-label">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                <input asp-for="Price" type="number" min="0" step="1000" asp-format="{0:0}" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CategoryId" class="form-label">Danh mục <span class="text-danger">*</span></label>
+                <select asp-for="CategoryId" asp-items="(SelectList)ViewBag.Categories" class="form-select">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="BrandId" class="form-label">Hãng sản xuất <span class="text-danger">*</span></label>
+                <select asp-for="BrandId" asp-items="(SelectList)ViewBag.Brands" class="form-select">
+                    <option value="">-- Chọn hãng --</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Stock" class="form-label">@(isEdit ? "Tồn kho hiện tại" : "Tồn kho ban đầu")</label>
+                @if (isEdit)
+                {
+                    <input value="@Model.Stock" class="form-control" disabled />
+                    <div class="form-text">Tồn kho chỉ thay đổi qua phiếu nhập / phiếu xuất.</div>
+                }
+                else
+                {
+                    <input asp-for="Stock" type="number" min="0" class="form-control" />
+                    <span asp-validation-for="Stock" class="text-danger small"></span>
+                }
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="WarrantyMonths" class="form-label">Bảo hành (tháng)</label>
+                <input asp-for="WarrantyMonths" type="number" min="0" class="form-control" />
+                <span asp-validation-for="WarrantyMonths" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Mô tả</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Thông số, dòng xe tương thích..."></textarea>
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label">Đang kinh doanh</label>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <label class="form-label">Ảnh phụ tùng</label>
+        <div class="image-preview mb-2">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img id="imgPreview" src="@Model.ImageUrl" alt="Ảnh phụ tùng" />
+            }
+            else
+            {
+                <img id="imgPreview" src="" alt="" class="d-none" />
+                <span id="imgPlaceholder" class="text-muted"><i class="bi bi-image fs-1"></i></span>
+            }
+        </div>
+        <div class="mb-2">
+            <input type="file" name="imageFile" id="imageFile" accept=".jpg,.jpeg,.png,.webp,.gif" class="form-control" />
+            @Html.ValidationMessage("imageFile", null, new { @class = "text-danger small" })
+            <div class="form-text">Tối đa 2MB. Hoặc dán link ảnh bên dưới.</div>
+        </div>
+        <div class="mb-3">
+            <input asp-for="ImageUrl" class="form-control form-control-sm" placeholder="https://... hoặc để trống" />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+@model Product
+@{
+    var p = Model;
+    var price = p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    var outOfStock = p.Stock <= 0;
+    var low = !outOfStock && p.Stock <= InventoryRules.LowStockThreshold;
+}
+<div class="pcard">
+    @if (outOfStock)
+    {
+        <span class="pcard-tag out">Hết hàng</span>
+    }
+    else if (low)
+    {
+        <span class="pcard-tag low">Chỉ còn @p.Stock</span>
+    }
+
+    <a asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id" class="pcard-img">
+        @if (!string.IsNullOrEmpty(p.ImageUrl))
+        {
+            <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" />
+        }
+        else
+        {
+            <i class="bi @ShopUi.CategoryIcon(p.Category?.Name)"></i>
+        }
+    </a>
+
+    <div class="pcard-body">
+        <span class="pcard-brand">@p.Brand?.Name</span>
+        <a asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id" class="pcard-name" title="@p.Name">@p.Name</a>
+        <span class="pcard-code">Mã: @p.PartNumber</span>
+        <div class="pcard-price">@Format.Money(p.Price)</div>
+        <div class="pcard-actions">
+            <button type="button" class="btn btn-shop btn-sm flex-grow-1" @(outOfStock ? "disabled" : "")
+                    data-add-to-cart data-id="@p.Id" data-name="@p.Name" data-price="@price" data-img="@p.ImageUrl" data-max="@p.Stock">
+                <i class="bi bi-cart-plus"></i> <span>@(outOfStock ? "Tạm hết" : "Thêm vào giỏ")</span>
+            </button>
+            <a asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id" class="btn btn-outline-secondary btn-sm" title="Xem chi tiết"><i class="bi bi-eye"></i></a>
+        </div>
+    </div>
+</div>

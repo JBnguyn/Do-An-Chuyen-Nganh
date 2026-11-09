@@ -1,0 +1,50 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_AuthLayout";
+}
+
+<h2 class="auth-title">Đăng nhập</h2>
+<p class="auth-subtitle">Chào mừng bạn quay lại cửa hàng 3H AUTO.</p>
+
+<form id="account" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+    <div class="mb-3">
+        <label asp-for="Input.UserName" class="form-label">Tên đăng nhập</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input asp-for="Input.UserName" class="form-control" autocomplete="username" autofocus placeholder="Nhập tên đăng nhập" />
+        </div>
+        <span asp-validation-for="Input.UserName" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Nhập mật khẩu" />
+            <button type="button" class="btn btn-outline-secondary" data-toggle-password="Input_Password" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+        </div>
+        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+    </div>
+
+    <div class="form-check mb-4">
+        <input class="form-check-input" asp-for="Input.RememberMe" />
+        <label class="form-check-label" asp-for="Input.RememberMe">Ghi nhớ đăng nhập</label>
+    </div>
+
+    <button id="login-submit" type="submit" class="btn btn-brand w-100 btn-lg">
+        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+    </button>
+</form>
+
+<p class="auth-switch">
+    Chưa có tài khoản?
+    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký ngay</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

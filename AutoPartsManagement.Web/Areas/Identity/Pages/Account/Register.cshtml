@@ -1,0 +1,57 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "_AuthLayout";
+}
+
+<h2 class="auth-title">Tạo tài khoản</h2>
+<p class="auth-subtitle">Tạo tài khoản để mua sắm nhanh hơn.</p>
+
+<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+    <div class="mb-3">
+        <label asp-for="Input.UserName" class="form-label">Tên đăng nhập</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input asp-for="Input.UserName" class="form-control" autocomplete="username" autofocus placeholder="vd: hoang, tran.huy" />
+        </div>
+        <div class="form-text">3–50 ký tự: chữ không dấu, số và dấu <code>. _ -</code></div>
+        <span asp-validation-for="Input.UserName" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" placeholder="Nhập mật khẩu" />
+            <button type="button" class="btn btn-outline-secondary" data-toggle-password="Input_Password" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+        </div>
+        <div class="form-text">Tối thiểu 6 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt (vd: <code>Abc@123</code>).</div>
+        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="Input.ConfirmPassword" class="form-label">Nhập lại mật khẩu</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
+            <button type="button" class="btn btn-outline-secondary" data-toggle-password="Input_ConfirmPassword" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+        </div>
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+    </div>
+
+    <button id="registerSubmit" type="submit" class="btn btn-brand w-100 btn-lg">
+        <i class="bi bi-person-plus"></i> Đăng ký
+    </button>
+</form>
+
+<p class="auth-switch">
+    Đã có tài khoản?
+    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Đăng nhập</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

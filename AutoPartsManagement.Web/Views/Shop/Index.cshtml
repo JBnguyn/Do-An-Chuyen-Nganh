@@ -1,0 +1,133 @@
+@model ShopHomeViewModel
+@{
+    ViewData["Title"] = "Cửa hàng phụ tùng ô tô";
+}
+
+<div class="container">
+    @* ===== Banner + tra cứu theo xe ===== *@
+    <section class="shop-hero">
+        <div class="shop-hero-main">
+            <h1>Phụ tùng ô tô chính hãng cho mọi hành trình</h1>
+            <p>Tìm đúng phụ tùng theo tên, mã hoặc dòng xe. Giá niêm yết rõ ràng, tồn kho cập nhật liên tục.</p>
+
+            <div class="shop-finder">
+                <div class="shop-finder-label"><i class="bi bi-car-front"></i> Tìm nhanh theo hãng xe</div>
+                <div class="shop-chips">
+                    @foreach (var make in ShopUi.CarMakes)
+                    {
+                        <a class="shop-chip" asp-action="Search" asp-route-search="@make">@make</a>
+                    }
+                </div>
+            </div>
+            <i class="bi bi-gear-wide-connected shop-hero-gear" aria-hidden="true"></i>
+        </div>
+
+        <div class="shop-hero-side">
+            <a class="shop-promo dark" asp-action="Search" asp-route-sortBy="newest">
+                <i class="bi bi-stars"></i>
+                <h5>Hàng mới về</h5>
+                <p>Xem các phụ tùng vừa được cập nhật</p>
+            </a>
+            <a class="shop-promo" asp-action="Search" asp-route-sortBy="price">
+                <i class="bi bi-tags"></i>
+                <h5>Giá tốt mỗi ngày</h5>
+                <p>Sắp xếp sản phẩm theo giá từ thấp đến cao</p>
+            </a>
+        </div>
+    </section>
+
+    @* ===== Danh mục ===== *@
+    @if (Model.Categories.Count > 0)
+    {
+        <section class="shop-section">
+            <div class="shop-section-head">
+                <h2 class="shop-section-title">Danh mục phụ tùng</h2>
+                <a class="shop-more" asp-action="Search">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="shop-cats">
+                @foreach (var c in Model.Categories)
+                {
+                    <a class="shop-cat" asp-action="Search" asp-route-categoryId="@c.Id">
+                        <span class="shop-cat-icon"><i class="bi @ShopUi.CategoryIcon(c.Name)"></i></span>
+                        <b>@c.Name</b>
+                        <small>@c.ProductCount sản phẩm</small>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    @* ===== Sản phẩm theo tab ===== *@
+    <section class="shop-section">
+        <div class="shop-section-head">
+            <h2 class="shop-section-title">Sản phẩm nổi bật</h2>
+            <ul class="nav shop-tabs" role="tablist">
+                @for (var i = 0; i < Model.Tabs.Count; i++)
+                {
+                    var t = Model.Tabs[i];
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(i == 0 ? "active" : "")" data-bs-toggle="pill" data-bs-target="#tab-@t.Key" type="button" role="tab">@t.Title</button>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            @for (var i = 0; i < Model.Tabs.Count; i++)
+            {
+                var t = Model.Tabs[i];
+                <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="tab-@t.Key" role="tabpanel">
+                    @if (t.Products.Count == 0)
+                    {
+                        <div class="shop-empty"><i class="bi bi-box"></i>Chưa có sản phẩm.</div>
+                    }
+                    else
+                    {
+                        <div class="shop-grid">
+                            @foreach (var p in t.Products)
+                            {
+                                <partial name="_ProductCard" model="p" />
+                            }
+                        </div>
+                        <div class="text-center mt-3">
+                            @if (t.CategoryId.HasValue)
+                            {
+                                <a class="btn btn-outline-danger" asp-action="Search" asp-route-categoryId="@t.CategoryId">Xem thêm @t.Title <i class="bi bi-arrow-right"></i></a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-outline-danger" asp-action="Search" asp-route-sortBy="newest">Xem thêm hàng mới <i class="bi bi-arrow-right"></i></a>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    @* ===== Thương hiệu ===== *@
+    @if (Model.Brands.Count > 0)
+    {
+        <section class="shop-section">
+            <div class="shop-section-head">
+                <h2 class="shop-section-title">Thương hiệu phân phối</h2>
+            </div>
+            <div class="shop-brands">
+                @foreach (var b in Model.Brands)
+                {
+                    <a class="shop-brand" asp-action="Search" asp-route-brandId="@b.Id" title="@b.Name">
+                        @if (!string.IsNullOrEmpty(b.LogoUrl))
+                        {
+                            <img src="@b.LogoUrl" alt="@b.Name" loading="lazy" />
+                        }
+                        else
+                        {
+                            <span>@b.Name</span>
+                        }
+                        <small>@b.ProductCount sản phẩm</small>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+</div>

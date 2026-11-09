@@ -1,0 +1,152 @@
+@model ShopSearchViewModel
+@{
+    var f = Model.Filter;
+    var heading = !string.IsNullOrWhiteSpace(f.Search) ? $"Kết quả cho \"{f.Search}\""
+                : Model.CategoryName ?? Model.BrandName ?? "Tất cả sản phẩm";
+    ViewData["Title"] = heading;
+
+    // Tạo link giữ nguyên các bộ lọc khác, chỉ thay 1 giá trị
+    string Link(string key, object? value)
+    {
+        var values = new Dictionary<string, string?>
+        {
+            ["search"] = f.Search,
+            ["categoryId"] = f.CategoryId?.ToString(),
+            ["brandId"] = f.BrandId?.ToString(),
+            ["stockStatus"] = f.StockStatus,
+            ["sortBy"] = f.SortBy
+        };
+        values[key] = value?.ToString();
+        var query = string.Join("&", values.Where(v => !string.IsNullOrEmpty(v.Value))
+                                           .Select(v => $"{v.Key}={Uri.EscapeDataString(v.Value!)}"));
+        return Url.Action("Search", "Shop") + (query.Length > 0 ? "?" + query : "");
+    }
+
+    string PageUrl(int page)
+    {
+        var baseUrl = Link("sortBy", f.SortBy);
+        return baseUrl + (baseUrl.Contains('?') ? "&" : "?") + "page=" + page;
+    }
+
+    var from = Model.Result.TotalCount == 0 ? 0 : (Model.Result.PageIndex - 1) * Model.Result.PageSize + 1;
+    var to = Math.Min(Model.Result.PageIndex * Model.Result.PageSize, Model.Result.TotalCount);
+}
+
+<div class="container">
+    <nav class="shop-breadcrumb" aria-label="breadcrumb">
+        <a asp-action="Index">Trang chủ</a> <i class="bi bi-chevron-right"></i> <span>@heading</span>
+    </nav>
+
+    <div class="row g-4">
+        @* ===== Cột bộ lọc ===== *@
+        <aside class="col-lg-3">
+            <div class="shop-filter">
+                <h6>Danh mục</h6>
+                <ul class="shop-filter-list">
+                    <li><a href="@Link("categoryId", null)" class="@(f.CategoryId == null ? "active" : "")">Tất cả</a></li>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <li><a href="@Link("categoryId", c.Id)" class="@(f.CategoryId == c.Id ? "active" : "")">@c.Name <small>@c.ProductCount</small></a></li>
+                    }
+                </ul>
+            </div>
+            <div class="shop-filter">
+                <h6>Thương hiệu</h6>
+                <ul class="shop-filter-list">
+                    <li><a href="@Link("brandId", null)" class="@(f.BrandId == null ? "active" : "")">Tất cả</a></li>
+                    @foreach (var b in Model.Brands)
+                    {
+                        <li><a href="@Link("brandId", b.Id)" class="@(f.BrandId == b.Id ? "active" : "")">@b.Name <small>@b.ProductCount</small></a></li>
+                    }
+                </ul>
+            </div>
+            <div class="shop-filter">
+                <h6>Tình trạng</h6>
+                <ul class="shop-filter-list">
+                    <li><a href="@Link("stockStatus", null)" class="@(string.IsNullOrEmpty(f.StockStatus) ? "active" : "")">Tất cả</a></li>
+                    <li><a href="@Link("stockStatus", "in")" class="@(f.StockStatus == "in" ? "active" : "")">Còn hàng</a></li>
+                    <li><a href="@Link("stockStatus", "low")" class="@(f.StockStatus == "low" ? "active" : "")">Sắp hết</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        @* ===== Lưới sản phẩm ===== *@
+        <div class="col-lg-9">
+            <div class="shop-toolbar">
+                <div>
+                    <h1 class="h5 fw-bold mb-1">@heading</h1>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <small class="text-muted">@Model.Result.TotalCount sản phẩm</small>
+                        @if (!string.IsNullOrWhiteSpace(f.Search))
+                        {
+                            <a class="shop-active-filter" href="@Link("search", null)">"@f.Search" <i class="bi bi-x"></i></a>
+                        }
+                        @if (Model.CategoryName != null)
+                        {
+                            <a class="shop-active-filter" href="@Link("categoryId", null)">@Model.CategoryName <i class="bi bi-x"></i></a>
+                        }
+                        @if (Model.BrandName != null)
+                        {
+                            <a class="shop-active-filter" href="@Link("brandId", null)">@Model.BrandName <i class="bi bi-x"></i></a>
+                        }
+                    </div>
+                </div>
+                <form method="get" asp-action="Search" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="search" value="@f.Search" />
+                    <input type="hidden" name="categoryId" value="@f.CategoryId" />
+                    <input type="hidden" name="brandId" value="@f.BrandId" />
+                    <input type="hidden" name="stockStatus" value="@f.StockStatus" />
+                    <label class="small text-muted text-nowrap" for="sortBy">Sắp xếp</label>
+                    <select id="sortBy" name="sortBy" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">Tên A → Z</option>
+                        <option value="newest" selected="@(f.SortBy == "newest")">Mới nhất</option>
+                        <option value="price" selected="@(f.SortBy == "price")">Giá thấp → cao</option>
+                        <option value="price_desc" selected="@(f.SortBy == "price_desc")">Giá cao → thấp</option>
+                        <option value="name_desc" selected="@(f.SortBy == "name_desc")">Tên Z → A</option>
+                    </select>
+                </form>
+            </div>
+
+            @if (Model.Result.Items.Count == 0)
+            {
+                <div class="shop-empty">
+                    <i class="bi bi-search"></i>
+                    Không tìm thấy phụ tùng phù hợp.
+                    <div class="mt-3"><a class="btn btn-shop" asp-action="Search">Xem tất cả sản phẩm</a></div>
+                </div>
+            }
+            else
+            {
+                <div class="shop-grid">
+                    @foreach (var p in Model.Result.Items)
+                    {
+                        <partial name="_ProductCard" model="p" />
+                    }
+                </div>
+
+                @if (Model.Result.TotalPages > 1)
+                {
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
+                        <small class="text-muted">Hiển thị @from–@to / @Model.Result.TotalCount sản phẩm</small>
+                        <nav aria-label="Phân trang">
+                            <ul class="pagination mb-0">
+                                <li class="page-item @(Model.Result.HasPrevious ? "" : "disabled")">
+                                    <a class="page-link" href="@PageUrl(Model.Result.PageIndex - 1)" aria-label="Trang trước">&laquo;</a>
+                                </li>
+                                @for (var i = 1; i <= Model.Result.TotalPages; i++)
+                                {
+                                    <li class="page-item @(i == Model.Result.PageIndex ? "active" : "")">
+                                        <a class="page-link" href="@PageUrl(i)">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item @(Model.Result.HasNext ? "" : "disabled")">
+                                    <a class="page-link" href="@PageUrl(Model.Result.PageIndex + 1)" aria-label="Trang sau">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

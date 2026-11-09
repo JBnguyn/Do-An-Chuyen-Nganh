@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 3H AUTO</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="shop-body">
+    @* ===== Thanh thông báo trên cùng ===== *@
+    <div class="shop-topbar">
+        <div class="container d-flex justify-content-between">
+            <span><i class="bi bi-patch-check"></i> Phụ tùng ô tô chính hãng</span>
+            <span class="d-none d-md-inline"><i class="bi bi-truck"></i> Giao hàng toàn quốc</span>
+        </div>
+    </div>
+
+    @* ===== Header cửa hàng ===== *@
+    <header class="shop-header">
+        <div class="container d-flex align-items-center gap-3 gap-lg-4">
+            <a href="~/" class="shop-logo">
+                <span class="shop-logo-icon"><i class="bi bi-gear-wide-connected"></i></span>
+                <span>3H <b>AUTO</b></span>
+            </a>
+
+            <form class="shop-search d-none d-md-flex" method="get" action="/Products">
+                <input type="search" name="search" class="form-control" placeholder="Tìm phụ tùng theo tên hoặc mã (vd: bugi, má phanh, IK20TT...)" />
+                <button type="submit" class="btn" aria-label="Tìm kiếm"><i class="bi bi-search"></i></button>
+            </form>
+
+            <div class="shop-actions ms-auto">
+                <div class="shop-hotline d-none d-lg-flex">
+                    <i class="bi bi-headset"></i>
+                    <div><small>Hotline hỗ trợ</small><strong>1900 xxxx</strong></div>
+                </div>
+                <a href="~/" class="shop-cart" aria-label="Giỏ hàng">
+                    <i class="bi bi-cart3"></i>
+                    <span class="d-none d-sm-inline">Giỏ hàng</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    @* ===== Nội dung: khung đăng nhập / đăng ký ===== *@
+    <main class="shop-main">
+        <div class="container">
+            <nav class="shop-breadcrumb" aria-label="breadcrumb">
+                <a href="~/">Trang chủ</a> <i class="bi bi-chevron-right"></i> <span>@ViewData["Title"]</span>
+            </nav>
+
+            <div class="shop-auth">
+                <section class="shop-auth-promo d-none d-md-flex">
+                    <div>
+                        <span class="shop-badge">Thành viên 3H AUTO</span>
+                        <h2>Mua phụ tùng<br />nhanh – đúng – chính hãng</h2>
+                        <p>Đăng nhập để xem giá, đặt hàng và theo dõi đơn hàng của bạn.</p>
+                    </div>
+                    <ul>
+                        <li><i class="bi bi-box-seam"></i> Phụ tùng cho nhiều dòng xe</li>
+                        <li><i class="bi bi-tags"></i> Giá niêm yết rõ ràng</li>
+                        <li><i class="bi bi-clock-history"></i> Lưu lịch sử mua hàng</li>
+                    </ul>
+                    <i class="bi bi-gear-wide-connected shop-promo-gear" aria-hidden="true"></i>
+                </section>
+
+                <section class="shop-auth-form">
+                    @if (TempData["Success"] is string ok)
+                    {
+                        <div class="alert alert-success py-2 small">@ok</div>
+                    }
+                    @RenderBody()
+                </section>
+            </div>
+        </div>
+    </main>
+
+    @* ===== Cam kết dịch vụ ===== *@
+    <section class="shop-benefits">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-patch-check"></i><div><b>Chính hãng</b><small>Nguồn gốc rõ ràng</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-shield-check"></i><div><b>Bảo hành</b><small>Theo chính sách hãng</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-truck"></i><div><b>Giao hàng</b><small>Toàn quốc</small></div></div></div>
+                <div class="col-6 col-lg-3"><div class="shop-benefit"><i class="bi bi-headset"></i><div><b>Tư vấn</b><small>Chọn đúng phụ tùng</small></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    @* ===== Footer ===== *@
+    <footer class="shop-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="shop-logo mb-2"><span class="shop-logo-icon"><i class="bi bi-gear-wide-connected"></i></span><span>3H <b>AUTO</b></span></div>
+                    <p class="mb-0">Cửa hàng phụ tùng ô tô: động cơ, hệ thống phanh, điện, lọc – dầu nhớt, ly hợp và nhiều hơn nữa.</p>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Danh mục</h6>
+                    <ul><li>Động cơ</li><li>Hệ thống phanh</li><li>Hệ thống điện</li><li>Lọc – dầu nhớt</li></ul>
+                </div>
+                <div class="col-6 col-md-4">
+                    <h6>Liên hệ</h6>
+                    <ul>
+                        <li><i class="bi bi-telephone"></i> 1900 xxxx</li>
+                        <li><i class="bi bi-envelope"></i> Email cửa hàng</li>
+                        <li><i class="bi bi-geo-alt"></i> Địa chỉ cửa hàng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="shop-copy">&copy; 2026 3H AUTO. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Nút hiện / ẩn mật khẩu
+        document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = document.getElementById(btn.getAttribute('data-toggle-password'));
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.querySelector('i').className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+                btn.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

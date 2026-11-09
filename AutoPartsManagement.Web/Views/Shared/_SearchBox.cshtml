@@ -1,0 +1,20 @@
+@model string
+@* Ô tìm kiếm dùng chung cho các trang danh sách đơn giản. Model = placeholder *@
+@{
+    var search = ViewData["Search"] as string;
+}
+<form method="get" class="row g-2 mb-3">
+    <div class="col-sm-8 col-md-6">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" name="search" value="@search" class="form-control" placeholder="@Model" />
+        </div>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Tìm</button>
+        @if (!string.IsNullOrEmpty(search))
+        {
+            <a href="?" class="btn btn-outline-secondary">Xóa lọc</a>
+        }
+    </div>
+</form>

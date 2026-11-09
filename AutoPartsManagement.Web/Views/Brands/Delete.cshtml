@@ -1,0 +1,38 @@
+@model Brand
+@{
+    ViewData["Title"] = "Xóa hãng sản xuất";
+    var productCount = (int)(ViewData["ProductCount"] ?? 0);
+}
+
+<h2 class="mb-3 text-danger">Xóa hãng sản xuất</h2>
+
+<div class="card shadow-sm" style="max-width:640px">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Tên hãng</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+            <dt class="col-sm-4">Quốc gia</dt>
+            <dd class="col-sm-8">@(Model.Country ?? "—")</dd>
+            <dt class="col-sm-4">Số phụ tùng</dt>
+            <dd class="col-sm-8">@productCount</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        @if (productCount > 0)
+        {
+            <div class="alert alert-warning mb-3">
+                Hãng đang có <strong>@productCount</strong> phụ tùng nên không thể xóa.
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        }
+        else
+        {
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <p class="mb-2">Bạn có chắc muốn xóa hãng này?</p>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+            </form>
+        }
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<script>
+    // Xem trước ảnh khi chọn file hoặc nhập link
+    (function () {
+        const fileInput = document.getElementById('imageFile');
+        const urlInput = document.getElementById('ImageUrl');
+        const img = document.getElementById('imgPreview');
+        const placeholder = document.getElementById('imgPlaceholder');
+
+        function show(src) {
+            if (src) {
+                img.src = src;
+                img.classList.remove('d-none');
+                if (placeholder) placeholder.classList.add('d-none');
+            } else {
+                img.classList.add('d-none');
+                if (placeholder) placeholder.classList.remove('d-none');
+            }
+        }
+
+        fileInput?.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (file) show(URL.createObjectURL(file));
+        });
+        urlInput?.addEventListener('change', function () {
+            if (!fileInput.files.length) show(this.value.trim());
+        });
+    })();
+</script>
