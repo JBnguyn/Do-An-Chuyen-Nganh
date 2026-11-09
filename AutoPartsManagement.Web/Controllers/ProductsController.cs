@@ -13,6 +13,7 @@ namespace AutoPartsManagement.Web.Controllers;
 /// <summary>
 /// Quản lý Danh mục Phụ tùng: xem danh sách (tìm kiếm, lọc, sắp xếp, phân trang), thêm, sửa, xóa.
 /// </summary>
+[Authorize(Roles = AppRoles.Admin)] // cả trang chỉ dành cho Admin; khách xem hàng ở trang Cửa hàng
 public class ProductsController : Controller
 {
     private const string ImageFolder = "products";

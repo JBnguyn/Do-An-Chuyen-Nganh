@@ -1,0 +1,154 @@
+﻿<UserControl x:Class="AutoPartsManagement.Desktop.Pages.CartPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="Page_Loaded" Unloaded="Page_Unloaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="380" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ===== Danh sách sản phẩm trong giỏ ===== -->
+        <Border Style="{StaticResource Card}" Padding="0">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Padding="20,16" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1">
+                    <Grid>
+                        <TextBlock x:Name="CartTitle" Style="{StaticResource SectionTitle}" VerticalAlignment="Center" />
+                        <Button x:Name="ClearButton" HorizontalAlignment="Right" Style="{StaticResource GhostButton}"
+                                Padding="12,6" Click="Clear_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE74D;" Style="{StaticResource IconText}" Margin="0,0,6,0" />
+                                <TextBlock Text="Xóa hết" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="CartList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="20,14" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="70" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Width="60" Height="60" CornerRadius="6" Background="#F9FAFB" HorizontalAlignment="Left">
+                                                <Grid>
+                                                    <TextBlock Text="&#xE7B8;" Style="{StaticResource IconText}" FontSize="22"
+                                                               Foreground="{StaticResource Line}" HorizontalAlignment="Center" />
+                                                    <Image Source="{Binding ImageUrl, Converter={StaticResource ImagePath}}" Margin="4" />
+                                                </Grid>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,12,0">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                <TextBlock Foreground="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0">
+                                                    <Run Text="Mã:" /> <Run Text="{Binding PartNumber, Mode=OneWay}" />
+                                                    <Run Text="·" /> <Run Text="{Binding Price, Mode=OneWay, Converter={StaticResource Money}}" />
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- Tăng / giảm số lượng -->
+                                            <Border Grid.Column="2" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="6"
+                                                    VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Content="&#xE738;" Style="{StaticResource IconButton}" Tag="{Binding}" Click="Minus_Click" />
+                                                    <TextBlock Text="{Binding Quantity}" Width="34" TextAlignment="Center"
+                                                               VerticalAlignment="Center" FontWeight="SemiBold" />
+                                                    <Button Content="&#xE710;" Style="{StaticResource IconButton}" Tag="{Binding}" Click="Plus_Click" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="3" Text="{Binding LineTotal, Converter={StaticResource Money}}"
+                                                       FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" />
+
+                                            <Button Grid.Column="4" Margin="10,0,0,0" Content="&#xE711;" Style="{StaticResource IconButton}"
+                                                    Foreground="{StaticResource Muted}" ToolTip="Bỏ khỏi giỏ" Tag="{Binding}" Click="Remove_Click" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <TextBlock Text="&#xE7BF;" Style="{StaticResource IconText}" FontSize="48" Foreground="{StaticResource Line}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Giỏ hàng đang trống" FontSize="16" FontWeight="SemiBold" Margin="0,14,0,4"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Hãy chọn phụ tùng bạn cần trong cửa hàng." Foreground="{StaticResource Muted}"
+                                   HorizontalAlignment="Center" />
+                        <Button Content="Tiếp tục mua sắm" Style="{StaticResource PrimaryButton}" Margin="0,18,0,0"
+                                HorizontalAlignment="Center" Click="ContinueShopping_Click" />
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <!-- ===== Thông tin giao hàng & thanh toán ===== -->
+        <Border Grid.Column="1" Style="{StaticResource Card}" Margin="18,0,0,0" Padding="22,18">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Thông tin giao hàng" Style="{StaticResource SectionTitle}" />
+
+                    <TextBlock Text="Họ tên người nhận *" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="NameBox" Style="{StaticResource Input}" MaxLength="200" />
+
+                    <TextBlock Text="Số điện thoại *" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="PhoneBox" Style="{StaticResource Input}" MaxLength="20" />
+
+                    <TextBlock Text="Địa chỉ giao hàng *" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="AddressBox" Style="{StaticResource Input}" MaxLength="300" Height="62"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" />
+
+                    <TextBlock Text="Email (không bắt buộc)" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="EmailBox" Style="{StaticResource Input}" MaxLength="100" />
+
+                    <TextBlock Text="Ghi chú" Style="{StaticResource FieldLabel}" />
+                    <TextBox x:Name="NotesBox" Style="{StaticResource Input}" MaxLength="500" Height="54"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" />
+
+                    <Border Margin="0,18,0,0" Padding="0,14,0,0" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Tạm tính" Foreground="{StaticResource Muted}" />
+                                <TextBlock x:Name="SubtotalText" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Grid Margin="0,0,0,10">
+                                <TextBlock Text="Phí giao hàng" Foreground="{StaticResource Muted}" />
+                                <TextBlock Text="Miễn phí" HorizontalAlignment="Right" Foreground="{StaticResource Success}" />
+                            </Grid>
+                            <Grid>
+                                <TextBlock Text="Tổng cộng" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock x:Name="TotalText" HorizontalAlignment="Right" FontSize="21" FontWeight="Bold"
+                                           Foreground="{StaticResource Red}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="ErrorBox" Margin="0,14,0,0" Padding="12,10" CornerRadius="6"
+                            Background="{StaticResource RedSoft}" Visibility="Collapsed">
+                        <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedDark}" TextWrapping="Wrap" />
+                    </Border>
+
+                    <Button x:Name="PlaceOrderButton" Margin="0,16,0,0" Style="{StaticResource PrimaryButton}" Padding="18,12"
+                            Click="PlaceOrder_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8FB;" Style="{StaticResource IconText}" Margin="0,0,8,0" />
+                            <TextBlock Text="Đặt hàng" FontSize="15" />
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Margin="0,10,0,0" FontSize="12" Foreground="{StaticResource Muted}" TextWrapping="Wrap"
+                               TextAlignment="Center" Text="Thanh toán khi nhận hàng (COD). Giá và tồn kho được kiểm tra lại lúc đặt." />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

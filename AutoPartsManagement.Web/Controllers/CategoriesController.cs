@@ -10,6 +10,7 @@ namespace AutoPartsManagement.Web.Controllers;
 /// <summary>
 /// Quản lý Danh mục (loại) phụ tùng.
 /// </summary>
+[Authorize(Roles = AppRoles.Admin)] // cả trang chỉ dành cho Admin; khách xem hàng ở trang Cửa hàng
 public class CategoriesController : Controller
 {
     private readonly ICategoryService _service;

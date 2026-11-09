@@ -113,44 +113,31 @@ html { font-size: 15px; }
   box-shadow: 0 10px 30px rgba(16, 24, 40, .08);
 }
 
-.shop-auth-promo {
-  position: relative;
-  overflow: hidden;
-  flex: 0 0 44%;
+/* ===== Khung trái: logo và tên cửa hàng ===== */
+.auth-brand {
+  flex: 0 0 40%;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: 2.5rem 2.25rem;
-  color: #fff;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2.5rem 2rem;
   background: linear-gradient(150deg, #e3373c 0%, #b31d22 70%, #8f1418 100%);
+  color: #fff;
 }
-.shop-badge {
-  display: inline-block;
-  background: rgba(255, 255, 255, .18);
-  padding: .3rem .75rem;
-  border-radius: 999px;
-  font-size: .78rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+.auth-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 1.5rem;
+  background: #fff;
+  color: var(--shop-red);
+  font-size: 3.2rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .2);
 }
-.shop-auth-promo h2 { font-weight: 800; font-size: 1.9rem; line-height: 1.25; }
-.shop-auth-promo p { color: rgba(255, 255, 255, .85); margin: 0; }
-.shop-auth-promo ul { list-style: none; padding: 0; margin: 0; position: relative; z-index: 1; }
-.shop-auth-promo li { display: flex; align-items: center; gap: .6rem; padding: .35rem 0; }
-.shop-auth-promo li i {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 1.9rem; height: 1.9rem; border-radius: .5rem;
-  background: rgba(255, 255, 255, .18);
-}
-.shop-promo-gear {
-  position: absolute;
-  right: -4.5rem;
-  bottom: -4.5rem;
-  font-size: 15rem;
-  line-height: 1;
-  color: rgba(255, 255, 255, .08);
-  pointer-events: none;
-}
+.auth-brand-name { font-size: 2.4rem; font-weight: 300; letter-spacing: .02em; }
+.auth-brand-name b { font-weight: 800; }
 
 .shop-auth-form { flex: 1; padding: 2.5rem 2.5rem 2rem; }
 

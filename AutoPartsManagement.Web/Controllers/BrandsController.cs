@@ -10,6 +10,7 @@ namespace AutoPartsManagement.Web.Controllers;
 /// <summary>
 /// Quản lý Hãng sản xuất phụ tùng.
 /// </summary>
+[Authorize(Roles = AppRoles.Admin)] // cả trang chỉ dành cho Admin; khách xem hàng ở trang Cửa hàng
 public class BrandsController : Controller
 {
     private readonly IBrandService _service;

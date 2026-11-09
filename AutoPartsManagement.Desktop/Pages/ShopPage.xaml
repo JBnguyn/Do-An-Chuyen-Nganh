@@ -1,0 +1,130 @@
+﻿<UserControl x:Class="AutoPartsManagement.Desktop.Pages.ShopPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="Page_Loaded">
+    <DockPanel>
+        <!-- ===== Thanh tìm kiếm & lọc ===== -->
+        <Border DockPanel.Dock="Top" Style="{StaticResource Card}" Padding="14" Margin="0,0,0,18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <TextBox x:Name="SearchBox" Style="{StaticResource Input}" Padding="34,7,8,7" KeyDown="SearchBox_KeyDown" />
+                    <TextBlock Text="&#xE721;" Style="{StaticResource IconText}" Foreground="{StaticResource Muted}"
+                               Margin="12,0,0,0" IsHitTestVisible="False" />
+                    <TextBlock Text="Tên phụ tùng, mã phụ tùng hoặc mã OEM..." Foreground="{StaticResource Muted}"
+                               Margin="36,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                               Visibility="{Binding Text, ElementName=SearchBox, Converter={StaticResource NullToVis}, ConverterParameter=invert}" />
+                </Grid>
+
+                <ComboBox x:Name="CategoryBox" Grid.Column="1" Margin="12,0,0,0"
+                          DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="Filter_Changed" />
+
+                <ComboBox x:Name="SortBox" Grid.Column="2" Margin="12,0,0,0" SelectionChanged="Filter_Changed">
+                    <ComboBoxItem Content="Tên A → Z" Tag="" />
+                    <ComboBoxItem Content="Giá thấp → cao" Tag="price" />
+                    <ComboBoxItem Content="Giá cao → thấp" Tag="price_desc" />
+                    <ComboBoxItem Content="Mới nhất" Tag="newest" />
+                </ComboBox>
+
+                <CheckBox x:Name="GenuineBox" Grid.Column="3" Margin="16,0,0,0" VerticalAlignment="Center"
+                          Content="Chỉ hàng chính hãng" Checked="Filter_Changed" Unchecked="Filter_Changed" />
+
+                <Button Grid.Column="4" Margin="16,0,0,0" Style="{StaticResource PrimaryButton}" Click="Search_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE721;" Style="{StaticResource IconText}" Margin="0,0,8,0" />
+                        <TextBlock Text="Tìm" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ===== Phân trang ===== -->
+        <Grid DockPanel.Dock="Bottom" Margin="0,10,0,0">
+            <TextBlock x:Name="ResultText" VerticalAlignment="Center" Foreground="{StaticResource Muted}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="PrevButton" Style="{StaticResource GhostButton}" Click="Prev_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE76B;" Style="{StaticResource IconText}" FontSize="11" Margin="0,0,6,0" />
+                        <TextBlock Text="Trước" />
+                    </StackPanel>
+                </Button>
+                <TextBlock x:Name="PageText" Margin="14,0" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <Button x:Name="NextButton" Style="{StaticResource GhostButton}" Click="Next_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Sau" />
+                        <TextBlock Text="&#xE76C;" Style="{StaticResource IconText}" FontSize="11" Margin="6,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- ===== Lưới sản phẩm ===== -->
+        <Grid>
+            <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="ProductList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="232" Margin="0,0,16,16" Style="{StaticResource Card}" Padding="0"
+                                    ToolTip="{Binding Description}">
+                                <StackPanel>
+                                    <Grid Height="150" Background="#F9FAFB">
+                                        <TextBlock Text="&#xE7B8;" Style="{StaticResource IconText}" FontSize="46"
+                                                   Foreground="{StaticResource Line}" HorizontalAlignment="Center" />
+                                        <Image Source="{Binding ImageUrl, Converter={StaticResource ImagePath}}"
+                                               Stretch="Uniform" Margin="12" />
+                                        <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"
+                                                Background="{StaticResource Red}" CornerRadius="4" Padding="7,2"
+                                                Visibility="{Binding IsGenuine, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="Chính hãng" Foreground="White" FontSize="11" FontWeight="SemiBold" />
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Margin="14,12,14,14">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                   Height="40" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Codes}" Foreground="{StaticResource Muted}" FontSize="12"
+                                                   Margin="0,6,0,0" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding Meta}" Foreground="{StaticResource Muted}" FontSize="12"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding PriceText}" Foreground="{StaticResource Red}" FontSize="18"
+                                                   FontWeight="Bold" Margin="0,8,0,0" />
+                                        <TextBlock Text="{Binding StockText}" Foreground="{Binding StockBrush}" FontSize="12" />
+                                        <Button Margin="0,12,0,0" Style="{StaticResource PrimaryButton}" Padding="12,8"
+                                                Tag="{Binding}" IsEnabled="{Binding CanBuy}" Click="AddToCart_Click">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE7BF;" Style="{StaticResource IconText}" Margin="0,0,8,0" />
+                                                <TextBlock Text="Thêm vào giỏ" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBlock Text="&#xE721;" Style="{StaticResource IconText}" FontSize="40" Foreground="{StaticResource Line}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Không tìm thấy sản phẩm phù hợp" Margin="0,12,0,0" FontSize="15" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Thử từ khóa khác hoặc bỏ bớt bộ lọc." Foreground="{StaticResource Muted}" HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <TextBlock x:Name="LoadingText" Text="Đang tải sản phẩm..." Foreground="{StaticResource Muted}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
+        </Grid>
+    </DockPanel>
+</UserControl>

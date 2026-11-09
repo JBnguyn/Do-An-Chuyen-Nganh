@@ -10,6 +10,7 @@ namespace AutoPartsManagement.Web.Controllers;
 /// <summary>
 /// Quản lý Nhà cung cấp.
 /// </summary>
+[Authorize(Roles = AppRoles.Admin)] // cả trang chỉ dành cho Admin; khách xem hàng ở trang Cửa hàng
 public class SuppliersController : Controller
 {
     private readonly ISupplierService _service;
