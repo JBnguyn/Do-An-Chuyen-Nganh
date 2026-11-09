@@ -11,6 +11,8 @@
     var suggest = root.querySelector('[data-chat-suggest]');
     var token = root.querySelector('input[name="__RequestVerificationToken"]').value;
     var askUrl = root.dataset.askUrl;
+    var imageUrl = root.dataset.imageUrl;
+    var fileInput = root.querySelector('[data-chat-file]');
     var money = new Intl.NumberFormat('vi-VN');
     var busy = false;
 
@@ -43,8 +45,9 @@
     }
 
     function bubble(m) {
-        var html = '<div class="chat-msg ' + (m.role === 'user' ? 'me' : 'bot') + '">' +
-            '<div class="chat-bubble">' + esc(m.content).replace(/\n/g, '<br>') + '</div>';
+        var html = '<div class="chat-msg ' + (m.role === 'user' ? 'me' : 'bot') + '">';
+        if (m.img) html += '<img class="chat-img" src="' + esc(m.img) + '" alt="Ảnh đã gửi" />';
+        if (m.text !== '') html += '<div class="chat-bubble">' + esc(m.text != null ? m.text : m.content).replace(/\n/g, '<br>') + '</div>';
         if (m.products && m.products.length) {
             html += '<div class="chat-products">' + m.products.map(productHtml).join('') + '</div>';
         }
@@ -87,6 +90,61 @@
             });
     }
 
+    // ----- Gửi ảnh: thu nhỏ trên trình duyệt rồi gửi lên server -----
+    function resize(file, maxSize, quality) {
+        return new Promise(function (resolve, reject) {
+            var img = new Image();
+            var url = URL.createObjectURL(file);
+            img.onload = function () {
+                var scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+                var c = document.createElement('canvas');
+                c.width = Math.round(img.width * scale);
+                c.height = Math.round(img.height * scale);
+                c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                URL.revokeObjectURL(url);
+                c.toBlob(function (blob) {
+                    resolve({ blob: blob, dataUrl: c.toDataURL('image/jpeg', 0.6) });
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = function () { URL.revokeObjectURL(url); reject(); };
+            img.src = url;
+        });
+    }
+
+    function askImage(file) {
+        if (!file || busy) return;
+        var note = input.value.trim();
+        input.value = '';
+        busy = true;
+
+        Promise.all([resize(file, 1280, 0.85), resize(file, 240, 0.6)])
+            .then(function (r) {
+                history.push({ role: 'user', content: '[Khách gửi ảnh phụ tùng] ' + note, text: note, img: r[1].dataUrl });
+                render();
+                var fd = new FormData();
+                fd.append('image', r[0].blob, 'photo.jpg');
+                fd.append('message', note);
+                return fetch(imageUrl, { method: 'POST', headers: { 'RequestVerificationToken': token }, body: fd });
+            })
+            .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
+            .then(function (data) {
+                history.push({ role: 'assistant', content: data.reply, products: data.products });
+            })
+            .catch(function () {
+                history.push({ role: 'assistant', content: 'Xin lỗi, mình chưa gửi được ảnh này. Bạn thử ảnh khác hoặc gõ tên phụ tùng giúp mình nha.' });
+            })
+            .finally(function () {
+                busy = false;
+                fileInput.value = '';
+                save(history);
+                render();
+            });
+    }
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) askImage(fileInput.files[0]);
+    });
+
     function toggle(open) {
         var show = typeof open === 'boolean' ? open : panel.hidden;
         panel.hidden = !show;
@@ -97,6 +155,7 @@
     root.addEventListener('click', function (e) {
         if (e.target.closest('[data-chat-toggle]')) toggle();
         else if (e.target.closest('[data-chat-reset]')) { history = []; save(history); render(); }
+        else if (e.target.closest('[data-chat-photo]')) fileInput.click();
         else if (e.target.closest('[data-chat-quick]')) ask(e.target.closest('[data-chat-quick]').textContent);
     });
     form.addEventListener('submit', function (e) {

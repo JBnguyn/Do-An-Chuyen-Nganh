@@ -1,0 +1,182 @@
+@model ImportCreateViewModel
+@{
+    ViewData["Title"] = "Tạo phiếu nhập";
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Nhập kho</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tạo phiếu nhập</li>
+    </ol>
+</nav>
+
+<style>.validation-summary-valid { display: none; }</style>
+
+<h2 class="mb-3"><i class="bi bi-file-earmark-plus"></i> Tạo phiếu nhập</h2>
+
+@* Danh sách sản phẩm dùng làm mẫu cho các dòng thêm mới *@
+<template id="productOptions">
+    <option value="">-- Chọn phụ tùng --</option>
+    @foreach (var p in Model.Products)
+    {
+        <option value="@p.Id" data-stock="@p.Stock" data-price="@p.Price.ToString(inv)">@p.PartNumber – @p.Name (tồn: @p.Stock)</option>
+    }
+</template>
+
+<form asp-action="Create" method="post" id="importForm">
+    <div asp-validation-summary="All" class="alert alert-danger py-2" role="alert"></div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body row g-3">
+            <div class="col-md-6">
+                <label asp-for="SupplierId" class="form-label fw-semibold"></label>
+                <select asp-for="SupplierId" class="form-select">
+                    <option value="0">-- Chọn nhà cung cấp --</option>
+                    @foreach (var s in Model.Suppliers)
+                    {
+                        <option value="@s.Id">@s.Name – @s.Phone</option>
+                    }
+                </select>
+                @if (Model.Suppliers.Count == 0)
+                {
+                    <div class="form-text text-danger">Chưa có nhà cung cấp. <a asp-controller="Suppliers" asp-action="Create">Thêm nhà cung cấp</a> trước.</div>
+                }
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Notes" class="form-label fw-semibold"></label>
+                <input asp-for="Notes" class="form-control" placeholder="Số hóa đơn, người giao hàng..." />
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Danh sách hàng nhập</span>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="addLine"><i class="bi bi-plus-lg"></i> Thêm dòng</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0" id="lines">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width:320px">Phụ tùng</th>
+                        <th style="width:130px">Số lượng</th>
+                        <th style="width:180px">Giá nhập (₫)</th>
+                        <th class="text-end" style="width:160px">Thành tiền</th>
+                        <th style="width:50px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Lines.Count; i++)
+                    {
+                        var line = Model.Lines[i];
+                        <tr class="import-line">
+                            <td>
+                                <select class="form-select form-select-sm" data-field="ProductId">
+                                    <option value="">-- Chọn phụ tùng --</option>
+                                    @foreach (var p in Model.Products)
+                                    {
+                                        <option value="@p.Id" data-stock="@p.Stock" data-price="@p.Price.ToString(inv)" selected="@(p.Id == line.ProductId)">@p.PartNumber – @p.Name (tồn: @p.Stock)</option>
+                                    }
+                                </select>
+                                <small class="text-muted" data-hint></small>
+                            </td>
+                            <td><input type="number" min="1" max="10000" class="form-control form-control-sm" data-field="Quantity" value="@line.Quantity" /></td>
+                            <td><input type="number" min="0" step="1000" class="form-control form-control-sm" data-field="UnitPrice" value="@line.UnitPrice.ToString(inv)" /></td>
+                            <td class="text-end fw-semibold" data-subtotal>0 ₫</td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" data-remove title="Xóa dòng"><i class="bi bi-x-lg"></i></button></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Tổng tiền nhập</td>
+                        <td class="text-end fw-bold fs-5 text-danger" id="grandTotal">0 ₫</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="form-check">
+                <input class="form-check-input" asp-for="ReceiveNow" />
+                <label class="form-check-label fw-semibold" asp-for="ReceiveNow">Đã nhận đủ hàng – cộng tồn kho ngay khi lưu</label>
+            </div>
+            <div class="form-text">Bỏ chọn nếu hàng chưa về: phiếu ở trạng thái <b>Chờ duyệt</b>, tồn kho chỉ được cộng khi bấm "Xác nhận đã nhận hàng".</div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu phiếu nhập</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var tbody = document.querySelector('#lines tbody');
+            var money = new Intl.NumberFormat('vi-VN');
+            var tpl = document.getElementById('productOptions').innerHTML;
+
+            function recalc() {
+                var total = 0;
+                tbody.querySelectorAll('.import-line').forEach(function (row) {
+                    var qty = parseFloat(row.querySelector('[data-field="Quantity"]').value) || 0;
+                    var price = parseFloat(row.querySelector('[data-field="UnitPrice"]').value) || 0;
+                    var sub = qty * price;
+                    total += sub;
+                    row.querySelector('[data-subtotal]').textContent = money.format(sub) + ' ₫';
+
+                    var opt = row.querySelector('[data-field="ProductId"]').selectedOptions[0];
+                    var hint = row.querySelector('[data-hint]');
+                    if (opt && opt.value) {
+                        var stock = parseInt(opt.dataset.stock, 10);
+                        hint.textContent = 'Giá bán: ' + money.format(parseFloat(opt.dataset.price)) + ' ₫ · Tồn sau nhập: ' + (stock + qty);
+                    } else {
+                        hint.textContent = '';
+                    }
+                });
+                document.getElementById('grandTotal').textContent = money.format(total) + ' ₫';
+            }
+
+            function addRow() {
+                var tr = document.createElement('tr');
+                tr.className = 'import-line';
+                tr.innerHTML =
+                    '<td><select class="form-select form-select-sm" data-field="ProductId">' + tpl + '</select><small class="text-muted" data-hint></small></td>' +
+                    '<td><input type="number" min="1" max="10000" class="form-control form-control-sm" data-field="Quantity" value="1" /></td>' +
+                    '<td><input type="number" min="0" step="1000" class="form-control form-control-sm" data-field="UnitPrice" value="0" /></td>' +
+                    '<td class="text-end fw-semibold" data-subtotal>0 ₫</td>' +
+                    '<td><button type="button" class="btn btn-sm btn-outline-danger" data-remove title="Xóa dòng"><i class="bi bi-x-lg"></i></button></td>';
+                tbody.appendChild(tr);
+                recalc();
+            }
+
+            document.getElementById('addLine').addEventListener('click', addRow);
+            tbody.addEventListener('input', recalc);
+            tbody.addEventListener('change', recalc);
+            tbody.addEventListener('click', function (e) {
+                if (e.target.closest('[data-remove]')) {
+                    e.target.closest('tr').remove();
+                    if (!tbody.querySelector('.import-line')) addRow();
+                    recalc();
+                }
+            });
+
+            // Đặt tên Lines[i].X cho các ô trước khi gửi để server nhận đúng danh sách
+            document.getElementById('importForm').addEventListener('submit', function () {
+                tbody.querySelectorAll('.import-line').forEach(function (row, i) {
+                    row.querySelectorAll('[data-field]').forEach(function (el) {
+                        el.name = 'Lines[' + i + '].' + el.dataset.field;
+                    });
+                });
+            });
+
+            recalc();
+        })();
+    </script>
+}

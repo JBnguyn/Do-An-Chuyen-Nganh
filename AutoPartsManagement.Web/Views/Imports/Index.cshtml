@@ -1,0 +1,104 @@
+@model PagedResult<Import>
+@using AutoPartsManagement.Data.Models.Enums
+@{
+    ViewData["Title"] = "Nhập kho";
+    var current = ViewData["Status"] as ImportStatus?;
+    var supplierId = ViewData["SupplierId"] as int?;
+    var counts = ViewData["Counts"] as Dictionary<ImportStatus, int> ?? new();
+    var suppliers = ViewData["Suppliers"] as List<Supplier> ?? new();
+    var lowStock = ViewData["LowStock"] as List<Product> ?? new();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><i class="bi bi-box-arrow-in-down"></i> Nhập kho</h2>
+    <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> Tạo phiếu nhập</a>
+</div>
+
+@if (lowStock.Count > 0)
+{
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <i class="bi bi-exclamation-triangle"></i>
+            Có <b>@lowStock.Count</b> phụ tùng sắp hết hoặc hết hàng (tồn ≤ @InventoryRules.LowStockThreshold):
+            <span class="small">@string.Join(", ", lowStock.Take(4).Select(p => $"{p.Name} ({p.Stock})"))@(lowStock.Count > 4 ? "..." : "")</span>
+        </div>
+        <a asp-action="Create" asp-route-lowStock="true" class="btn btn-sm btn-warning fw-semibold">
+            <i class="bi bi-lightning-charge"></i> Nhập hàng cho các món này
+        </a>
+    </div>
+}
+
+<ul class="nav nav-pills mb-3 gap-1 flex-wrap">
+    <li class="nav-item">
+        <a class="nav-link @(current == null ? "active" : "")" asp-action="Index" asp-route-supplierId="@supplierId">
+            Tất cả <span class="badge bg-light text-dark ms-1">@counts.Values.Sum()</span>
+        </a>
+    </li>
+    @foreach (var s in Enum.GetValues<ImportStatus>())
+    {
+        <li class="nav-item">
+            <a class="nav-link @(current == s ? "active" : "")" asp-action="Index" asp-route-status="@s" asp-route-supplierId="@supplierId">
+                @ImportUi.Label(s) <span class="badge @ImportUi.Badge(s) ms-1">@(counts.GetValueOrDefault(s))</span>
+            </a>
+        </li>
+    }
+</ul>
+
+<form method="get" asp-action="Index" class="card card-body shadow-sm mb-3">
+    <input type="hidden" name="status" value="@current" />
+    <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label small mb-1">Nhà cung cấp</label>
+            <select name="supplierId" class="form-select">
+                <option value="">-- Tất cả --</option>
+                @foreach (var s in suppliers)
+                {
+                    <option value="@s.Id" selected="@(supplierId == s.Id)">@s.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-auto">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Lọc</button>
+        </div>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>Ngày nhập</th>
+                    <th>Nhà cung cấp</th>
+                    <th class="text-center">Số mặt hàng</th>
+                    <th class="text-center">Tổng SL</th>
+                    <th class="text-end">Tổng tiền</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count == 0)
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-4">Chưa có phiếu nhập nào.</td></tr>
+                }
+                @foreach (var i in Model.Items)
+                {
+                    <tr>
+                        <td class="fw-semibold">PN-@i.Id.ToString("D4")</td>
+                        <td class="text-nowrap">@Format.DateAndTime(i.ImportDate)</td>
+                        <td>@i.Supplier?.Name</td>
+                        <td class="text-center">@i.ImportDetails.Count</td>
+                        <td class="text-center">@Format.Number(i.ImportDetails.Sum(d => d.Quantity))</td>
+                        <td class="text-end text-nowrap fw-semibold">@Format.Money(i.TotalAmount)</td>
+                        <td class="text-center"><span class="badge @ImportUi.Badge(i.Status)">@ImportUi.Label(i.Status)</span></td>
+                        <td class="text-end"><a asp-action="Detail" asp-route-id="@i.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Xem</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<partial name="_Pagination" model="Model" />

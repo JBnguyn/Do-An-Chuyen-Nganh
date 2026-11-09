@@ -64,6 +64,32 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Origin" class="form-label">Xuất xứ (nơi sản xuất)</label>
+                <input asp-for="Origin" class="form-control" list="originList" placeholder="Vd: Thái Lan" />
+                <datalist id="originList">
+                    <option value="Nhật Bản"></option><option value="Thái Lan"></option><option value="Indonesia"></option>
+                    <option value="Việt Nam"></option><option value="Trung Quốc"></option><option value="Hàn Quốc"></option>
+                    <option value="Đức"></option><option value="Đài Loan"></option><option value="Malaysia"></option>
+                </datalist>
+                <span asp-validation-for="Origin" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="OemNumber" class="form-label">Mã OEM (mã gốc hãng xe)</label>
+                <input asp-for="OemNumber" class="form-control text-uppercase" placeholder="Vd: 04465-0D020" />
+                <span asp-validation-for="OemNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Loại hàng</label>
+                <div class="form-check form-switch mt-2">
+                    <input asp-for="IsGenuine" class="form-check-input" />
+                    <label asp-for="IsGenuine" class="form-check-label">Chính hãng xe (OEM)</label>
+                </div>
+                <div class="form-text">Tắt = hàng thương hiệu thay thế (Aisin, Bosch, KYB...).</div>
+            </div>
+        </div>
+
         <div class="mb-3">
             <label asp-for="Description" class="form-label">Mô tả</label>
             <textarea asp-for="Description" class="form-control" rows="4" placeholder="Thông số, dòng xe tương thích..."></textarea>

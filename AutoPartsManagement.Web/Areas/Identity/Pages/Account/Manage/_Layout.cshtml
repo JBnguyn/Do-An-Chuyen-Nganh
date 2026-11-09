@@ -1,0 +1,62 @@
+@using AutoPartsManagement.Web.Identity
+@{
+    Layout = "/Views/Shared/_ShopLayout.cshtml";
+    var active = ViewData["ActivePage"] as string ?? "";
+    string Cls(string page) => string.Equals(active, page, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+
+<div class="container">
+    <nav class="shop-breadcrumb" aria-label="breadcrumb">
+        <a asp-area="" asp-controller="Shop" asp-action="Index">Trang chủ</a> <i class="bi bi-chevron-right"></i>
+        <span>Tài khoản của tôi</span>
+    </nav>
+
+    <div class="row g-4">
+        <aside class="col-lg-3">
+            <section class="shop-section acc-side">
+                <div class="acc-user">
+                    <span class="acc-avatar"><i class="bi bi-person-fill"></i></span>
+                    <div>
+                        <b>@User.Identity?.Name</b>
+                        <small>@(User.IsInRole(AppRoles.Admin) ? "Quản trị viên" : "Khách hàng")</small>
+                    </div>
+                </div>
+                <nav class="acc-nav">
+                    <a class="@Cls("Index")" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="bi bi-person-vcard"></i> Hồ sơ</a>
+                    <a class="@Cls("ChangePassword")" asp-area="Identity" asp-page="/Account/Manage/ChangePassword"><i class="bi bi-key"></i> Đổi mật khẩu</a>
+                    <a asp-area="" asp-controller="MyOrders" asp-action="Index"><i class="bi bi-receipt"></i> Đơn hàng của tôi</a>
+                    <a asp-area="" asp-controller="Maintenance" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Xe của tôi & bảo dưỡng</a>
+                    @if (User.IsInRole(AppRoles.Admin))
+                    {
+                        <a asp-area="" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i> Trang quản trị</a>
+                    }
+                </nav>
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" class="mt-2">
+                    <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+                </form>
+            </section>
+        </aside>
+
+        <div class="col-lg-9">
+            <section class="shop-section">
+                @RenderBody()
+            </section>
+        </div>
+    </div>
+</div>
+
+<style>
+    .acc-user { display: flex; align-items: center; gap: .75rem; padding-bottom: 1rem; margin-bottom: .75rem; border-bottom: 1px solid var(--shop-line); }
+    .acc-user b { display: block; line-height: 1.2; }
+    .acc-user small { color: var(--shop-muted); }
+    .acc-avatar { width: 2.8rem; height: 2.8rem; border-radius: 50%; background: var(--shop-red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .acc-nav { display: flex; flex-direction: column; gap: .2rem; }
+    .acc-nav a { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: .6rem; color: var(--shop-ink); font-weight: 500; }
+    .acc-nav a:hover { background: var(--shop-bg); color: var(--shop-ink); }
+    .acc-nav a.active { background: var(--shop-red-soft); color: var(--shop-red); font-weight: 700; }
+    .acc-nav a .bi { font-size: 1.1rem; }
+</style>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

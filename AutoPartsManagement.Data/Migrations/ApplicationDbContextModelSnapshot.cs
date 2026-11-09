@@ -274,10 +274,21 @@ namespace AutoPartsManagement.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsGenuine")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("OemNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Origin")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PartNumber")
                         .IsRequired()
@@ -708,6 +719,93 @@ namespace AutoPartsManagement.Data.Migrations
             modelBuilder.Entity("AutoPartsManagement.Data.Models.Supplier", b =>
                 {
                     b.Navigation("Imports");
+                });
+
+            modelBuilder.Entity("AutoPartsManagement.Data.Models.MaintenanceRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ItemKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("LastDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LastKm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserVehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserVehicleId");
+
+                    b.ToTable("MaintenanceRecords", (string)null);
+                });
+
+            modelBuilder.Entity("AutoPartsManagement.Data.Models.UserVehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CarModel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentKm")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("KmUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Make")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserVehicles", (string)null);
+                });
+
+            modelBuilder.Entity("AutoPartsManagement.Data.Models.MaintenanceRecord", b =>
+                {
+                    b.HasOne("AutoPartsManagement.Data.Models.UserVehicle", "UserVehicle")
+                        .WithMany("Records")
+                        .HasForeignKey("UserVehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserVehicle");
+                });
+
+            modelBuilder.Entity("AutoPartsManagement.Data.Models.UserVehicle", b =>
+                {
+                    b.Navigation("Records");
                 });
 #pragma warning restore 612, 618
         }

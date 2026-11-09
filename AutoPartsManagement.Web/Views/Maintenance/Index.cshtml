@@ -1,0 +1,289 @@
+@model MaintenanceIndexViewModel
+@using AutoPartsManagement.Services.Models
+@{
+    ViewData["Title"] = "Xe của tôi & bảo dưỡng";
+    var s = Model.Summary;
+    var showForm = Model.Vehicles.Count == 0 || ViewData["ShowForm"] is true;
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+
+    string StateLabel(MaintenanceState st) => st switch
+    {
+        MaintenanceState.Overdue => "Quá hạn",
+        MaintenanceState.DueSoon => "Sắp đến hạn",
+        MaintenanceState.Unknown => "Chưa ghi nhận",
+        _ => "Còn tốt"
+    };
+    string StateClass(MaintenanceState st) => st switch
+    {
+        MaintenanceState.Overdue => "overdue",
+        MaintenanceState.DueSoon => "soon",
+        MaintenanceState.Unknown => "unknown",
+        _ => "ok"
+    };
+
+    // Combo: phụ tùng gợi ý đầu tiên (còn hàng) của mỗi hạng mục cần làm
+    var combo = s?.Items.Where(i => i.NeedsAttention)
+        .Select(i => i.Suggestions.FirstOrDefault(p => p.Stock > 0))
+        .Where(p => p != null)
+        .Select(p => p!)
+        .DistinctBy(p => p.Id)
+        .ToList() ?? new();
+    var comboJson = System.Text.Json.JsonSerializer.Serialize(combo.Select(p => new
+    {
+        id = p.Id, name = p.Name, price = p.Price, img = p.ImageUrl ?? "", max = p.Stock, qty = 1
+    }));
+}
+
+<div class="container">
+    <nav class="shop-breadcrumb" aria-label="breadcrumb">
+        <a asp-controller="Shop" asp-action="Index">Trang chủ</a> <i class="bi bi-chevron-right"></i> <span>Xe của tôi & bảo dưỡng</span>
+    </nav>
+
+    <div class="row g-4">
+        @* ===== Cột trái: danh sách xe + thêm xe ===== *@
+        <aside class="col-lg-4">
+            <section class="shop-section">
+                <h1 class="shop-section-title mb-3">Xe của tôi</h1>
+
+                @if (Model.Vehicles.Count > 0)
+                {
+                    <div class="d-flex flex-column gap-2 mb-3">
+                        @foreach (var v in Model.Vehicles)
+                        {
+                            var active = s?.Vehicle.Id == v.Id;
+                            <a class="mt-vehicle @(active ? "active" : "")" asp-action="Index" asp-route-id="@v.Id">
+                                <span class="mt-vehicle-icon"><i class="bi bi-car-front-fill"></i></span>
+                                <span class="flex-grow-1">
+                                    <b>@v.DisplayName</b>
+                                    <small>@Format.Number(v.CurrentKm) km</small>
+                                </span>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        }
+                    </div>
+                }
+
+                <details class="mt-add" open="@showForm">
+                    <summary><i class="bi bi-plus-circle"></i> Thêm xe</summary>
+                    <form asp-action="Create" method="post" class="mt-3">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                        <div class="mb-2">
+                            <label asp-for="NewVehicle.Make" class="form-label small fw-semibold">Hãng xe</label>
+                            <select asp-for="NewVehicle.Make" class="form-select">
+                                <option value="">-- Chọn hãng --</option>
+                                @foreach (var make in ShopUi.CarMakes)
+                                {
+                                    <option value="@make">@make</option>
+                                }
+                                <option value="Khác">Khác</option>
+                            </select>
+                            <span asp-validation-for="NewVehicle.Make" class="text-danger small"></span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-7">
+                                <label asp-for="NewVehicle.CarModel" class="form-label small fw-semibold">Dòng xe</label>
+                                <input asp-for="NewVehicle.CarModel" class="form-control" placeholder="vd: Vios, City" />
+                                <span asp-validation-for="NewVehicle.CarModel" class="text-danger small"></span>
+                            </div>
+                            <div class="col-5">
+                                <label asp-for="NewVehicle.Year" class="form-label small fw-semibold">Năm SX</label>
+                                <input asp-for="NewVehicle.Year" class="form-control" placeholder="2019" />
+                                <span asp-validation-for="NewVehicle.Year" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewVehicle.CurrentKm" class="form-label small fw-semibold">Số km hiện tại (ODO)</label>
+                            <div class="input-group">
+                                <input asp-for="NewVehicle.CurrentKm" class="form-control" type="number" min="0" placeholder="vd: 45000" />
+                                <span class="input-group-text">km</span>
+                            </div>
+                            <span asp-validation-for="NewVehicle.CurrentKm" class="text-danger small"></span>
+                        </div>
+                        <button type="submit" class="btn btn-shop w-100"><i class="bi bi-plus-lg"></i> Lưu xe</button>
+                    </form>
+                </details>
+            </section>
+
+            <section class="shop-section small text-muted">
+                <i class="bi bi-info-circle"></i>
+                Lịch bảo dưỡng là mức tham khảo phổ biến cho xe du lịch. Hãy đối chiếu sổ bảo dưỡng của hãng xe,
+                điều kiện sử dụng thực tế có thể cần bảo dưỡng sớm hơn.
+            </section>
+        </aside>
+
+        @* ===== Cột phải: lịch bảo dưỡng của xe đang chọn ===== *@
+        <div class="col-lg-8">
+            @if (s == null)
+            {
+                <section class="shop-section text-center py-5">
+                    <div class="mt-empty-icon"><i class="bi bi-car-front"></i></div>
+                    <h2 class="h4 fw-bold mt-3">Thêm xe để nhận lịch bảo dưỡng</h2>
+                    <p class="text-muted mb-0">Nhập hãng xe, dòng xe và số km hiện tại. Hệ thống sẽ nhắc bạn hạng mục nào sắp đến hạn
+                        và gợi ý phụ tùng phù hợp có trong cửa hàng.</p>
+                </section>
+            }
+            else
+            {
+                var v = s.Vehicle;
+                var overdue = s.Items.Count(i => i.State == MaintenanceState.Overdue);
+                var soon = s.Items.Count(i => i.State == MaintenanceState.DueSoon);
+
+                <section class="mt-hero">
+                    <div class="flex-grow-1">
+                        <small class="text-white-50">Xe đang xem</small>
+                        <h2 class="mb-1">@v.DisplayName</h2>
+                        <div class="mt-odo"><i class="bi bi-speedometer2"></i> @Format.Number(v.CurrentKm) <span>km</span></div>
+                        <small class="text-white-50">Cập nhật lúc @Format.DateAndTime(v.KmUpdatedAt)</small>
+                    </div>
+                    <div class="mt-hero-side">
+                        <form asp-action="UpdateKm" asp-route-id="@v.Id" method="post" class="mt-km-form">
+                            <label class="small" for="km">Cập nhật số km</label>
+                            <div class="input-group">
+                                <input id="km" name="km" type="number" min="0" class="form-control" value="@v.CurrentKm" />
+                                <button class="btn btn-light fw-semibold" type="submit">Lưu</button>
+                            </div>
+                        </form>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="mt-count overdue">@overdue quá hạn</span>
+                            <span class="mt-count soon">@soon sắp đến hạn</span>
+                        </div>
+                    </div>
+                </section>
+
+                @if (combo.Count > 0)
+                {
+                    <section class="shop-section mt-combo">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <div>
+                                <h2 class="shop-section-title mb-1">Combo bảo dưỡng gợi ý</h2>
+                                <small class="text-muted">Phụ tùng cho các hạng mục đến hạn, còn hàng trong cửa hàng</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted small">Tổng tạm tính</div>
+                                <div class="fs-4 fw-bold text-danger">@Format.Money(combo.Sum(p => p.Price))</div>
+                            </div>
+                        </div>
+                        <div class="mt-combo-list">
+                            @foreach (var p in combo)
+                            {
+                                <a class="mt-chip" asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id">@p.Name <b>@Format.Money(p.Price)</b></a>
+                            }
+                        </div>
+                        <button type="button" class="btn btn-shop" data-add-combo data-items="@comboJson">
+                            <i class="bi bi-cart-plus"></i> Thêm cả combo vào giỏ
+                        </button>
+                    </section>
+                }
+
+                <section class="shop-section">
+                    <h2 class="shop-section-title mb-3">Lịch bảo dưỡng</h2>
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var it in s.Items)
+                        {
+                            var cls = StateClass(it.State);
+                            <div class="mt-item @cls">
+                                <div class="mt-item-head">
+                                    <span class="mt-item-icon"><i class="bi @it.Item.Icon"></i></span>
+                                    <div class="flex-grow-1">
+                                        <b>@it.Item.Name</b>
+                                        <small class="d-block text-muted">
+                                            @if (it.Item.IntervalKm.HasValue) { <text>Mỗi @Format.Number(it.Item.IntervalKm.Value) km</text> }
+                                            @if (it.Item.IntervalKm.HasValue && it.Item.IntervalMonths.HasValue) { <text> hoặc </text> }
+                                            @if (it.Item.IntervalMonths.HasValue) { <text>@it.Item.IntervalMonths tháng</text> }
+                                            · @it.Item.Note
+                                        </small>
+                                    </div>
+                                    <span class="mt-state @cls">@StateLabel(it.State)</span>
+                                </div>
+
+                                <div class="mt-item-body">
+                                    <div class="mt-facts">
+                                        @if (it.NextKm.HasValue)
+                                        {
+                                            <span>
+                                                Mốc tiếp theo: <b>@Format.Number(it.NextKm.Value) km</b>
+                                                @if (it.RemainingKm < 0)
+                                                {
+                                                    <em class="text-danger">(quá @Format.Number(-it.RemainingKm!.Value) km)</em>
+                                                }
+                                                else
+                                                {
+                                                    <em>(còn @Format.Number(it.RemainingKm!.Value) km)</em>
+                                                }
+                                            </span>
+                                        }
+                                        @if (it.NextDate.HasValue)
+                                        {
+                                            <span>Hạn theo thời gian: <b>@Format.ShortDate(it.NextDate.Value)</b></span>
+                                        }
+                                        <span>
+                                            Lần gần nhất:
+                                            @if (it.HasRecord)
+                                            {
+                                                <b>@(Format.Number(it.LastKm ?? 0) + " km" + (it.LastDate.HasValue ? " – " + Format.ShortDate(it.LastDate.Value) : ""))</b>
+                                            }
+                                            else
+                                            {
+                                                <b>chưa ghi nhận</b>
+                                            }
+                                        </span>
+                                    </div>
+
+                                    @if (it.Suggestions.Count > 0)
+                                    {
+                                        <div class="mt-suggest">
+                                            @foreach (var p in it.Suggestions)
+                                            {
+                                                var price = p.Price.ToString(inv);
+                                                <div class="mt-sp">
+                                                    <a asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id" class="mt-sp-name">@p.Name</a>
+                                                    <span class="mt-sp-price">@Format.Money(p.Price)</span>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" @(p.Stock <= 0 ? "disabled" : "")
+                                                            data-add-to-cart data-id="@p.Id" data-name="@p.Name" data-price="@price" data-img="@p.ImageUrl" data-max="@p.Stock"
+                                                            title="@(p.Stock <= 0 ? "Hết hàng" : "Thêm vào giỏ")">
+                                                        <i class="bi bi-cart-plus"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="small text-muted mt-2">Cửa hàng chưa có phụ tùng cho hạng mục này trên web, gọi @ShopUi.Hotline để được tư vấn.</div>
+                                    }
+
+                                    <details class="mt-done">
+                                        <summary><i class="bi bi-check2-circle"></i> Tôi đã làm hạng mục này</summary>
+                                        <form asp-action="MarkDone" asp-route-id="@v.Id" method="post" class="row g-2 align-items-end mt-1">
+                                            <input type="hidden" name="itemKey" value="@it.Item.Key" />
+                                            <div class="col-sm-4">
+                                                <label class="form-label small mb-1">Ở số km</label>
+                                                <input name="km" type="number" min="0" max="@v.CurrentKm" value="@v.CurrentKm" class="form-control form-control-sm" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="form-label small mb-1">Ngày</label>
+                                                <input name="date" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button type="submit" class="btn btn-sm btn-success w-100">Lưu</button>
+                                            </div>
+                                        </form>
+                                    </details>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <form asp-action="Delete" asp-route-id="@v.Id" method="post" class="text-end"
+                      onsubmit="return confirm('Xóa xe này và toàn bộ lịch sử bảo dưỡng của xe?');">
+                    <button type="submit" class="btn btn-link text-danger"><i class="bi bi-trash"></i> Xóa xe này</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

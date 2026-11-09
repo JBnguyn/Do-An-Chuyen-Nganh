@@ -14,6 +14,10 @@
     {
         <span class="pcard-tag low">Chỉ còn @p.Stock</span>
     }
+    @if (p.IsGenuine)
+    {
+        <span class="pcard-oem" title="Phụ tùng chính hãng xe (OEM)"><i class="bi bi-patch-check-fill"></i> Chính hãng</span>
+    }
 
     <a asp-controller="Shop" asp-action="Detail" asp-route-id="@p.Id" class="pcard-img">
         @if (!string.IsNullOrEmpty(p.ImageUrl))

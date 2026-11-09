@@ -298,3 +298,67 @@ body.shop { background: var(--shop-bg); color: var(--shop-ink); }
   .chat-fab-label { display: none; }
   .chat-panel { height: calc(100vh - 1.5rem); }
 }
+
+/* ---------- Bảo dưỡng xe ---------- */
+.shop-nav-maint { position: relative; }
+.shop-nav-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 1.25rem; height: 1.25rem; padding: 0 .3rem; margin-left: .25rem; border-radius: 999px; background: #ffc107; color: #000; font-size: .72rem; font-weight: 800; }
+
+.mt-vehicle { display: flex; align-items: center; gap: .75rem; padding: .7rem .85rem; border: 1px solid var(--shop-line); border-radius: .8rem; color: var(--shop-ink); }
+.mt-vehicle:hover { border-color: var(--shop-red); color: var(--shop-ink); }
+.mt-vehicle.active { border-color: var(--shop-red); background: var(--shop-red-soft); }
+.mt-vehicle b { display: block; line-height: 1.25; }
+.mt-vehicle small { color: var(--shop-muted); }
+.mt-vehicle-icon { width: 2.4rem; height: 2.4rem; border-radius: .6rem; background: var(--shop-ink); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.mt-add summary { cursor: pointer; font-weight: 700; color: var(--shop-red); list-style: none; }
+.mt-add summary::-webkit-details-marker { display: none; }
+.mt-empty-icon { width: 5rem; height: 5rem; margin: 0 auto; border-radius: 50%; background: var(--shop-red-soft); color: var(--shop-red); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+
+.mt-hero { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 1rem; color: #fff; background: radial-gradient(circle at 90% 10%, rgba(255,255,255,.12), transparent 40%), linear-gradient(135deg, var(--shop-ink), #343a40); }
+.mt-hero h2 { font-weight: 800; font-size: 1.6rem; }
+.mt-odo { font-size: 2.2rem; font-weight: 800; letter-spacing: .02em; }
+.mt-odo i { color: #ff8a8e; }
+.mt-odo span { font-size: 1rem; font-weight: 600; opacity: .7; }
+.mt-hero-side { min-width: 240px; }
+.mt-km-form label { opacity: .75; }
+.mt-count { font-size: .8rem; font-weight: 700; padding: .25rem .6rem; border-radius: 999px; }
+.mt-count.overdue { background: var(--shop-red); }
+.mt-count.soon { background: #ffc107; color: #000; }
+
+.mt-combo { border: 2px dashed var(--shop-red); }
+.mt-combo-list { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.mt-chip { border: 1px solid var(--shop-line); border-radius: 999px; padding: .3rem .8rem; font-size: .85rem; color: var(--shop-ink); background: #fff; }
+.mt-chip b { color: var(--shop-red); margin-left: .25rem; }
+.mt-chip:hover { border-color: var(--shop-red); color: var(--shop-ink); }
+
+.mt-item { border: 1px solid var(--shop-line); border-left: 5px solid #adb5bd; border-radius: .8rem; padding: .9rem 1rem; }
+.mt-item.overdue { border-left-color: var(--shop-red); background: #fff8f8; }
+.mt-item.soon { border-left-color: #ffc107; background: #fffdf3; }
+.mt-item.ok { border-left-color: #198754; }
+.mt-item-head { display: flex; align-items: center; gap: .75rem; }
+.mt-item-icon { width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--shop-bg); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem; color: var(--shop-red); }
+.mt-state { font-size: .75rem; font-weight: 800; padding: .25rem .6rem; border-radius: 999px; white-space: nowrap; }
+.mt-state.overdue { background: var(--shop-red); color: #fff; }
+.mt-state.soon { background: #ffc107; color: #000; }
+.mt-state.unknown { background: #e9ecef; color: #495057; }
+.mt-state.ok { background: #d1f3e0; color: #146c43; }
+.mt-item-body { margin-left: 3.15rem; margin-top: .5rem; }
+.mt-facts { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .88rem; color: var(--shop-muted); }
+.mt-facts b { color: var(--shop-ink); }
+.mt-facts em { font-style: normal; font-weight: 600; }
+.mt-suggest { display: flex; flex-direction: column; gap: .35rem; margin-top: .6rem; }
+.mt-sp { display: flex; align-items: center; gap: .6rem; padding: .35rem .5rem; background: #fff; border: 1px solid var(--shop-line); border-radius: .6rem; font-size: .88rem; }
+.mt-sp-name { flex: 1; color: var(--shop-ink); font-weight: 600; }
+.mt-sp-name:hover { color: var(--shop-red); }
+.mt-sp-price { color: var(--shop-red); font-weight: 800; white-space: nowrap; }
+.mt-done { margin-top: .6rem; }
+.mt-done summary { cursor: pointer; font-size: .85rem; font-weight: 600; color: #198754; }
+@media (max-width: 575.98px) { .mt-item-body { margin-left: 0; } .mt-odo { font-size: 1.8rem; } }
+
+/* ---------- Chat: gửi ảnh ---------- */
+.chat-attach { width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem; border: 1px solid var(--shop-line) !important; border-radius: 50%; background: #fff !important; color: var(--shop-red) !important; }
+.chat-attach:hover { border-color: var(--shop-red) !important; }
+.chat-img { max-width: 180px; max-height: 180px; border-radius: .8rem; border: 2px solid var(--shop-red); margin-bottom: .3rem; object-fit: cover; }
+
+/* ---------- Nhãn chính hãng xe (OEM) ---------- */
+.pcard-oem { position: absolute; top: .6rem; right: .6rem; z-index: 1; font-size: .7rem; font-weight: 700; padding: .2rem .5rem; border-radius: .4rem; background: #e7f1ff; color: #0b5ed7; }
+.pd-oem-badge { font-size: .78rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px; background: #e7f1ff; color: #0b5ed7; }

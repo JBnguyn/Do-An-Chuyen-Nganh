@@ -1,0 +1,318 @@
+@model DashboardData
+@using AutoPartsManagement.Data.Models.Enums
+@{
+    ViewData["Title"] = "Tổng quan";
+    var json = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+    var daily = System.Text.Json.JsonSerializer.Serialize(Model.RevenueByDay.Select(d => new { label = d.Date.ToString("dd/MM"), revenue = d.Revenue, orders = d.Orders }), json);
+    var byCat = System.Text.Json.JsonSerializer.Serialize(Model.RevenueByCategory.Select(c => new { name = c.Name, value = c.Value }), json);
+    var statuses = System.Text.Json.JsonSerializer.Serialize(Model.StatusCounts.Select(s => new { name = OrderUi.Label(s.Key), value = s.Value }), json);
+    var maxTop = Model.TopProducts.Count == 0 ? 1 : Model.TopProducts.Max(t => t.Quantity);
+    string Pct(double v) => (v >= 0 ? "+" : "") + (v * 100).ToString("0.#") + "%";
+}
+
+<style>
+    .dash-root { --series-1: #2a78d6; --grid: #e9ecef; --ink-2: #52514e; }
+    .kpi { border: 1px solid var(--bs-border-color); border-radius: .8rem; padding: 1rem 1.1rem; background: #fff; height: 100%; }
+    .kpi-label { color: var(--ink-2); font-size: .85rem; }
+    .kpi-value { font-size: 1.6rem; font-weight: 800; line-height: 1.2; margin-top: .2rem; }
+    .kpi-sub { font-size: .8rem; color: var(--ink-2); margin-top: .2rem; }
+    .kpi-up { color: #146c43; font-weight: 700; }
+    .kpi-down { color: #b02a37; font-weight: 700; }
+    .chart-box { position: relative; height: 280px; }
+    .bar-cell { position: relative; }
+    .bar-track { height: 8px; border-radius: 4px; background: var(--grid); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; background: var(--series-1); }
+</style>
+
+<div class="dash-root">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h2 class="mb-0"><i class="bi bi-speedometer2"></i> Tổng quan</h2>
+            <small class="text-muted">Từ @Format.ShortDate(Model.From) đến @Format.ShortDate(Model.To)</small>
+        </div>
+        <div class="btn-group" role="group" aria-label="Khoảng thời gian">
+            @foreach (var d in new[] { 7, 30, 90 })
+            {
+                <a asp-action="Index" asp-route-days="@d" class="btn btn-sm @(Model.Days == d ? "btn-primary" : "btn-outline-primary")">@d ngày</a>
+            }
+        </div>
+    </div>
+
+    @* ===== Chỉ số chính ===== *@
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="kpi">
+                <div class="kpi-label"><i class="bi bi-cash-stack"></i> Doanh thu</div>
+                <div class="kpi-value">@Format.Money(Model.Revenue)</div>
+                <div class="kpi-sub">
+                    @if (Model.RevenueChange is double ch)
+                    {
+                        <span class="@(ch >= 0 ? "kpi-up" : "kpi-down")"><i class="bi @(ch >= 0 ? "bi-arrow-up-right" : "bi-arrow-down-right")"></i> @Pct(ch)</span>
+                        <span> so với @Model.Days ngày trước</span>
+                    }
+                    else
+                    {
+                        <span>Kỳ trước chưa có doanh thu</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi">
+                <div class="kpi-label"><i class="bi bi-receipt"></i> Đơn hàng</div>
+                <div class="kpi-value">@Format.Number(Model.OrderCount)</div>
+                <div class="kpi-sub">Giá trị TB: @Format.Money(Model.AverageOrderValue)</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="text-decoration-none text-reset" asp-controller="Orders" asp-action="Index" asp-route-status="Pending">
+                <div class="kpi">
+                    <div class="kpi-label"><i class="bi bi-hourglass-split"></i> Đơn chờ xác nhận</div>
+                    <div class="kpi-value">@Format.Number(Model.PendingOrders)</div>
+                    <div class="kpi-sub">Tỉ lệ hủy trong kỳ: @((Model.CancelRate * 100).ToString("0.#"))%</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi">
+                <div class="kpi-label"><i class="bi bi-box-seam"></i> Giá trị tồn kho</div>
+                <div class="kpi-value">@Format.Money(Model.InventoryValue)</div>
+                <div class="kpi-sub">Tính theo giá bán · @Format.Number(Model.CustomerCount) khách hàng</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        @* ===== Doanh thu theo ngày ===== *@
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-0">Doanh thu theo ngày</h5>
+                    <small class="text-muted">Đơn không bị hủy, theo ngày đặt hàng</small>
+                    <div class="chart-box mt-2"><canvas id="revenueChart" aria-label="Biểu đồ doanh thu theo ngày" role="img"></canvas></div>
+                </div>
+            </div>
+        </div>
+        @* ===== Trạng thái đơn ===== *@
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-0">Trạng thái đơn trong kỳ</h5>
+                    <small class="text-muted">Số đơn theo trạng thái hiện tại</small>
+                    <div class="chart-box mt-2"><canvas id="statusChart" aria-label="Biểu đồ trạng thái đơn" role="img"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        @* ===== Sản phẩm bán chạy ===== *@
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 sản phẩm bán chạy</h5>
+                    @if (Model.TopProducts.Count == 0)
+                    {
+                        <p class="text-muted mb-0">Chưa có đơn hàng trong kỳ.</p>
+                    }
+                    else
+                    {
+                        <table class="table align-middle mb-0">
+                            <thead><tr><th>Sản phẩm</th><th style="width:35%">Số lượng</th><th class="text-end">Doanh thu</th></tr></thead>
+                            <tbody>
+                                @foreach (var t in Model.TopProducts)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@t.ProductId" class="fw-semibold text-decoration-none">@t.Name</a>
+                                            <div class="small text-muted">@t.PartNumber</div>
+                                        </td>
+                                        <td class="bar-cell">
+                                            <div class="d-flex align-items-center gap-2" title="@t.Quantity sản phẩm">
+                                                <div class="bar-track flex-grow-1"><div class="bar-fill" style="width:@((t.Quantity * 100 / maxTop))%"></div></div>
+                                                <span class="small fw-semibold">@t.Quantity</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end text-nowrap">@Format.Money(t.Revenue)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+        @* ===== Doanh thu theo danh mục ===== *@
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-0">Doanh thu theo danh mục</h5>
+                    <small class="text-muted">Trong kỳ đang xem</small>
+                    @if (Model.RevenueByCategory.Count == 0)
+                    {
+                        <p class="text-muted mt-3 mb-0">Chưa có dữ liệu.</p>
+                    }
+                    else
+                    {
+                        <div class="chart-box mt-2"><canvas id="categoryChart" aria-label="Biểu đồ doanh thu theo danh mục" role="img"></canvas></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        @* ===== Hàng sắp hết ===== *@
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">Hàng sắp hết (@Model.LowStockCount)</h5>
+                        @if (Model.LowStockCount > 0)
+                        {
+                            <a asp-controller="Imports" asp-action="Create" asp-route-lowStock="true" class="btn btn-sm btn-warning"><i class="bi bi-box-arrow-in-down"></i> Nhập hàng</a>
+                        }
+                    </div>
+                    @if (Model.LowStockProducts.Count == 0)
+                    {
+                        <p class="text-muted mb-0"><i class="bi bi-check-circle text-success"></i> Tất cả sản phẩm đều đủ hàng.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var p in Model.LowStockProducts)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>@p.Name <small class="text-muted">· @p.PartNumber</small></span>
+                                    <partial name="~/Views/Products/_StockBadge.cshtml" model="p.Stock" />
+                                </li>
+                            }
+                        </ul>
+                    }
+                    <div class="small text-muted mt-2">Tiền nhập hàng đã nhận trong kỳ: <b>@Format.Money(Model.ImportCost)</b></div>
+                </div>
+            </div>
+        </div>
+        @* ===== Đơn mới nhất ===== *@
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">Đơn hàng mới nhất</h5>
+                        <a asp-controller="Orders" asp-action="Index" class="small">Xem tất cả →</a>
+                    </div>
+                    @if (Model.RecentOrders.Count == 0)
+                    {
+                        <p class="text-muted mb-0">Chưa có đơn hàng.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm align-middle mb-0">
+                            <tbody>
+                                @foreach (var o in Model.RecentOrders)
+                                {
+                                    <tr>
+                                        <td><a asp-controller="Orders" asp-action="Detail" asp-route-id="@o.Id" class="fw-semibold text-decoration-none">#@o.Id</a></td>
+                                        <td>@o.Customer?.Name</td>
+                                        <td class="text-nowrap small text-muted">@Format.DateAndTime(o.OrderDate)</td>
+                                        <td class="text-end text-nowrap">@Format.Money(o.TotalAmount)</td>
+                                        <td class="text-end"><span class="badge @OrderUi.Badge(o.Status)">@OrderUi.Label(o.Status)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            if (!window.Chart) return;
+            var BLUE = '#2a78d6', GRID = '#e9ecef', INK = '#52514e';
+            var money = new Intl.NumberFormat('vi-VN');
+            var short = function (v) {
+                if (v >= 1e9) return (v / 1e9).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' tỷ';
+                if (v >= 1e6) return (v / 1e6).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + ' tr';
+                if (v >= 1e3) return (v / 1e3).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + 'k';
+                return v;
+            };
+            Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+            Chart.defaults.color = INK;
+
+            var daily = @Html.Raw(daily);
+            var byCat = @Html.Raw(byCat);
+            var statuses = @Html.Raw(statuses);
+
+            // --- Doanh thu theo ngày: 1 đường, 1 trục ---
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'line',
+                data: {
+                    labels: daily.map(function (d) { return d.label; }),
+                    datasets: [{
+                        label: 'Doanh thu', data: daily.map(function (d) { return d.revenue; }),
+                        borderColor: BLUE, backgroundColor: 'rgba(42,120,214,.10)', fill: true,
+                        borderWidth: 2, tension: .25, pointRadius: 0, pointHoverRadius: 5, pointHitRadius: 12
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: {
+                            label: function (c) { return ' Doanh thu: ' + money.format(c.parsed.y) + ' ₫'; },
+                            afterLabel: function (c) { return ' Số đơn: ' + daily[c.dataIndex].orders; }
+                        } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
+                        y: { beginAtZero: true, grid: { color: GRID }, border: { display: false }, ticks: { callback: short } }
+                    }
+                }
+            });
+
+            // --- Trạng thái đơn: thanh ngang, có số trên tooltip ---
+            new Chart(document.getElementById('statusChart'), {
+                type: 'bar',
+                data: {
+                    labels: statuses.map(function (s) { return s.name; }),
+                    datasets: [{ label: 'Số đơn', data: statuses.map(function (s) { return s.value; }),
+                        backgroundColor: BLUE, borderRadius: 4, barThickness: 18 }]
+                },
+                options: {
+                    indexAxis: 'y', maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: GRID }, border: { display: false }, ticks: { precision: 0 } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // --- Doanh thu theo danh mục: thanh ngang, sắp xếp giảm dần ---
+            var catEl = document.getElementById('categoryChart');
+            if (catEl) new Chart(catEl, {
+                type: 'bar',
+                data: {
+                    labels: byCat.map(function (c) { return c.name; }),
+                    datasets: [{ label: 'Doanh thu', data: byCat.map(function (c) { return c.value; }),
+                        backgroundColor: BLUE, borderRadius: 4, barThickness: 16 }]
+                },
+                options: {
+                    indexAxis: 'y', maintainAspectRatio: false,
+                    plugins: { legend: { display: false },
+                        tooltip: { callbacks: { label: function (c) { return ' ' + money.format(c.parsed.x) + ' ₫'; } } } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: GRID }, border: { display: false }, ticks: { callback: short } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        })();
+    </script>
+}

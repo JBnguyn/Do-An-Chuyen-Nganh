@@ -102,6 +102,23 @@
         bootstrap.Toast.getOrCreateInstance(el, { delay: 2000 }).show();
     }
 
+    // Thêm nhiều sản phẩm một lần (combo bảo dưỡng)
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-add-combo]');
+        if (!btn) return;
+        var list = [];
+        try { list = JSON.parse(btn.dataset.items || '[]'); } catch (err) { list = []; }
+        if (!list.length) return;
+        var items = load();
+        list.forEach(function (it) {
+            var found = items.find(function (x) { return x.id === it.id; });
+            if (found) found.qty = Math.min(found.qty + 1, it.max || 999);
+            else items.push({ id: it.id, name: it.name, price: it.price, img: it.img || '', max: it.max || 999, qty: 1 });
+        });
+        save(items);
+        showToast('Đã thêm ' + list.length + ' sản phẩm của combo vào giỏ');
+    });
+
     document.addEventListener('click', function (e) {
         var addBtn = e.target.closest('[data-add-to-cart]');
         if (addBtn) {

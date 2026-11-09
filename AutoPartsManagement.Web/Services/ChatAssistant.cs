@@ -20,6 +20,9 @@ public record ChatReply(string Reply, List<ChatProduct> Products, bool UsedAi);
 public interface IChatAssistant
 {
     Task<ChatReply> AskAsync(IReadOnlyList<ChatMessage> history, CancellationToken ct = default);
+
+    /// <summary>Nhận diện phụ tùng trong ảnh (cần API key) rồi tìm sản phẩm tương ứng trong kho.</summary>
+    Task<ChatReply> IdentifyImageAsync(byte[] image, string mediaType, string? note, CancellationToken ct = default);
 }
 
 /// <summary>
@@ -97,6 +100,124 @@ public class ChatAssistant : IChatAssistant
         return FallbackReply(question, products, fromContext, messages.Count(m => m.Role == "user"));
     }
 
+    // ===== Tìm phụ tùng bằng ảnh =====
+
+    public async Task<ChatReply> IdentifyImageAsync(byte[] image, string mediaType, string? note, CancellationToken ct = default)
+    {
+        var apiKey = _config["Anthropic:ApiKey"];
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return new ChatReply(
+                "Tính năng tìm bằng ảnh cần bật trợ lý AI nên hiện chưa dùng được bạn ơi. " +
+                "Bạn gõ giúp mình tên phụ tùng hoặc mã in trên vỏ (vd: IK20TT, 04465-0D020) là mình tìm liền nha!",
+                new(), false);
+        }
+
+        var prompt =
+            "Đây là ảnh khách gửi cho cửa hàng phụ tùng ô tô. Hãy nhận diện phụ tùng trong ảnh. " +
+            "Nếu thấy chữ / mã in trên sản phẩm hoặc tem nhãn thì đọc chính xác. " +
+            (string.IsNullOrWhiteSpace(note) ? "" : $"Khách ghi thêm: \"{note.Trim()}\". ") +
+            "Chỉ trả về đúng một đối tượng JSON, không giải thích thêm, theo mẫu: " +
+            "{\"is_car_part\": true, \"part_name_vi\": \"tên phụ tùng tiếng Việt, vd: má phanh, bugi, lọc gió\", " +
+            "\"part_number\": \"mã đọc được hoặc null\", \"brand\": \"hãng đọc được hoặc null\", " +
+            "\"vehicle_hint\": \"dòng xe nếu thấy hoặc null\", \"keywords\": [\"từ khóa tìm kiếm tiếng Việt\"], " +
+            "\"confidence\": \"cao | trung bình | thấp\", \"note\": \"một câu mô tả ngắn tình trạng / đặc điểm\"}";
+
+        var body = new
+        {
+            model = _config["Anthropic:Model"] ?? "claude-haiku-5-5",
+            max_tokens = 400,
+            messages = new object[]
+            {
+                new
+                {
+                    role = "user",
+                    content = new object[]
+                    {
+                        new { type = "image", source = new { type = "base64", media_type = mediaType, data = Convert.ToBase64String(image) } },
+                        new { type = "text", text = prompt }
+                    }
+                }
+            }
+        };
+
+        ImageIdentification? info = null;
+        try
+        {
+            var text = await SendAsync(apiKey, body, ct);
+            info = ParseIdentification(text);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
+        {
+            _logger.LogWarning(ex, "Nhận diện ảnh thất bại.");
+        }
+
+        if (info == null)
+            return new ChatReply("Xin lỗi, mình chưa xem được ảnh này. Bạn thử chụp lại rõ hơn, hoặc gõ tên phụ tùng giúp mình nha.", new(), true);
+
+        if (info.IsCarPart == false)
+            return new ChatReply("Hmm, mình chưa nhận ra phụ tùng ô tô nào trong ảnh này. Bạn chụp gần món phụ tùng, hoặc chụp tem mã trên hộp giúp mình nha.", new(), true);
+
+        // Tìm trong kho theo mã, hãng, tên và từ khóa AI đưa ra
+        var query = string.Join(" ", new[] { info.PartNumber, info.Brand, info.PartNameVi, info.VehicleHint }
+            .Concat(info.Keywords ?? new List<string>())
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
+        var products = await FindProductsAsync(query, ct);
+
+        var name = string.IsNullOrWhiteSpace(info.PartNameVi) ? "một phụ tùng ô tô" : info.PartNameVi.Trim();
+        var sb = new StringBuilder();
+        sb.Append($"Ảnh này trông giống {name}");
+        if (!string.IsNullOrWhiteSpace(info.Brand)) sb.Append($" hãng {info.Brand.Trim()}");
+        if (!string.IsNullOrWhiteSpace(info.PartNumber)) sb.Append($", mình đọc được mã {info.PartNumber.Trim()}");
+        sb.Append(". ");
+        if (!string.IsNullOrWhiteSpace(info.Note)) sb.Append(info.Note.Trim().TrimEnd('.') + ". ");
+
+        if (products.Count > 0)
+            sb.Append(products.Count == 1
+                ? "Bên mình có món này nè, bạn xem bên dưới nha."
+                : $"Bên mình có {products.Count} món phù hợp, bạn xem bên dưới nha.");
+        else
+            sb.Append($"Tiếc là món này chưa có trên web. Bạn gọi {Helpers.ShopUi.Hotline} để bên mình kiểm tra kho giúp nha.");
+
+        if (string.Equals(info.Confidence?.Trim(), "thấp", StringComparison.OrdinalIgnoreCase))
+            sb.Append(" Mình chưa chắc lắm, bạn chụp rõ tem mã hoặc cho mình biết dòng xe để mình tìm chính xác hơn nhé.");
+        else if (products.Count > 0 && string.IsNullOrWhiteSpace(info.VehicleHint))
+            sb.Append(" Bạn đi xe gì để mình kiểm tra món nào lắp vừa nha?");
+
+        return new ChatReply(sb.ToString(), products.Take(5).ToList(), true);
+    }
+
+    private sealed class ImageIdentification
+    {
+        [JsonPropertyName("is_car_part")] public bool? IsCarPart { get; set; }
+        [JsonPropertyName("part_name_vi")] public string? PartNameVi { get; set; }
+        [JsonPropertyName("part_number")] public string? PartNumber { get; set; }
+        [JsonPropertyName("brand")] public string? Brand { get; set; }
+        [JsonPropertyName("vehicle_hint")] public string? VehicleHint { get; set; }
+        [JsonPropertyName("keywords")] public List<string>? Keywords { get; set; }
+        [JsonPropertyName("confidence")] public string? Confidence { get; set; }
+        [JsonPropertyName("note")] public string? Note { get; set; }
+    }
+
+    /// <summary>Lấy đối tượng JSON trong câu trả lời của AI (bỏ phần chữ thừa nếu có).</summary>
+    private static ImageIdentification? ParseIdentification(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return null;
+        var start = text.IndexOf('{');
+        var end = text.LastIndexOf('}');
+        if (start < 0 || end <= start) return null;
+        var json = text[start..(end + 1)];
+        var info = JsonSerializer.Deserialize<ImageIdentification>(json);
+        if (info == null) return null;
+        // "null" dạng chuỗi -> null thật
+        static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) || s.Trim().Equals("null", StringComparison.OrdinalIgnoreCase) ? null : s;
+        info.PartNumber = Clean(info.PartNumber);
+        info.Brand = Clean(info.Brand);
+        info.VehicleHint = Clean(info.VehicleHint);
+        info.Note = Clean(info.Note);
+        return info;
+    }
+
     // ===== Tìm sản phẩm liên quan =====
 
     private async Task<List<ChatProduct>> FindProductsAsync(string question, CancellationToken ct)
@@ -108,7 +229,8 @@ public class ChatAssistant : IChatAssistant
             {
                 p.Id, p.Name, p.PartNumber, p.Price, p.Stock, p.ImageUrl,
                 Category = p.Category!.Name,
-                Brand = p.Brand!.Name
+                Brand = p.Brand!.Name,
+                p.OemNumber
             })
             .Take(1000)
             .ToListAsync(ct);
@@ -123,7 +245,7 @@ public class ChatAssistant : IChatAssistant
         var scored = all
             .Select(p =>
             {
-                var text = Normalize($"{p.Name} {p.PartNumber} {p.Category} {p.Brand}");
+                var text = Normalize($"{p.Name} {p.PartNumber} {p.OemNumber} {p.Category} {p.Brand}");
                 var tokens = text.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
                 var score = 0;
                 foreach (var w in words)
@@ -179,7 +301,6 @@ public class ChatAssistant : IChatAssistant
     private async Task<string?> CallClaudeAsync(string apiKey, List<ChatMessage> messages, List<ChatProduct> products, CancellationToken ct)
     {
         var model = _config["Anthropic:Model"] ?? "claude-haiku-5-5";
-        var version = _config["Anthropic:Version"] ?? "2026-10-21";
 
         var body = new
         {
@@ -188,7 +309,13 @@ public class ChatAssistant : IChatAssistant
             system = BuildSystemPrompt(products),
             messages = messages.Select(m => new { role = m.Role, content = m.Content })
         };
+        return await SendAsync(apiKey, body, ct);
+    }
 
+    /// <summary>Gửi yêu cầu tới Claude Messages API, trả về đoạn text đầu tiên (null nếu lỗi).</summary>
+    private async Task<string?> SendAsync(string apiKey, object body, CancellationToken ct)
+    {
+        var version = _config["Anthropic:Version"] ?? "2026-10-21";
         using var req = new HttpRequestMessage(HttpMethod.Post, "https://api.anthropic.com/v1/messages")
         {
             Content = JsonContent.Create(body)

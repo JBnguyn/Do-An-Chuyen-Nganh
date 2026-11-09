@@ -27,7 +27,8 @@ public class ProductService : IProductService
         if (!string.IsNullOrWhiteSpace(filter.Search))
         {
             var s = filter.Search.Trim();
-            query = query.Where(p => p.Name.Contains(s) || p.PartNumber.Contains(s));
+            query = query.Where(p => p.Name.Contains(s) || p.PartNumber.Contains(s)
+                                  || (p.OemNumber != null && p.OemNumber.Contains(s)));
         }
 
         // --- Lọc ---
@@ -39,6 +40,9 @@ public class ProductService : IProductService
 
         if (filter.IsActive.HasValue)
             query = query.Where(p => p.IsActive == filter.IsActive.Value);
+
+        if (filter.Genuine.HasValue)
+            query = query.Where(p => p.IsGenuine == filter.Genuine.Value);
 
         const int low = InventoryRules.LowStockThreshold;
         query = filter.StockStatus switch
@@ -121,6 +125,9 @@ public class ProductService : IProductService
         entity.ImageUrl = product.ImageUrl;
         entity.WarrantyMonths = product.WarrantyMonths;
         entity.IsActive = product.IsActive;
+        entity.Origin = product.Origin;
+        entity.OemNumber = product.OemNumber;
+        entity.IsGenuine = product.IsGenuine;
         entity.UpdatedAt = DateTime.Now;
         // Không cập nhật entity.Stock: tồn kho chỉ thay đổi qua nhập / xuất kho.
 
@@ -174,5 +181,7 @@ public class ProductService : IProductService
         p.PartNumber = p.PartNumber.Trim().ToUpperInvariant();
         p.Description = string.IsNullOrWhiteSpace(p.Description) ? null : p.Description.Trim();
         p.ImageUrl = string.IsNullOrWhiteSpace(p.ImageUrl) ? null : p.ImageUrl.Trim();
+        p.Origin = string.IsNullOrWhiteSpace(p.Origin) ? null : p.Origin.Trim();
+        p.OemNumber = string.IsNullOrWhiteSpace(p.OemNumber) ? null : p.OemNumber.Trim().ToUpperInvariant();
     }
 }

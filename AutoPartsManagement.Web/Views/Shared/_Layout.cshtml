@@ -33,8 +33,18 @@
                         @if (User.IsInRole(AppRoles.Admin))
                         {
                             <li class="nav-item">
+                                <a class="nav-link @Active("Dashboard")" asp-area="" asp-controller="Dashboard" asp-action="Index">
+                                    <i class="bi bi-speedometer2"></i> Tổng quan
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link @Active("Orders")" asp-area="" asp-controller="Orders" asp-action="Index">
                                     <i class="bi bi-clipboard-check"></i> Đơn hàng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Imports")" asp-area="" asp-controller="Imports" asp-action="Index">
+                                    <i class="bi bi-box-arrow-in-down"></i> Nhập kho
                                 </a>
                             </li>
                         }

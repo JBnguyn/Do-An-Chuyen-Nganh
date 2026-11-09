@@ -29,12 +29,12 @@
     @* ===== Header ===== *@
     <header class="shop-header">
         <div class="container d-flex align-items-center gap-3 gap-lg-4">
-            <a asp-controller="Shop" asp-action="Index" class="shop-logo">
+            <a asp-area="" asp-controller="Shop" asp-action="Index" class="shop-logo">
                 <span class="shop-logo-icon"><i class="bi bi-gear-wide-connected"></i></span>
                 <span>3H <b>AUTO</b></span>
             </a>
 
-            <form class="shop-search d-none d-md-flex" method="get" asp-controller="Shop" asp-action="Search">
+            <form class="shop-search d-none d-md-flex" method="get" asp-area="" asp-controller="Shop" asp-action="Search">
                 <input type="search" name="search" value="@currentSearch" class="form-control" placeholder="Tìm theo tên, mã phụ tùng hoặc dòng xe (vd: Vios, bugi, IK20TT)" />
                 <button type="submit" class="btn" aria-label="Tìm kiếm"><i class="bi bi-search"></i></button>
             </form>
@@ -64,11 +64,12 @@
                                     <span class="badge bg-secondary">Khách hàng</span>
                                 }
                             </li>
-                            <li><a class="dropdown-item" asp-controller="MyOrders" asp-action="Index"><i class="bi bi-receipt"></i> Đơn hàng của tôi</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="MyOrders" asp-action="Index"><i class="bi bi-receipt"></i> Đơn hàng của tôi</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Maintenance" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Xe của tôi & bảo dưỡng</a></li>
                             @if (isAdmin)
                             {
-                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index"><i class="bi bi-clipboard-check"></i> Quản lý đơn hàng</a></li>
-                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index"><i class="bi bi-speedometer2"></i> Trang quản trị</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Orders" asp-action="Index"><i class="bi bi-clipboard-check"></i> Quản lý đơn hàng</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i> Trang quản trị</a></li>
                             }
                             <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="bi bi-gear"></i> Tài khoản</a></li>
                             <li><hr class="dropdown-divider" /></li>
@@ -95,7 +96,7 @@
 
         @* Ô tìm kiếm trên điện thoại *@
         <div class="container d-md-none mt-2">
-            <form class="shop-search d-flex" method="get" asp-controller="Shop" asp-action="Search">
+            <form class="shop-search d-flex" method="get" asp-area="" asp-controller="Shop" asp-action="Search">
                 <input type="search" name="search" value="@currentSearch" class="form-control" placeholder="Tìm phụ tùng..." />
                 <button type="submit" class="btn" aria-label="Tìm kiếm"><i class="bi bi-search"></i></button>
             </form>
@@ -105,16 +106,20 @@
     @* ===== Menu danh mục ===== *@
     <nav class="shop-nav">
         <div class="container d-flex align-items-center">
-            <a asp-controller="Shop" asp-action="Search" class="shop-nav-all"><i class="bi bi-list"></i> Tất cả sản phẩm</a>
+            <a asp-area="" asp-controller="Shop" asp-action="Search" class="shop-nav-all"><i class="bi bi-list"></i> Tất cả sản phẩm</a>
             <div class="shop-nav-links">
-                <a asp-controller="Shop" asp-action="Index">Trang chủ</a>
-                <a asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a>
-                <a asp-controller="Shop" asp-action="Search" asp-route-stockStatus="low">Sắp hết hàng</a>
-                <a asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a>
-                <a asp-controller="MyOrders" asp-action="Index">Đơn hàng của tôi</a>
+                <a asp-area="" asp-controller="Shop" asp-action="Index">Trang chủ</a>
+                <a asp-area="" asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a>
+                <a asp-area="" asp-controller="Shop" asp-action="Search" asp-route-stockStatus="low">Sắp hết hàng</a>
+                <a asp-area="" asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a>
+                <a asp-area="" asp-controller="MyOrders" asp-action="Index">Đơn hàng của tôi</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    @await Component.InvokeAsync("MaintenanceBadge")
+                }
                 @if (isAdmin)
                 {
-                    <a asp-controller="Products" asp-action="Index" class="shop-nav-admin"><i class="bi bi-speedometer2"></i> Quản trị</a>
+                    <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="shop-nav-admin"><i class="bi bi-speedometer2"></i> Quản trị</a>
                 }
             </div>
         </div>
@@ -150,9 +155,9 @@
                 <div class="col-6 col-lg-2">
                     <h6>Mua sắm</h6>
                     <ul>
-                        <li><a asp-controller="Shop" asp-action="Search">Tất cả sản phẩm</a></li>
-                        <li><a asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a></li>
-                        <li><a asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a></li>
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Search">Tất cả sản phẩm</a></li>
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Search" asp-route-sortBy="newest">Hàng mới</a></li>
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Search" asp-route-sortBy="price">Giá tốt</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-lg-3">
@@ -189,7 +194,7 @@
                     <span>Tạm tính</span>
                     <strong class="text-danger fs-5" data-cart-total>0 ₫</strong>
                 </div>
-                <a class="btn btn-shop btn-lg w-100 mb-2" asp-controller="Checkout" asp-action="Index" data-cart-checkout><i class="bi bi-bag-check"></i> Đặt hàng</a>
+                <a class="btn btn-shop btn-lg w-100 mb-2" asp-area="" asp-controller="Checkout" asp-action="Index" data-cart-checkout><i class="bi bi-bag-check"></i> Đặt hàng</a>
                 <p class="small text-muted mb-2">Thanh toán khi nhận hàng. Hotline hỗ trợ: <b>@ShopUi.Hotline</b></p>
                 <button type="button" class="btn btn-outline-secondary w-100" data-cart-clear>Xóa giỏ hàng</button>
             </div>

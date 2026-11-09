@@ -1,0 +1,8 @@
+@model int
+<a asp-area="" asp-controller="Maintenance" asp-action="Index" class="shop-nav-maint">
+    <i class="bi bi-wrench-adjustable"></i> Bảo dưỡng xe
+    @if (Model > 0)
+    {
+        <span class="shop-nav-badge" title="@Model hạng mục sắp đến hạn hoặc quá hạn">@Model</span>
+    }
+</a>

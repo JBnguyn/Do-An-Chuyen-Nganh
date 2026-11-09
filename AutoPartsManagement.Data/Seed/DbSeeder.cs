@@ -50,17 +50,17 @@ public static class DbSeeder
         // --- Phụ tùng ---
         db.Products.AddRange(
             new Product { Name = "Phuộc nhún trước Toyota Vios 2014-2021 KYB Gas Shock", PartNumber = "333338-KYB", Category = treo, Brand = kyb, Price = 1350000, Stock = 12, WarrantyMonths = 12 },
-            new Product { Name = "Bộ ly hợp mâm ép lá côn Toyota Innova 2.0", PartNumber = "DTX-136", Category = lyHop, Brand = aisin, Price = 3200000, Stock = 4, WarrantyMonths = 12 },
-            new Product { Name = "Má phanh trước Toyota Vios / Yaris", PartNumber = "04465-0D020", Category = phanh, Brand = toyota, Price = 850000, Stock = 25, WarrantyMonths = 6 },
-            new Product { Name = "Đĩa phanh trước Brembo Mazda 3", PartNumber = "09.A968.11", Category = phanh, Brand = brembo, Price = 1650000, Stock = 0, WarrantyMonths = 12 },
+            new Product { Name = "Bộ ly hợp mâm ép lá côn Toyota Innova 2.0", PartNumber = "DTX-136", Category = lyHop, Brand = aisin, Price = 3200000, Stock = 30, WarrantyMonths = 12 },
+            new Product { Name = "Má phanh trước Toyota Vios / Yaris", PartNumber = "04465-0D020", Category = phanh, Brand = toyota, Price = 850000, Stock = 25, WarrantyMonths = 6, IsGenuine = true, OemNumber = "04465-0D020" },
+            new Product { Name = "Đĩa phanh trước Brembo Mazda 3", PartNumber = "09.A968.11", Category = phanh, Brand = brembo, Price = 1650000, Stock = 30, WarrantyMonths = 12 },
             new Product { Name = "Bugi Iridium NGK ILKAR7B11", PartNumber = "ILKAR7B11", Category = dongCo, Brand = ngk, Price = 320000, Stock = 60, WarrantyMonths = 6 },
-            new Product { Name = "Bugi Iridium Denso IK20TT", PartNumber = "IK20TT", Category = dongCo, Brand = denso, Price = 280000, Stock = 3, WarrantyMonths = 6 },
+            new Product { Name = "Bugi Iridium Denso IK20TT", PartNumber = "IK20TT", Category = dongCo, Brand = denso, Price = 280000, Stock = 30, WarrantyMonths = 6 },
             new Product { Name = "Lọc gió động cơ Bosch Honda City", PartNumber = "F026400358", Category = loc, Brand = bosch, Price = 210000, Stock = 40, WarrantyMonths = 3 },
-            new Product { Name = "Lọc dầu Toyota chính hãng", PartNumber = "90915-YZZE1", Category = loc, Brand = toyota, Price = 120000, Stock = 80, WarrantyMonths = 3 },
-            new Product { Name = "Bơm nước động cơ Aisin Toyota Fortuner", PartNumber = "WPT-190", Category = dongCo, Brand = aisin, Price = 1450000, Stock = 2, WarrantyMonths = 12 },
-            new Product { Name = "Ắc quy Bosch 12V 60Ah", PartNumber = "S4-005", Category = dien, Brand = bosch, Price = 1900000, Stock = 8, WarrantyMonths = 18 },
-            new Product { Name = "Máy phát điện Denso Toyota Corolla Altis", PartNumber = "104210-3470", Category = dien, Brand = denso, Price = 5600000, Stock = 0, WarrantyMonths = 12 },
-            new Product { Name = "Phuộc nhún sau KYB Ford Ranger", PartNumber = "344455-KYB", Category = treo, Brand = kyb, Price = 1550000, Stock = 6, WarrantyMonths = 12 });
+            new Product { Name = "Lọc dầu Toyota chính hãng", PartNumber = "90915-YZZE1", Category = loc, Brand = toyota, Price = 120000, Stock = 80, WarrantyMonths = 3, IsGenuine = true, OemNumber = "90915-YZZE1", Origin = "Thái Lan" },
+            new Product { Name = "Bơm nước động cơ Aisin cho động cơ 2ZR-FXE (Toyota hybrid)", PartNumber = "WPT-190", Category = dongCo, Brand = aisin, Price = 1450000, Stock = 30, WarrantyMonths = 12 },
+            new Product { Name = "Ắc quy Bosch 12V 60Ah", PartNumber = "S4-005", Category = dien, Brand = bosch, Price = 1900000, Stock = 30, WarrantyMonths = 18 },
+            new Product { Name = "Máy phát điện Denso Toyota Corolla Altis", PartNumber = "104210-3470", Category = dien, Brand = denso, Price = 5600000, Stock = 30, WarrantyMonths = 12 },
+            new Product { Name = "Phuộc nhún sau KYB Ford Ranger", PartNumber = "344455-KYB", Category = treo, Brand = kyb, Price = 1550000, Stock = 30, WarrantyMonths = 12 });
 
         await db.SaveChangesAsync();
     }
@@ -80,6 +80,9 @@ public static class DbSeeder
         var loc = await CategoryAsync(db, "Lọc - dầu nhớt", "Lọc gió, lọc dầu, lọc nhiên liệu, dầu máy");
         var dien = await CategoryAsync(db, "Hệ thống điện", "Ắc quy, đèn, máy phát, củ đề");
         var lamMat = await CategoryAsync(db, "Nước làm mát - phụ gia", "Nước làm mát động cơ, phụ gia vệ sinh động cơ");
+        var lop = await CategoryAsync(db, "Lốp - bánh xe", "Lốp (vỏ) xe du lịch, mâm, van, ốc bánh");
+        var den = await CategoryAsync(db, "Đèn - chiếu sáng", "Bóng đèn pha, đèn hậu, đèn xi nhan, đèn sương mù");
+        var kinh = await CategoryAsync(db, "Kính - gương - gạt mưa", "Kính chắn gió, gương chiếu hậu, cần gạt mưa");
 
         var aisin = await BrandAsync(db, "Aisin", "Nhật Bản");
         var kyb = await BrandAsync(db, "KYB", "Nhật Bản");
@@ -87,36 +90,39 @@ public static class DbSeeder
         var mk = await BrandAsync(db, "MK Kashiyama", "Nhật Bản");
         var gsp = await BrandAsync(db, "GSP", null);
         var nisto = await BrandAsync(db, "NISTO", null);
+        var michelin = await BrandAsync(db, "Michelin", "Pháp");
+        var philips = await BrandAsync(db, "Philips", "Hà Lan");
+        var toyota = await BrandAsync(db, "Toyota Genuine Parts", "Nhật Bản");
 
         var products = new List<Product>
         {
             // Ly hợp - truyền động
             P("Mâm ép ly hợp Toyota Vios đời mới", "CTX-175A", lyHop, aisin, 1240000, 10, "Mâm ép (bàn ép) ly hợp Aisin dùng cho Toyota Vios đời mới."),
-            P("Mâm ép ly hợp Toyota Fortuner", "CTX-160A", lyHop, aisin, 1890000, 6, "Mâm ép (bàn ép) ly hợp Aisin dùng cho Toyota Fortuner."),
-            P("Mâm ép ly hợp Toyota Hiace đời 2007 trở lên", "CTX-106A", lyHop, aisin, 2380000, 0, "Mâm ép (bàn ép) ly hợp Aisin dùng cho Toyota Hiace từ đời 2007."),
+            P("Mâm ép ly hợp Toyota Fortuner", "CTX-160A", lyHop, aisin, 1890000, 30, "Mâm ép (bàn ép) ly hợp Aisin dùng cho Toyota Fortuner."),
+            P("Mâm ép ly hợp Toyota Hiace đời 2007 trở lên", "CTX-106A", lyHop, aisin, 2380000, 30, "Mâm ép (bàn ép) ly hợp Aisin dùng cho Toyota Hiace từ đời 2007."),
 
             // Động cơ
             P("Bơm nước động cơ Toyota Vios Aisin", "WPT-111V", dongCo, aisin, 550000, 15, "Bơm nước làm mát động cơ Aisin dùng cho Toyota Vios."),
-            P("Cao su chân máy Toyota Camry ACV40 2007", "EMTT-0015", dongCo, aisin, 1050000, 5, "Cao su chân máy (giảm chấn động cơ) Aisin cho Toyota Camry ACV40."),
+            P("Cao su chân máy Toyota Camry ACV40 2007", "EMTT-0015", dongCo, aisin, 1050000, 30, "Cao su chân máy (giảm chấn động cơ) Aisin cho Toyota Camry ACV40."),
             P("Gioăng nắp dàn cò Honda Civic / CR-V", "VGH-5001", dongCo, aisin, 230000, 20, "Gioăng nắp dàn cò (nắp quy lát) Aisin dùng cho Honda Civic, CR-V."),
 
             // Hệ thống treo - gầm
             P("Rô tuyn cân bằng trước Aisin", "JRST-4003", treo, aisin, 320000, 18, "Rô tuyn thanh cân bằng trước Aisin."),
-            P("Bạc đạn bánh trước Toyota Fortuner (có ABS)", "HUBT-0004A", treo, aisin, 1210000, 4, "Bạc đạn (moay ơ) bánh trước Aisin cho Toyota Fortuner có ABS."),
-            P("Cặp phuộc dầu KYB Toyota Camry 2008-2011", "665021JAPAN", treo, kyb, 3100000, 3, "Cặp phuộc nhún dầu KYB sản xuất tại Nhật Bản, dùng cho Toyota Camry 2008-2011. Giá cho 1 cặp."),
+            P("Bạc đạn bánh trước Toyota Fortuner (có ABS)", "HUBT-0004A", treo, aisin, 1210000, 30, "Bạc đạn (moay ơ) bánh trước Aisin cho Toyota Fortuner có ABS."),
+            P("Cặp phuộc dầu KYB Toyota Camry 2008-2011", "665021JAPAN", treo, kyb, 3100000, 30, "Cặp phuộc nhún dầu KYB sản xuất tại Nhật Bản, dùng cho Toyota Camry 2008-2011. Giá cho 1 cặp.", origin: "Nhật Bản"),
             P("Bộ chụp bụi + giảm chấn phuộc trước Toyota Camry", "5408450PK", treo, gsp, 420000, 12, "Bộ gồm 2 chụp bụi và 2 cao su giảm chấn phuộc trước, dùng cho Toyota Camry."),
-            P("Cao su cân bằng trước Mazda 3 / Mazda 6 / CX-5", "BJS7-34-156A", treo, nisto, 80000, 30, "Cao su thanh cân bằng trước cho Mazda 3 (2014-2018), Mazda 6 (2014 trở lên), Mazda CX-5."),
-            P("Cao su càng A trên Toyota Hiace", "48632-26010", treo, nisto, 150000, 14, "Cao su càng A trên (loại nhỏ) dùng cho Toyota Hiace."),
+            P("Cao su cân bằng trước Mazda 3 / Mazda 6 / CX-5", "BJS7-34-156A", treo, nisto, 80000, 30, "Cao su thanh cân bằng trước cho Mazda 3 (2014-2018), Mazda 6 (2014 trở lên), Mazda CX-5.", oem: "BJS7-34-156A"),
+            P("Cao su càng A trên Toyota Hiace", "48632-26010", treo, nisto, 150000, 14, "Cao su càng A trên (loại nhỏ) dùng cho Toyota Hiace.", oem: "48632-26010"),
 
             // Hệ thống phanh
             P("Má phanh trước Toyota Fortuner MK Kashiyama", "D-2228", phanh, mk, 620000, 16, "Bố thắng (má phanh) trước MK Kashiyama cho Toyota Fortuner. Giá cho 1 bộ."),
             P("Má phanh trước Toyota Wigo MK Kashiyama", "D-0034", phanh, mk, 570000, 10, "Bố thắng (má phanh) trước MK Kashiyama cho Toyota Wigo. Giá cho 1 bộ."),
-            P("Má phanh trước Mitsubishi Xpander / Suzuki Vitara MK Kashiyama", "D-6168", phanh, mk, 600000, 8, "Bố thắng trước MK Kashiyama cho Mitsubishi Xpander, Suzuki Vitara (đời 2015 trở lên). Giá cho 1 bộ."),
-            P("Má phanh sau Mitsubishi Outlander (phanh tay điện) MK Kashiyama", "D-6161", phanh, mk, 730000, 5, "Bố thắng sau MK Kashiyama cho Mitsubishi Outlander loại phanh tay điện. Giá cho 1 bộ."),
+            P("Má phanh trước Mitsubishi Xpander / Suzuki Vitara MK Kashiyama", "D-6168", phanh, mk, 600000, 30, "Bố thắng trước MK Kashiyama cho Mitsubishi Xpander, Suzuki Vitara (đời 2015 trở lên). Giá cho 1 bộ."),
+            P("Má phanh sau Mitsubishi Outlander (phanh tay điện) MK Kashiyama", "D-6161", phanh, mk, 730000, 30, "Bố thắng sau MK Kashiyama cho Mitsubishi Outlander loại phanh tay điện. Giá cho 1 bộ."),
 
             // Lọc - dầu nhớt
-            P("Dầu hộp số tự động Aisin AFW-VI (can 4L)", "ATFDVI4S", loc, aisin, 1300000, 0, "Dầu hộp số tự động Aisin AFW-VI, can 4 lít."),
-            P("Dầu hộp số thường Aisin GL-5 75W-90 (can 4L)", "GSL57594P", loc, aisin, 1485000, 0, "Dầu hộp số thường / cầu Aisin GL-5 75W-90, can 4 lít."),
+            P("Dầu hộp số tự động Aisin AFW-VI (can 4L)", "ATFDVI4S", loc, aisin, 1300000, 30, "Dầu hộp số tự động Aisin AFW-VI, can 4 lít."),
+            P("Dầu hộp số thường Aisin GL-5 75W-90 (can 4L)", "GSL57594P", loc, aisin, 1485000, 30, "Dầu hộp số thường / cầu Aisin GL-5 75W-90, can 4 lít."),
 
             // Nước làm mát - phụ gia
             P("Nước làm mát Aisin Super Long Life xanh dương 1L", "SCPM50A1LB", lamMat, aisin, 275000, 40, "Nước làm mát pha sẵn Aisin Super Long Life màu xanh dương, can 1 lít."),
@@ -125,7 +131,28 @@ public static class DbSeeder
             P("Phụ gia vệ sinh động cơ Aisin", "ADEAZ-4004", lamMat, aisin, 330000, 22, "Phụ gia vệ sinh động cơ xăng cao cấp Aisin."),
 
             // Hệ thống điện
-            P("Ắc quy Bosch 55D23L 12V 60Ah", "55D23L", dien, bosch, 1690000, 7, "Ắc quy khô (miễn bảo dưỡng) Bosch 12V 60Ah, cọc trái.")
+            P("Ắc quy Bosch 55D23L 12V 60Ah", "55D23L", dien, bosch, 1690000, 30, "Ắc quy khô (miễn bảo dưỡng) Bosch 12V 60Ah, cọc trái."),
+
+            // Lốp - bánh xe
+            P("Lốp Michelin Energy XM2+ 185/60R15 88H (Vios, Yaris, City)", "185/60R15 88H XM2+", lop, michelin, 2140000, 16,
+              "Lốp Michelin Energy XM2+ cỡ 185/60R15, chỉ số tải 88 (560 kg), tốc độ H (210 km/h). Dùng cho Toyota Vios, Toyota Yaris, Honda City, Suzuki Swift, VW Polo. Giá cho 1 lốp.",
+              origin: "Thái Lan"),
+
+            // Đèn - chiếu sáng
+            P("Bóng đèn pha Philips Halogen H4 X-tremeVision 12V 60/55W (hộp 2 bóng)", "12342 XV", den, philips, 684000, 20,
+              "Bóng đèn pha / cos halogen chân H4, tăng sáng, ánh sáng vàng 3500K. Hộp gồm 2 bóng, nên thay theo cặp."),
+            P("Đèn hậu ngoài bên phải Toyota Vios 2014-2017", "81551-0D430", den, toyota, 1600000, 30,
+              "Cụm đèn hậu ngoài bên phải (bên phụ) cho Toyota Vios 1.5 đời 2014-2017. Giá cho 1 chiếc.", oem: "81551-0D430", genuine: true),
+            P("Đèn xi nhan gương chiếu hậu Toyota Vios 2014-2018", "81730-52100", den, toyota, 550000, 10,
+              "Đèn báo rẽ (xi nhan) gắn trên gương chiếu hậu Toyota Vios đời 2014-2018. Giá cho 1 chiếc.", oem: "81730-52100", genuine: true),
+
+            // Kính - gương - gạt mưa
+            P("Gương chiếu hậu Toyota Vios 2017-2020 (kèm xi nhan)", "87910-0D740", kinh, toyota, 2700000, 30,
+              "Cụm gương chiếu hậu ngoài Toyota Vios đời 2017-2020, có đèn xi nhan. Giá tham khảo cho 1 bên, chưa sơn màu theo xe.", oem: "87910-0D740", genuine: true),
+            P("Kính chắn gió trước Toyota Vios", "56101-0D380", kinh, toyota, 3700000, 30,
+              "Kính chắn gió trước chính hãng cho Toyota Vios. Giá chưa gồm công lắp đặt.", oem: "56101-0D380", genuine: true),
+            P("Gạt mưa Bosch AeroTwin Retrofit AR24U (24 inch / 600 mm)", "AR24U", kinh, bosch, 470000, 25,
+              "Lưỡi gạt mưa thân mềm Bosch AeroTwin Retrofit, dài 600 mm (24 inch), mã Bosch 3 397 008 538. Giá cho 1 chiếc, chọn cỡ theo xe.")
         };
 
         var existing = await db.Products.Select(p => p.PartNumber).ToListAsync();
@@ -137,9 +164,13 @@ public static class DbSeeder
         await db.SaveChangesAsync();
     }
 
-    private static Product P(string name, string partNumber, Category category, Brand brand, decimal price, int stock, string description) =>
+    private static Product P(string name, string partNumber, Category category, Brand brand, decimal price, int stock, string description,
+        string? origin = null, string? oem = null, bool genuine = false) =>
         new()
         {
+            Origin = origin,
+            OemNumber = oem,
+            IsGenuine = genuine,
             Name = name,
             PartNumber = partNumber,
             Category = category,

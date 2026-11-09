@@ -18,6 +18,9 @@ public class ProductFilter
     /// <summary>true = đang kinh doanh, false = ngừng kinh doanh, null = tất cả.</summary>
     public bool? IsActive { get; set; }
 
+    /// <summary>true = chỉ hàng chính hãng xe (OEM), false = chỉ hàng thay thế, null = tất cả.</summary>
+    public bool? Genuine { get; set; }
+
     /// <summary>name | name_desc | price | price_desc | stock | stock_desc | newest</summary>
     public string? SortBy { get; set; }
 

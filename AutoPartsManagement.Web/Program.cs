@@ -39,6 +39,9 @@ builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
+builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // === Trợ lý hỏi đáp (khung chat ở góc màn hình) ===
 // Muốn dùng AI: đặt khóa Anthropic:ApiKey bằng User Secrets (không ghi khóa vào appsettings.json).

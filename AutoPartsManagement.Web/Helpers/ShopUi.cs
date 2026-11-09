@@ -23,6 +23,8 @@ public static class ShopUi
         if (n.Contains("treo") || n.Contains("gầm") || n.Contains("lái")) return "bi-car-front";
         if (n.Contains("làm mát")) return "bi-thermometer-snow";
         if (n.Contains("đèn") || n.Contains("chiếu sáng")) return "bi-lightbulb";
+        if (n.Contains("lốp") || n.Contains("bánh xe") || n.Contains("mâm")) return "bi-record-circle";
+        if (n.Contains("kính") || n.Contains("gương") || n.Contains("gạt mưa")) return "bi-window";
         return "bi-box-seam";
     }
 }

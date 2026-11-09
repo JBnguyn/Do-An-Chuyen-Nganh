@@ -2,4 +2,5 @@
   <Project Path="AutoPartsManagement.Data/AutoPartsManagement.Data.csproj" />
   <Project Path="AutoPartsManagement.Services/AutoPartsManagement.Services.csproj" />
   <Project Path="AutoPartsManagement.Web/AutoPartsManagement.Web.csproj" />
+  <Project Path="AutoPartsManagement.Tests/AutoPartsManagement.Tests.csproj" />
 </Solution>

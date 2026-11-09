@@ -35,6 +35,17 @@ public class Product
 
     public string? ImageUrl { get; set; }
 
+    /// <summary>Xuất xứ: nơi sản xuất thực tế của sản phẩm (vd: Thái Lan, Nhật Bản). Null = đang cập nhật.</summary>
+    [StringLength(100)]
+    public string? Origin { get; set; }
+
+    /// <summary>Mã OEM: mã phụ tùng gốc do hãng xe đặt (vd Toyota 04465-0D020) - dùng để tra món tương đương.</summary>
+    [StringLength(50)]
+    public string? OemNumber { get; set; }
+
+    /// <summary>true = phụ tùng chính hãng xe (OEM / "zin"); false = hàng thương hiệu thay thế (aftermarket).</summary>
+    public bool IsGenuine { get; set; }
+
     /// <summary>
     /// Thời gian bảo hành (tháng)
     /// </summary>

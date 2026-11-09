@@ -14,7 +14,8 @@
             ["categoryId"] = f.CategoryId?.ToString(),
             ["brandId"] = f.BrandId?.ToString(),
             ["stockStatus"] = f.StockStatus,
-            ["sortBy"] = f.SortBy
+            ["sortBy"] = f.SortBy,
+            ["genuine"] = f.Genuine?.ToString().ToLowerInvariant()
         };
         values[key] = value?.ToString();
         var query = string.Join("&", values.Where(v => !string.IsNullOrEmpty(v.Value))
@@ -66,6 +67,14 @@
                     <li><a href="@Link("stockStatus", null)" class="@(string.IsNullOrEmpty(f.StockStatus) ? "active" : "")">Tất cả</a></li>
                     <li><a href="@Link("stockStatus", "in")" class="@(f.StockStatus == "in" ? "active" : "")">Còn hàng</a></li>
                     <li><a href="@Link("stockStatus", "low")" class="@(f.StockStatus == "low" ? "active" : "")">Sắp hết</a></li>
+                </ul>
+            </div>
+            <div class="shop-filter">
+                <h6>Loại hàng</h6>
+                <ul class="shop-filter-list">
+                    <li><a href="@Link("genuine", null)" class="@(f.Genuine == null ? "active" : "")">Tất cả</a></li>
+                    <li><a href="@Link("genuine", "true")" class="@(f.Genuine == true ? "active" : "")"><span><i class="bi bi-patch-check-fill text-primary"></i> Chính hãng xe (OEM)</span></a></li>
+                    <li><a href="@Link("genuine", "false")" class="@(f.Genuine == false ? "active" : "")">Thương hiệu thay thế</a></li>
                 </ul>
             </div>
         </aside>

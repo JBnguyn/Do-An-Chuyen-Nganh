@@ -24,6 +24,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<Import> Imports { get; set; }
     public DbSet<ImportDetail> ImportDetails { get; set; }
+    public DbSet<UserVehicle> UserVehicles { get; set; }
+    public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -145,6 +147,22 @@ public class ApplicationDbContext : IdentityDbContext
             entity.HasIndex(c => c.UserId);
         });
 
+        // === Cấu hình bảng UserVehicle (xe của khách) ===
+        modelBuilder.Entity<UserVehicle>(entity =>
+        {
+            entity.HasIndex(v => v.UserId);
+        });
+
+        // === Cấu hình bảng MaintenanceRecord (lịch sử bảo dưỡng) ===
+        modelBuilder.Entity<MaintenanceRecord>(entity =>
+        {
+            // Xóa xe thì xóa luôn lịch sử bảo dưỡng của xe đó
+            entity.HasOne(r => r.UserVehicle)
+                .WithMany(v => v.Records)
+                .HasForeignKey(r => r.UserVehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         // === Đặt tên bảng theo snake_case / quy ước ===
         modelBuilder.Entity<Category>().ToTable("Categories");
         modelBuilder.Entity<Brand>().ToTable("Brands");
@@ -155,5 +173,7 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<OrderDetail>().ToTable("OrderDetails");
         modelBuilder.Entity<Import>().ToTable("Imports");
         modelBuilder.Entity<ImportDetail>().ToTable("ImportDetails");
+        modelBuilder.Entity<UserVehicle>().ToTable("UserVehicles");
+        modelBuilder.Entity<MaintenanceRecord>().ToTable("MaintenanceRecords");
     }
 }

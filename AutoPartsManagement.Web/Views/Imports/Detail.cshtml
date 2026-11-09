@@ -1,0 +1,105 @@
+@model Import
+@using AutoPartsManagement.Data.Models.Enums
+@{
+    ViewData["Title"] = $"Phiếu nhập PN-{Model.Id:D4}";
+    var open = Model.Status is ImportStatus.Pending or ImportStatus.Approved;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Nhập kho</a></li>
+        <li class="breadcrumb-item active" aria-current="page">PN-@Model.Id.ToString("D4")</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0">Phiếu nhập PN-@Model.Id.ToString("D4")</h2>
+    <span class="badge fs-6 @ImportUi.Badge(Model.Status)">@ImportUi.Label(Model.Status)</span>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Hàng nhập</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Phụ tùng</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-end">Giá nhập</th>
+                            <th class="text-end">Thành tiền</th>
+                            <th class="text-center">Tồn hiện tại</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.ImportDetails)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@d.ProductId" class="fw-semibold text-decoration-none">@d.Product?.Name</a>
+                                    <div class="small text-muted">Mã: @d.Product?.PartNumber</div>
+                                </td>
+                                <td class="text-center">@Format.Number(d.Quantity)</td>
+                                <td class="text-end text-nowrap">@Format.Money(d.UnitPrice)</td>
+                                <td class="text-end text-nowrap fw-semibold">@Format.Money(d.Quantity * d.UnitPrice)</td>
+                                <td class="text-center"><partial name="~/Views/Products/_StockBadge.cshtml" model="d.Product?.Stock ?? 0" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Tổng tiền</td>
+                            <td class="text-end fw-bold fs-5 text-danger">@Format.Money(Model.TotalAmount)</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header fw-semibold">Thông tin phiếu</div>
+            <div class="card-body">
+                <p class="mb-1"><b>Nhà cung cấp:</b> @Model.Supplier?.Name</p>
+                <p class="mb-1"><b>Điện thoại:</b> @Model.Supplier?.Phone</p>
+                <p class="mb-1"><b>Ngày lập:</b> @Format.DateAndTime(Model.ImportDate)</p>
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <p class="mb-0" style="white-space:pre-line"><b>Ghi chú:</b> @Model.Notes</p>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Xử lý phiếu</div>
+            <div class="card-body d-grid gap-2">
+                @if (!open)
+                {
+                    <p class="text-muted mb-0">
+                        @(Model.Status == ImportStatus.Received ? "Phiếu đã nhận hàng, tồn kho đã được cộng." : "Phiếu đã bị hủy.")
+                    </p>
+                }
+                else
+                {
+                    @if (Model.Status == ImportStatus.Pending)
+                    {
+                        <form asp-action="Approve" asp-route-id="@Model.Id" method="post">
+                            <button class="btn btn-outline-primary w-100"><i class="bi bi-check2"></i> Duyệt phiếu</button>
+                        </form>
+                    }
+                    <form asp-action="Receive" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Xác nhận đã nhận đủ hàng? Tồn kho sẽ được cộng thêm.');">
+                        <button class="btn btn-success w-100"><i class="bi bi-box-seam"></i> Xác nhận đã nhận hàng</button>
+                    </form>
+                    <form asp-action="Cancel" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Hủy phiếu nhập này?');">
+                        <button class="btn btn-outline-danger w-100"><i class="bi bi-x-circle"></i> Hủy phiếu</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

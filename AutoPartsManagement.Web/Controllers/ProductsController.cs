@@ -69,7 +69,7 @@ public class ProductsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Name,PartNumber,CategoryId,BrandId,Price,Stock,Description,ImageUrl,WarrantyMonths,IsActive")] Product product,
+        [Bind("Name,PartNumber,CategoryId,BrandId,Price,Stock,Description,ImageUrl,WarrantyMonths,IsActive,Origin,OemNumber,IsGenuine")] Product product,
         IFormFile? imageFile)
     {
         ValidateImage(imageFile);
@@ -114,7 +114,7 @@ public class ProductsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
         int id,
-        [Bind("Id,Name,PartNumber,CategoryId,BrandId,Price,Description,ImageUrl,WarrantyMonths,IsActive")] Product product,
+        [Bind("Id,Name,PartNumber,CategoryId,BrandId,Price,Description,ImageUrl,WarrantyMonths,IsActive,Origin,OemNumber,IsGenuine")] Product product,
         IFormFile? imageFile)
     {
         if (id != product.Id) return BadRequest();

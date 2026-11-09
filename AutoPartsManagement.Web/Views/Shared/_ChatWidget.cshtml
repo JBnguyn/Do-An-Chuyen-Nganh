@@ -1,5 +1,5 @@
 @* Khung chat trợ lý ở góc phải màn hình cửa hàng *@
-<div class="chat-widget" data-chat data-ask-url="@Url.Action("Ask", "Chat")">
+<div class="chat-widget" data-chat data-ask-url="@Url.Action("Ask", "Chat", new { area = "" })" data-image-url="@Url.Action("AskImage", "Chat", new { area = "" })">
     @Html.AntiForgeryToken()
 
     <button type="button" class="chat-fab" data-chat-toggle aria-label="Mở trợ lý hỏi đáp">
@@ -25,9 +25,12 @@
             <button type="button" data-chat-quick>Bugi Iridium giá bao nhiêu?</button>
             <button type="button" data-chat-quick>Nước làm mát</button>
             <button type="button" data-chat-quick>Cách đặt hàng?</button>
+            <button type="button" data-chat-photo><i class="bi bi-camera"></i> Tìm bằng ảnh</button>
         </div>
 
         <form class="chat-input" data-chat-form>
+            <button type="button" class="chat-attach" data-chat-photo title="Gửi ảnh phụ tùng để tìm" aria-label="Gửi ảnh phụ tùng"><i class="bi bi-camera"></i></button>
+            <input type="file" accept="image/*" hidden data-chat-file />
             <input type="text" maxlength="500" placeholder="Nhập câu hỏi..." aria-label="Câu hỏi" data-chat-text autocomplete="off" />
             <button type="submit" aria-label="Gửi"><i class="bi bi-send-fill"></i></button>
         </form>

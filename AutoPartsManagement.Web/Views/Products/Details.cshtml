@@ -52,6 +52,15 @@
                     <dt class="col-sm-4">Hãng sản xuất</dt>
                     <dd class="col-sm-8">@Model.Brand?.Name @(Model.Brand?.Country is string c ? $"({c})" : "")</dd>
 
+                    <dt class="col-sm-4">Loại hàng</dt>
+                    <dd class="col-sm-8">@(Model.IsGenuine ? "Chính hãng xe (OEM)" : "Thương hiệu thay thế")</dd>
+
+                    <dt class="col-sm-4">Mã OEM</dt>
+                    <dd class="col-sm-8">@(Model.OemNumber ?? "—")</dd>
+
+                    <dt class="col-sm-4">Xuất xứ</dt>
+                    <dd class="col-sm-8">@(Model.Origin ?? "Đang cập nhật")</dd>
+
                     <dt class="col-sm-4">Bảo hành</dt>
                     <dd class="col-sm-8">@(Model.WarrantyMonths.HasValue ? $"{Model.WarrantyMonths} tháng" : "—")</dd>
 
@@ -74,6 +83,7 @@
         @if (User.IsInRole(AppRoles.Admin))
         {
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil"></i> Sửa</a>
+            <a asp-controller="Imports" asp-action="Create" asp-route-productId="@Model.Id" class="btn btn-success"><i class="bi bi-box-arrow-in-down"></i> Nhập thêm hàng</a>
             <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Xóa</a>
         }
         <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>

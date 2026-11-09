@@ -1,0 +1,40 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Hồ sơ";
+    ViewData["ActivePage"] = "Index";
+}
+
+<h1 class="shop-section-title mb-1">Hồ sơ</h1>
+<p class="text-muted mb-4">Thông tin tài khoản của bạn.</p>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert @(Model.StatusMessage.StartsWith("Lỗi") ? "alert-danger" : "alert-success") py-2">@Model.StatusMessage</div>
+}
+
+<form method="post" style="max-width: 480px">
+    <div asp-validation-summary="ModelOnly" class="text-danger small" role="alert"></div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Tên đăng nhập</label>
+        <input value="@Model.Username" class="form-control" disabled />
+        <div class="form-text">Tên đăng nhập không thể thay đổi.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.PhoneNumber" class="form-label fw-semibold">Số điện thoại</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Vd: 0912345678" inputmode="tel" />
+        </div>
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+        <div class="form-text">Dùng để cửa hàng liên hệ khi cần.</div>
+    </div>
+
+    <button id="update-profile-button" type="submit" class="btn btn-shop px-4"><i class="bi bi-save"></i> Lưu thay đổi</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

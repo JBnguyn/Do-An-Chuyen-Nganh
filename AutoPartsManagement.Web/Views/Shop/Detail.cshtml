@@ -33,15 +33,22 @@
             </div>
 
             <div class="col-md-7">
-                <a class="pcard-brand" asp-action="Search" asp-route-brandId="@p.BrandId">@p.Brand?.Name</a>
+                <div class="d-flex align-items-center gap-2">
+                    <a class="pcard-brand" asp-action="Search" asp-route-brandId="@p.BrandId">@p.Brand?.Name</a>
+                    @if (p.IsGenuine)
+                    {
+                        <span class="pd-oem-badge"><i class="bi bi-patch-check-fill"></i> Chính hãng xe</span>
+                    }
+                </div>
                 <h1 class="pd-title mt-1">@p.Name</h1>
                 <div class="pd-meta">
                     <span>Mã phụ tùng: <b>@p.PartNumber</b></span>
                     <span>Danh mục: <b>@p.Category?.Name</b></span>
-                    @if (p.Brand?.Country != null)
+                    @if (!string.IsNullOrEmpty(p.OemNumber) && p.OemNumber != p.PartNumber)
                     {
-                        <span>Xuất xứ hãng: <b>@p.Brand.Country</b></span>
+                        <span>Mã OEM: <b>@p.OemNumber</b></span>
                     }
+                    <span>Xuất xứ: <b>@(p.Origin ?? "Đang cập nhật")</b></span>
                 </div>
 
                 <div class="pd-price">
@@ -113,7 +120,10 @@
                 <table class="table table-sm pd-spec mb-0">
                     <tbody>
                         <tr><th>Mã phụ tùng</th><td>@p.PartNumber</td></tr>
-                        <tr><th>Thương hiệu</th><td>@p.Brand?.Name</td></tr>
+                        <tr><th>Mã OEM (hãng xe)</th><td>@(p.OemNumber ?? "—")</td></tr>
+                        <tr><th>Thương hiệu</th><td>@p.Brand?.Name @(p.Brand?.Country is string bc ? $"({bc})" : "")</td></tr>
+                        <tr><th>Xuất xứ (nơi sản xuất)</th><td>@(p.Origin ?? "Đang cập nhật")</td></tr>
+                        <tr><th>Loại hàng</th><td>@(p.IsGenuine ? "Chính hãng xe (OEM)" : "Thương hiệu thay thế (aftermarket)")</td></tr>
                         <tr><th>Danh mục</th><td>@p.Category?.Name</td></tr>
                         <tr><th>Bảo hành</th><td>@(p.WarrantyMonths.HasValue ? $"{p.WarrantyMonths} tháng" : "—")</td></tr>
                         <tr><th>Tình trạng</th><td>@(outOfStock ? "Tạm hết hàng" : "Còn hàng")</td></tr>
