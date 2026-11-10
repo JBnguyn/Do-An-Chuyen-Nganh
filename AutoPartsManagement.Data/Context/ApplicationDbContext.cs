@@ -26,6 +26,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<ImportDetail> ImportDetails { get; set; }
     public DbSet<UserVehicle> UserVehicles { get; set; }
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -163,6 +164,13 @@ public class ApplicationDbContext : IdentityDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        // === Cấu hình bảng Notification (thông báo cho Admin) ===
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            // Đếm thông báo chưa đọc & lấy mới nhất cho nhanh
+            entity.HasIndex(n => new { n.IsRead, n.CreatedAt });
+        });
+
         // === Đặt tên bảng theo snake_case / quy ước ===
         modelBuilder.Entity<Category>().ToTable("Categories");
         modelBuilder.Entity<Brand>().ToTable("Brands");
@@ -175,5 +183,6 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<ImportDetail>().ToTable("ImportDetails");
         modelBuilder.Entity<UserVehicle>().ToTable("UserVehicles");
         modelBuilder.Entity<MaintenanceRecord>().ToTable("MaintenanceRecords");
+        modelBuilder.Entity<Notification>().ToTable("Notifications");
     }
 }

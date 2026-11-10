@@ -1,0 +1,28 @@
+﻿@* Chuông thông báo cho Admin: hiện số thông báo chưa đọc, danh sách mới nhất, tự cập nhật mỗi 15 giây *@
+@if (User.IsInRole(AppRoles.Admin))
+{
+    <div class="dropdown notif" data-notif
+         data-feed-url="@Url.Action("Feed", "Notifications", new { area = "" })"
+         data-readall-url="@Url.Action("MarkAllRead", "Notifications", new { area = "" })">
+        @Html.AntiForgeryToken()
+        <button type="button" class="notif-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                aria-expanded="false" aria-label="Thông báo" title="Thông báo">
+            <i class="bi bi-bell"></i>
+            <span class="notif-count" data-notif-count hidden>0</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end notif-menu shadow">
+            <div class="notif-head">
+                <b>Thông báo</b>
+                <button type="button" class="notif-readall" data-notif-readall hidden>
+                    <i class="bi bi-check2-all"></i> Đánh dấu đã đọc
+                </button>
+            </div>
+            <div class="notif-list" data-notif-list>
+                <div class="notif-empty">Đang tải...</div>
+            </div>
+            <a class="notif-all" href="@Url.Action("Index", "Notifications", new { area = "" })">Xem tất cả thông báo</a>
+        </div>
+    </div>
+    <div class="notif-toasts" data-notif-toasts aria-live="polite"></div>
+    <script src="~/js/notifications.js" asp-append-version="true" defer></script>
+}

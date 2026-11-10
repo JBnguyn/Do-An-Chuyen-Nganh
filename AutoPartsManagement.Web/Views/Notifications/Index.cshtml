@@ -1,0 +1,56 @@
+﻿@model PagedResult<Notification>
+@{
+    ViewData["Title"] = "Thông báo";
+    var unreadOnly = ViewData["Unread"] as bool? ?? false;
+    var unreadCount = ViewData["UnreadCount"] as int? ?? 0;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><i class="bi bi-bell"></i> Thông báo</h2>
+    @if (unreadCount > 0)
+    {
+        <form method="post" asp-action="MarkAllRead">
+            <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-check2-all"></i> Đánh dấu tất cả đã đọc</button>
+        </form>
+    }
+</div>
+
+<ul class="nav nav-pills mb-3 gap-1">
+    <li class="nav-item">
+        <a class="nav-link @(unreadOnly ? "" : "active")" asp-action="Index">Tất cả</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(unreadOnly ? "active" : "")" asp-action="Index" asp-route-unread="true">
+            Chưa đọc <span class="badge bg-danger ms-1">@unreadCount</span>
+        </a>
+    </li>
+</ul>
+
+@if (Model.TotalCount == 0)
+{
+    <div class="card card-body text-center text-muted py-5">
+        <i class="bi bi-bell-slash fs-1 mb-2"></i>
+        @(unreadOnly ? "Không có thông báo chưa đọc." : "Chưa có thông báo nào. Khi khách đặt hàng, thông báo sẽ hiện ở đây.")
+    </div>
+}
+else
+{
+    <div class="list-group shadow-sm notif-page">
+        @foreach (var n in Model.Items)
+        {
+            <a asp-action="Open" asp-route-id="@n.Id" class="list-group-item list-group-item-action notif-row @(n.IsRead ? "" : "is-unread")">
+                <span class="notif-icon @NotificationUi.Css(n.Type)"><i class="bi @NotificationUi.Icon(n.Type)"></i></span>
+                <span class="notif-body">
+                    <span class="notif-title">@n.Title</span>
+                    <span class="notif-msg">@n.Message</span>
+                    <span class="notif-time" title="@n.CreatedAt.ToString("dd/MM/yyyy HH:mm")">@NotificationUi.TimeAgo(n.CreatedAt)</span>
+                </span>
+                @if (!n.IsRead)
+                {
+                    <span class="notif-dot" aria-label="Chưa đọc"></span>
+                }
+            </a>
+        }
+    </div>
+    <partial name="_Pagination" model="Model" />
+}

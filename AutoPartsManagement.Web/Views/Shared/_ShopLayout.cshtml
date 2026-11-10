@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
 </head>
 <body class="shop">
     @* ===== Thanh trên cùng ===== *@
@@ -44,6 +45,8 @@
                     <i class="bi bi-headset"></i>
                     <div><small>Hotline đặt hàng</small><strong>@ShopUi.Hotline</strong></div>
                 </div>
+
+                <partial name="_NotificationBell" />
 
                 @if (SignInManager.IsSignedIn(User))
                 {

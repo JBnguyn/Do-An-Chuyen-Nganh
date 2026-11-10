@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoPartsManagement.Data.Context;
 using AutoPartsManagement.Data.Models;
 using AutoPartsManagement.Data.Models.Enums;
@@ -86,6 +87,21 @@ public class OrderService : IOrderService
         order.TotalAmount = order.OrderDetails.Sum(d => d.Quantity * d.UnitPrice);
 
         _db.Orders.Add(order);
+        await _db.SaveChangesAsync();   // lưu để có mã đơn
+
+        // Báo cho Admin: đơn mới + sản phẩm vừa rơi xuống mức sắp hết / hết hàng
+        _db.Notifications.Add(NewOrderNotification(order, customer, products));
+        foreach (var (productId, qty) in wanted)
+        {
+            var p = products[productId];
+            var stockBefore = p.Stock + qty;
+            if (p.Stock <= 0)
+                _db.Notifications.Add(StockNotification(p, NotificationTypes.OutOfStock,
+                    "Hết hàng", $"\"{p.Name}\" ({p.PartNumber}) đã hết hàng sau đơn #{order.Id}. Cần nhập thêm."));
+            else if (p.Stock <= InventoryRules.LowStockThreshold && stockBefore > InventoryRules.LowStockThreshold)
+                _db.Notifications.Add(StockNotification(p, NotificationTypes.LowStock,
+                    "Sắp hết hàng", $"\"{p.Name}\" ({p.PartNumber}) chỉ còn {p.Stock} sản phẩm sau đơn #{order.Id}."));
+        }
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
 
@@ -178,9 +194,57 @@ public class OrderService : IOrderService
 
         await RestoreStockAsync(order);
         order.Status = OrderStatus.Cancelled;
+        _db.Notifications.Add(new Notification
+        {
+            Type = NotificationTypes.OrderCancelled,
+            Title = $"Khách hủy đơn #{order.Id}",
+            Message = $"{order.Customer?.Name} ({order.Customer?.Phone}) đã hủy đơn #{order.Id} trị giá {Money(order.TotalAmount)}. Tồn kho đã được hoàn lại.",
+            Link = $"/Orders/Detail/{order.Id}",
+            OrderId = order.Id,
+            CreatedAt = DateTime.Now
+        });
         await _db.SaveChangesAsync();
         return ServiceResult.Success($"Đã hủy đơn #{order.Id}.");
     }
+
+    // ===== Nội dung thông báo cho Admin =====
+
+    private static readonly CultureInfo Vi = CultureInfo.GetCultureInfo("vi-VN");
+
+    private static string Money(decimal value) => value.ToString("N0", Vi) + " ₫";
+
+    private static Notification NewOrderNotification(Order order, Customer customer, IReadOnlyDictionary<int, Product> products)
+    {
+        // Vd: "Dầu động cơ 5W-30 ×2, Má phanh trước ×1 và 2 sản phẩm khác"
+        var lines = order.OrderDetails
+            .Select(d => $"{products[d.ProductId].Name} ×{d.Quantity}")
+            .ToList();
+        var items = string.Join(", ", lines.Take(3));
+        if (lines.Count > 3) items += $" và {lines.Count - 3} sản phẩm khác";
+
+        var message = $"{customer.Name} ({customer.Phone}) đặt {order.OrderDetails.Sum(d => d.Quantity)} sản phẩm: {items}. " +
+                      $"Tổng tiền {Money(order.TotalAmount)}. Giao tới: {customer.Address}.";
+
+        return new Notification
+        {
+            Type = NotificationTypes.NewOrder,
+            Title = $"Đơn hàng mới #{order.Id}",
+            Message = message.Length > 1000 ? message[..997] + "..." : message,
+            Link = $"/Orders/Detail/{order.Id}",
+            OrderId = order.Id,
+            CreatedAt = DateTime.Now
+        };
+    }
+
+    private static Notification StockNotification(Product p, string type, string title, string message) => new()
+    {
+        Type = type,
+        Title = $"{title}: {p.Name}",
+        Message = message,
+        Link = $"/Imports/Create?productId={p.Id}",
+        ProductId = p.Id,
+        CreatedAt = DateTime.Now
+    };
 
     /// <summary>Cộng lại tồn kho cho các sản phẩm trong đơn bị hủy.</summary>
     private async Task RestoreStockAsync(Order order)

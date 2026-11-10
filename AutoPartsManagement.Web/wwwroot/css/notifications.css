@@ -1,0 +1,86 @@
+﻿/* ===== Chuông thông báo cho Admin ===== */
+.notif { position: relative; }
+
+.notif-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem;
+  border: 0; border-radius: 50%;
+  background: transparent; color: inherit;
+  font-size: 1.25rem;
+  transition: background-color .15s;
+}
+.notif-btn:hover, .notif-btn[aria-expanded="true"] { background: rgba(127, 127, 127, .15); }
+
+.notif-count {
+  position: absolute; top: .1rem; right: .05rem;
+  min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem;
+  border-radius: 999px; border: 2px solid #fff;
+  background: #d7262b; color: #fff;
+  font-size: .66rem; font-weight: 700; line-height: .8rem; text-align: center;
+}
+.notif-count.bump { animation: notif-bump .6s; }
+
+.notif-menu { width: 380px; max-width: calc(100vw - 1.5rem); padding: 0; border: 0; border-radius: .75rem; overflow: hidden; }
+.notif-head { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; border-bottom: 1px solid #eef0f3; color: #1d2127; }
+.notif-readall { border: 0; background: none; color: #d7262b; font-size: .82rem; font-weight: 600; padding: 0; }
+.notif-readall:hover { text-decoration: underline; }
+.notif-list { max-height: 420px; overflow-y: auto; }
+.notif-empty { padding: 2rem 1rem; text-align: center; color: #6b7280; font-size: .9rem; }
+.notif-all { display: block; padding: .65rem; text-align: center; font-size: .86rem; font-weight: 600; color: #d7262b; text-decoration: none; border-top: 1px solid #eef0f3; }
+.notif-all:hover { background: #fff5f5; }
+
+/* Một dòng thông báo (dùng chung cho chuông, trang Thông báo và thông báo nổi) */
+.notif-item, .notif-row {
+  position: relative;
+  display: flex; gap: .75rem; align-items: flex-start;
+  padding: .75rem 1rem;
+  color: #1d2127; text-decoration: none;
+  border-bottom: 1px solid #f3f4f6;
+}
+.notif-item:hover { background: #f9fafb; color: #1d2127; }
+.notif-item.is-unread, .notif-row.is-unread { background: #fff7f7; }
+.notif-icon {
+  flex: 0 0 2.2rem; height: 2.2rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 1rem;
+  background: #f3f4f6; color: #6b7280;
+}
+.notif-type-order { background: #dcfce7; color: #15803d; }
+.notif-type-cancel { background: #f3f4f6; color: #6b7280; }
+.notif-type-low { background: #fef3c7; color: #b45309; }
+.notif-type-out { background: #fee2e2; color: #b91c1c; }
+.notif-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.notif-title { font-weight: 700; font-size: .9rem; }
+.notif-msg { font-size: .84rem; color: #4b5563; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.notif-time { font-size: .76rem; color: #9ca3af; margin-top: .2rem; }
+.notif-dot { flex: 0 0 .55rem; height: .55rem; margin-top: .4rem; border-radius: 50%; background: #d7262b; }
+.notif-page .notif-msg { -webkit-line-clamp: unset; }
+
+/* Thông báo nổi góc phải dưới khi có đơn mới */
+.notif-toasts { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 1090; display: flex; flex-direction: column; gap: .6rem; width: 360px; max-width: calc(100vw - 2.5rem); }
+.notif-toast {
+  display: flex; gap: .75rem; align-items: flex-start;
+  padding: .85rem 1rem;
+  border-radius: .75rem; border-left: 4px solid #d7262b;
+  background: #fff; color: #1d2127; text-decoration: none;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, .18);
+  opacity: 0; transform: translateX(24px);
+  transition: opacity .3s, transform .3s;
+}
+.notif-toast.show { opacity: 1; transform: none; }
+.notif-toast:hover { color: #1d2127; }
+
+/* Chuông trên thanh menu tối của trang quản trị */
+.navbar-dark .notif-btn, .bg-dark .notif-btn { color: rgba(255, 255, 255, .85); }
+.navbar-dark .notif-count, .bg-dark .notif-count { border-color: #212529; }
+
+@keyframes notif-bump {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.35); }
+  60% { transform: scale(.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notif-count.bump { animation: none; }
+  .notif-toast { transition: none; }
+}

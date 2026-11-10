@@ -48,6 +48,7 @@ public static class AppHost
         services.AddScoped<IMaintenanceService, MaintenanceService>();
         services.AddScoped<IImportService, ImportService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         Services = services.BuildServiceProvider();
     }
