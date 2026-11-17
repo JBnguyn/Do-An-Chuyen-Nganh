@@ -1,0 +1,83 @@
+    @model BotSetting
+@{
+    ViewData["Title"] = "Cấu hình bot";
+}
+
+<h2 class="mb-1"><i class="bi bi-robot"></i> Cấu hình bot</h2>
+<p class="text-muted mb-3">Cách trợ lý chat nói chuyện với khách. Lưu xong, tin nhắn tiếp theo của khách sẽ dùng cấu hình mới.</p>
+
+<form asp-action="Index" method="post" style="max-width:860px">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-semibold">Bật / tắt AI</div>
+        <div class="card-body">
+            <div class="form-check form-switch">
+                <input asp-for="AiEnabled" class="form-check-input" role="switch" />
+                <label asp-for="AiEnabled" class="form-check-label">Dùng AI để trả lời khách</label>
+            </div>
+            <div class="form-text">Tắt thì bot chỉ trả lời bằng danh sách sản phẩm tìm được, không gọi AI (không tốn phí).</div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-semibold">Tính cách bot</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="BotName" class="form-label"></label> <span class="text-danger">*</span>
+                    <input asp-for="BotName" class="form-control" />
+                    <span asp-validation-for="BotName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="BotPronoun" class="form-label"></label> <span class="text-danger">*</span>
+                    <input asp-for="BotPronoun" class="form-control" placeholder="mình / em" />
+                    <span asp-validation-for="BotPronoun" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="CustomerPronoun" class="form-label"></label> <span class="text-danger">*</span>
+                    <input asp-for="CustomerPronoun" class="form-control" placeholder="bạn / anh chị" />
+                    <span asp-validation-for="CustomerPronoun" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label asp-for="Tone" class="form-label"></label>
+                    <input asp-for="Tone" class="form-control" placeholder="VD: thân thiện, nhiệt tình, ngắn gọn" />
+                    <span asp-validation-for="Tone" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="EmojiLevel" class="form-label"></label>
+                    <select asp-for="EmojiLevel" asp-items="Html.GetEnumSelectList<EmojiLevel>()" class="form-select"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-semibold">Thông tin cửa hàng bot được nói</div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label asp-for="WorkingHours" class="form-label"></label>
+                <input asp-for="WorkingHours" class="form-control" placeholder="VD: 8:00 - 17:30, Thứ 2 - Thứ 7" />
+                <span asp-validation-for="WorkingHours" class="text-danger small"></span>
+            </div>
+            <div class="mb-0">
+                <label asp-for="Policies" class="form-label"></label>
+                <textarea asp-for="Policies" class="form-control" rows="5"
+                          placeholder="VD: Đổi trả trong 7 ngày nếu lỗi do nhà sản xuất; bảo hành theo hãng; giao hàng toàn quốc 2-4 ngày."></textarea>
+                <span asp-validation-for="Policies" class="text-danger small"></span>
+                <div class="form-text">Bot chỉ trả lời về chính sách dựa trên nội dung này, không tự bịa thêm.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu thay đổi</button>
+        <span class="text-muted small">Cập nhật lần cuối: @Model.UpdatedAt.ToString("HH:mm dd/MM/yyyy")</span>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
