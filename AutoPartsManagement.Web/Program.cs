@@ -43,6 +43,7 @@ builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IBotSettingService, BotSettingService>(); // MỚI: cấu hình trợ lý chat
 
 // === Trợ lý hỏi đáp (khung chat ở góc màn hình) ===
 // Muốn dùng AI: đặt khóa Anthropic:ApiKey bằng User Secrets (không ghi khóa vào appsettings.json).
