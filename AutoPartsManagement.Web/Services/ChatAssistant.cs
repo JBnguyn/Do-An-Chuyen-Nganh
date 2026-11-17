@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using AutoPartsManagement.Data.Context;
 using AutoPartsManagement.Data.Models;
 using AutoPartsManagement.Services.Interfaces;
@@ -42,7 +43,7 @@ public class ChatAssistant : IChatAssistant
     private readonly ApplicationDbContext _db;
     private readonly HttpClient _http;
     private readonly IConfiguration _config;
-   private readonly ILogger<ChatAssistant> _logger;
+    private readonly ILogger<ChatAssistant> _logger;
     private readonly IBotSettingService _settings;
 
     public ChatAssistant(ApplicationDbContext db, HttpClient http, IConfiguration config,
@@ -79,7 +80,7 @@ public class ChatAssistant : IChatAssistant
             fromContext = products.Count > 0;
         }
 
-      var setting = await _settings.GetAsync();
+        var setting = await _settings.GetAsync();
         var apiKey = _config["Anthropic:ApiKey"];
         if (setting.AiEnabled && !string.IsNullOrWhiteSpace(apiKey))
         {
@@ -103,7 +104,7 @@ public class ChatAssistant : IChatAssistant
             }
         }
 
-        return FallbackReply(question, products, fromContext, messages.Count(m => m.Role == "user"));
+        return FallbackReply(question, products, fromContext, messages.Count(m => m.Role == "user"), setting);
     }
 
     // ===== Tìm phụ tùng bằng ảnh =====
@@ -313,7 +314,7 @@ public class ChatAssistant : IChatAssistant
         {
             model,
             max_tokens = 600,
-            system = BuildSystemPrompt(products ,setting),
+            system = BuildSystemPrompt(products, setting),
             messages = messages.Select(m => new { role = m.Role, content = m.Content })
         };
         return await SendAsync(apiKey, body, ct);
@@ -345,7 +346,7 @@ public class ChatAssistant : IChatAssistant
             .Trim();
     }
 
-   private string BuildSystemPrompt(List<ChatProduct> products, BotSetting s)
+    private string BuildSystemPrompt(List<ChatProduct> products, BotSetting s)
     {
         var vi = CultureInfo.GetCultureInfo("vi-VN");
         var me = s.BotPronoun;
@@ -404,12 +405,14 @@ public class ChatAssistant : IChatAssistant
 
     // ===== Trả lời khi không dùng AI =====
 
-    private static ChatReply FallbackReply(string question, List<ChatProduct> products, bool fromContext, int turn)
+    private static ChatReply FallbackReply(string question, List<ChatProduct> products, bool fromContext, int turn, BotSetting s)
     {
         var q = " " + Normalize(question).Trim() + " ";
         bool Has(params string[] phrases) => phrases.Any(p => q.Contains(" " + p + " "));
         var vi = CultureInfo.GetCultureInfo("vi-VN");
         var hotline = Helpers.ShopUi.Hotline;
+        // Mọi câu trả lời trong hàm này đều đi qua Text(...) -> đổi xưng hô, thêm emoji theo cấu hình
+        ChatReply Text(string reply) => new(Personalize(reply, s), new(), false);
 
         var greeting = Has("alo", "chao", "xin chao", "hello", "hi", "hey", "shop oi", "ad oi", "ban oi", "em oi");
         var thanks = Has("cam on", "thanks", "thank", "thank you", "tks", "camon");
@@ -422,8 +425,8 @@ public class ChatAssistant : IChatAssistant
             if (bye) return Text(Pick("Chào bạn nha, hẹn gặp lại!", "Tạm biệt bạn, chúc bạn một ngày vui vẻ!"));
             if (greeting && Normalize(question).Split(' ', StringSplitOptions.RemoveEmptyEntries).Length <= 4)
                 return Text(turn <= 1
-                    ? Pick("Chào bạn! Mình là trợ lý của 3H AUTO đây. Bạn đang tìm phụ tùng gì, cho xe nào vậy?",
-                           "Alo, mình nghe nè! Bạn cần tìm phụ tùng gì cho xe của mình ạ?",
+                    ? Pick($"Chào bạn! Mình là {s.BotName} của 3H AUTO đây. Bạn đang tìm phụ tùng gì, cho xe nào vậy?",
+                           "Alo, mình nghe nè! Bạn cần tìm phụ tùng gì cho xe ạ?",
                            "Chào bạn nha! Hôm nay xe bạn cần thay gì nè?")
                     : Pick("Mình vẫn ở đây nè! Bạn cần hỏi thêm gì không?", "Dạ mình nghe đây ạ, bạn cứ hỏi nha."));
             if (Has("ok", "oke", "okela", "uk", "u", "vang", "da", "duoc", "ok roi"))
@@ -432,15 +435,17 @@ public class ChatAssistant : IChatAssistant
 
         // --- Câu hỏi thường gặp ---
         if (Has("ban la ai", "bot", "nguoi that", "ai vay"))
-            return Text("Mình là trợ lý tự động của 3H AUTO. Mình giúp bạn tìm phụ tùng, xem giá, tồn kho và hướng dẫn đặt hàng. Cần gặp nhân viên thì bạn gọi " + hotline + " nha.");
+            return Text($"Mình là {s.BotName}, trợ lý tự động của 3H AUTO. Mình giúp bạn tìm phụ tùng, xem giá, tồn kho và hướng dẫn đặt hàng. Cần gặp nhân viên thì bạn gọi " + hotline + " nha.");
         if (Has("dat hang", "cach mua", "mua the nao", "mua sao", "thanh toan", "tra tien", "cod"))
             return Text("Dễ lắm bạn: bấm \"Thêm vào giỏ\" ở sản phẩm, mở Giỏ hàng rồi bấm \"Đặt hàng\", điền tên, số điện thoại với địa chỉ là xong. Bạn trả tiền khi nhận hàng (COD) nha.");
         if (Has("giao hang", "ship", "van chuyen", "phi ship", "bao lau", "may ngay"))
             return Text("Bên mình giao hàng toàn quốc nha bạn. Sau khi đặt, cửa hàng sẽ gọi xác nhận và báo phí ship, thời gian giao luôn.");
         if (Has("bao hanh", "doi tra", "tra hang", "loi"))
-            return Text("Phụ tùng được bảo hành theo chính sách của hãng nha bạn. Thời gian bảo hành từng món có ghi trong trang chi tiết sản phẩm, có vấn đề gì bạn gọi " + hotline + " là được hỗ trợ liền.");
+            return Text(string.IsNullOrWhiteSpace(s.Policies)
+                ? "Phụ tùng được bảo hành theo chính sách của hãng nha bạn. Có vấn đề gì bạn gọi " + hotline + " là được hỗ trợ liền."
+                : "Chính sách của cửa hàng nè bạn: " + s.Policies + " Cần hỗ trợ thêm thì bạn gọi " + hotline + " nha.");
         if (Has("may gio", "mo cua", "gio mo cua", "gio lam viec", "lam viec", "dong cua", "chu nhat", "nghi le"))
-            return Text("Cửa hàng làm việc từ 8:00 đến 17:30, Thứ 2 đến Thứ 7, Chủ nhật nghỉ nha bạn. Đặt hàng trên web thì lúc nào cũng được.");
+            return Text($"Cửa hàng làm việc {s.WorkingHours} nha bạn. Đặt hàng trên web thì lúc nào cũng được.");
         if (Has("hotline", "so dien thoai", "sdt", "lien he", "dia chi", "zalo"))
             return Text("Bạn gọi hotline " + hotline + " để gặp nhân viên nha. Còn tìm phụ tùng thì cứ hỏi mình ở đây cũng được.");
         if (Has("don hang", "don cua toi", "huy don", "kiem tra don"))
@@ -469,7 +474,7 @@ public class ChatAssistant : IChatAssistant
             reply += top.Stock <= 0
                 ? " Món này hết rồi, bạn xem thử các lựa chọn khác hoặc gọi " + hotline + " để đặt trước nha."
                 : " " + Pick("Bạn đi xe gì, đời nào để mình kiểm tra cho chắc nha?", "Bạn cần mình tư vấn thêm gì không?", "Muốn mua thì bấm \"Thêm vào giỏ\" là được nha.");
-            return new ChatReply(reply, products.Take(5).ToList(), false);
+            return new ChatReply(Personalize(reply, s), products.Take(5).ToList(), false);
         }
 
         // --- Không hiểu / không có sản phẩm ---
@@ -482,7 +487,26 @@ public class ChatAssistant : IChatAssistant
             $"Món này hiện chưa có trên web bạn ơi. Bạn gọi {hotline} để bên mình kiểm tra kho giúp nha."));
     }
 
-    private static ChatReply Text(string reply) => new(reply, new(), false);
+    /// <summary>
+    /// Đổi xưng hô "mình / bạn" trong câu trả lời có sẵn theo cấu hình bot, thêm emoji nếu chọn "Nhiều".
+    /// Dùng cho chế độ trả lời không có AI.
+    /// </summary>
+    private static string Personalize(string text, BotSetting s)
+    {
+        text = ReplaceWord(text, "mình", s.BotPronoun);
+        text = ReplaceWord(text, "bạn", s.CustomerPronoun);
+        if (s.EmojiLevel == EmojiLevel.Many) text += " 😊";
+        return text;
+    }
+
+    /// <summary>Thay cả từ (không thay khi nằm trong từ khác), giữ chữ hoa ở đầu câu.</summary>
+    private static string ReplaceWord(string text, string word, string replacement)
+    {
+        if (string.IsNullOrWhiteSpace(replacement) || replacement == word) return text;
+        var upper = char.ToUpper(replacement[0]) + replacement[1..];
+        text = Regex.Replace(text, $@"\b{char.ToUpper(word[0])}{word[1..]}\b", upper);
+        return Regex.Replace(text, $@"\b{word}\b", replacement);
+    }
 
     private static string Pick(params string[] options) => options[Random.Shared.Next(options.Length)];
 }
