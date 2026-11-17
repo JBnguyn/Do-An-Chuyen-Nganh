@@ -54,8 +54,35 @@
         return html + '</div>';
     }
 
+    // ----- Vạch ngăn ngày giữa các tin nhắn (theo giờ Việt Nam) -----
+    var dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' });
+
+    /** "YYYY-MM-DD" của một thời điểm ("" nếu tin nhắn cũ chưa lưu thời gian). */
+    function dayKey(ms) {
+        var d = new Date(ms);
+        return ms && !isNaN(d.getTime()) ? dayFmt.format(d) : '';
+    }
+
+    function dayLabel(key) {
+        var today = dayKey(Date.now());
+        if (key === today) return 'Hôm nay';
+        if (key === dayKey(Date.now() - 86400000)) return 'Hôm qua';
+        var p = key.split('-');
+        return p[0] === today.slice(0, 4) ? p[2] + '/' + p[1] : p[2] + '/' + p[1] + '/' + p[0];
+    }
+
+    function thread() {
+        var prev = '';
+        return history.map(function (m) {
+            var key = dayKey(m.at);
+            var sep = key && key !== prev ? '<div class="chat-day"><span>' + dayLabel(key) + '</span></div>' : '';
+            if (key) prev = key;
+            return sep + bubble(m);
+        }).join('');
+    }
+
     function render() {
-        body.innerHTML = bubble({ role: 'assistant', content: WELCOME }) + history.map(bubble).join('') +
+        body.innerHTML = bubble({ role: 'assistant', content: WELCOME }) + thread() +
             (busy ? '<div class="chat-msg bot"><div class="chat-bubble chat-typing"><span></span><span></span><span></span></div></div>' : '');
         suggest.hidden = history.length > 0;
         body.scrollTop = body.scrollHeight;
@@ -64,7 +91,7 @@
     function ask(text) {
         text = (text || '').trim();
         if (!text || busy) return;
-        history.push({ role: 'user', content: text });
+        history.push({ at: Date.now(), role: 'user', content: text });
         busy = true;
         render();
 
@@ -77,10 +104,10 @@
         })
             .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
             .then(function (data) {
-                history.push({ role: 'assistant', content: data.reply, products: data.products });
+                history.push({ at: Date.now(), role: 'assistant', content: data.reply, products: data.products });
             })
             .catch(function () {
-                history.push({ role: 'assistant', content: 'Xin lỗi, hiện mình chưa trả lời được. Bạn thử lại sau ít phút nhé.' });
+                history.push({ at: Date.now(), role: 'assistant', content: 'Xin lỗi, hiện mình chưa trả lời được. Bạn thử lại sau ít phút nhé.' });
             })
             .finally(function () {
                 busy = false;
@@ -119,7 +146,7 @@
 
         Promise.all([resize(file, 1280, 0.85), resize(file, 240, 0.6)])
             .then(function (r) {
-                history.push({ role: 'user', content: '[Khách gửi ảnh phụ tùng] ' + note, text: note, img: r[1].dataUrl });
+                history.push({ at: Date.now(), role: 'user', content: '[Khách gửi ảnh phụ tùng] ' + note, text: note, img: r[1].dataUrl });
                 render();
                 var fd = new FormData();
                 fd.append('image', r[0].blob, 'photo.jpg');
@@ -128,10 +155,10 @@
             })
             .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
             .then(function (data) {
-                history.push({ role: 'assistant', content: data.reply, products: data.products });
+                history.push({ at: Date.now(), role: 'assistant', content: data.reply, products: data.products });
             })
             .catch(function () {
-                history.push({ role: 'assistant', content: 'Xin lỗi, mình chưa gửi được ảnh này. Bạn thử ảnh khác hoặc gõ tên phụ tùng giúp mình nha.' });
+                history.push({ at: Date.now(), role: 'assistant', content: 'Xin lỗi, mình chưa gửi được ảnh này. Bạn thử ảnh khác hoặc gõ tên phụ tùng giúp mình nha.' });
             })
             .finally(function () {
                 busy = false;

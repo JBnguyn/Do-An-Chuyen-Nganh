@@ -54,6 +54,11 @@ public class ProductsController : Controller
     {
         var product = await _products.GetByIdAsync(id);
         if (product == null) return NotFound();
+
+        // Trang danh sách tải nội dung này bằng fetch để hiện trong ngăn kéo
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+            return PartialView("_DetailsPanel", product);
+
         return View(product);
     }
 

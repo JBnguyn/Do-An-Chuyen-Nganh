@@ -133,6 +133,33 @@ public class OrderServiceTests
         Assert.Equal(5, t.StockOf(TestDb.BrakePad));
     }
 
+    [Fact(DisplayName = "Xác nhận nhanh: đơn chờ xác nhận chuyển sang Đang chuẩn bị")]
+    public async Task Confirm_Pending_BecomesProcessing()
+    {
+        var t = new TestDb();
+        var (_, orderId) = await new OrderService(t.NewContext()).PlaceOrderAsync(User, Info, Cart((TestDb.BrakePad, 1)));
+
+        var result = await new OrderService(t.NewContext()).ConfirmAsync(orderId);
+
+        Assert.True(result.Succeeded);
+        var order = await new OrderService(t.NewContext()).GetByIdAsync(orderId);
+        Assert.Equal(OrderStatus.Processing, order!.Status);
+    }
+
+    [Fact(DisplayName = "Xác nhận nhanh: mở lại link với đơn đã xử lý thì không đổi trạng thái")]
+    public async Task Confirm_NotPending_Fails()
+    {
+        var t = new TestDb();
+        var (_, orderId) = await new OrderService(t.NewContext()).PlaceOrderAsync(User, Info, Cart((TestDb.BrakePad, 1)));
+        await new OrderService(t.NewContext()).UpdateStatusAsync(orderId, OrderStatus.Shipped);
+
+        var result = await new OrderService(t.NewContext()).ConfirmAsync(orderId);
+
+        Assert.False(result.Succeeded);
+        var order = await new OrderService(t.NewContext()).GetByIdAsync(orderId);
+        Assert.Equal(OrderStatus.Shipped, order!.Status);
+    }
+
     [Fact(DisplayName = "Đơn đã giao xong thì bị khóa, không hủy được")]
     public async Task UpdateStatus_Delivered_IsLocked()
     {

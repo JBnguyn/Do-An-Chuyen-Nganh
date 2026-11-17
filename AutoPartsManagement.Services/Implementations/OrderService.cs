@@ -179,6 +179,21 @@ public class OrderService : IOrderService
         return ServiceResult.Success($"Đã cập nhật đơn #{order.Id}.");
     }
 
+    public async Task<ServiceResult> ConfirmAsync(int id)
+    {
+        var order = await _db.Orders.FirstOrDefaultAsync(o => o.Id == id);
+        if (order == null)
+            return ServiceResult.Failure("Không tìm thấy đơn hàng.");
+
+        // Link xác nhận có thể được mở lại nhiều lần: chỉ đơn còn chờ mới được xác nhận
+        if (order.Status != OrderStatus.Pending)
+            return ServiceResult.Failure($"Đơn #{order.Id} không còn ở trạng thái Chờ xác nhận.");
+
+        order.Status = OrderStatus.Processing;
+        await _db.SaveChangesAsync();
+        return ServiceResult.Success($"Đã xác nhận đơn #{order.Id}.");
+    }
+
     public async Task<ServiceResult> CancelByUserAsync(int id, string userId)
     {
         var order = await _db.Orders

@@ -1,6 +1,6 @@
 @model ProductIndexViewModel
 @{
-    ViewData["Title"] = "Danh mục phụ tùng";
+    ViewData["Title"] = "Quản lý phụ tùng";
     var f = Model.Filter;
     var hasFilter = !string.IsNullOrWhiteSpace(f.Search) || f.CategoryId.HasValue || f.BrandId.HasValue
                     || !string.IsNullOrEmpty(f.StockStatus) || f.IsActive.HasValue || !string.IsNullOrEmpty(f.SortBy);
@@ -175,7 +175,7 @@
                             }
                         </td>
                         <td class="text-end text-nowrap">
-                            <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary" title="Chi tiết"><i class="bi bi-eye"></i></a>
+                            <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary" title="Xem nhanh" data-product-drawer><i class="bi bi-eye"></i></a>
                             @if (User.IsInRole(AppRoles.Admin))
                             {
                                 <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
@@ -190,3 +190,38 @@
 </div>
 
 <partial name="_Pagination" model="Model.Result" />
+
+@* ---- Ngăn kéo xem nhanh chi tiết phụ tùng ---- *@
+<div class="offcanvas offcanvas-end product-drawer" tabindex="-1" id="productDrawer" aria-labelledby="productDrawerLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="productDrawerLabel"><i class="bi bi-box-seam"></i> Chi tiết phụ tùng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+    </div>
+    <div class="offcanvas-body" data-drawer-body></div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var el = document.getElementById('productDrawer');
+            var body = el.querySelector('[data-drawer-body]');
+            var drawer = new bootstrap.Offcanvas(el);
+
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('[data-product-drawer]');
+                if (!link) return;
+                e.preventDefault();
+                body.innerHTML = '<div class="text-center text-muted py-5"><div class="spinner-border" role="status"></div></div>';
+                drawer.show();
+
+                fetch(link.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+                    .then(function (html) { body.innerHTML = html; })
+                    .catch(function () {
+                        body.innerHTML = '<div class="alert alert-danger">Không tải được chi tiết phụ tùng. <a class="alert-link">Mở trang chi tiết</a></div>';
+                        body.querySelector('a').href = link.href;
+                    });
+            });
+        })();
+    </script>
+}

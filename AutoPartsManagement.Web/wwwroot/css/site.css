@@ -78,6 +78,20 @@ body {
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1);
 }
 
+.product-drawer {
+  --bs-offcanvas-width: 560px;
+}
+
+.product-drawer-img {
+  max-width: 240px;
+}
+
+.unsaved-hint {
+  margin-left: .75rem;
+  font-size: .875rem;
+  color: #b45309;
+}
+
 .text-pre-line {
   white-space: pre-line;
 }

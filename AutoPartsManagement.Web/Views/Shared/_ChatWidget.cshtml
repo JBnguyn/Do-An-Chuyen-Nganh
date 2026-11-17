@@ -18,6 +18,8 @@
             <button type="button" class="chat-icon" data-chat-toggle aria-label="Đóng"><i class="bi bi-x-lg"></i></button>
         </header>
 
+        @await Component.InvokeAsync("ChatOrders")
+
         <div class="chat-body" data-chat-body aria-live="polite"></div>
 
         <div class="chat-suggest" data-chat-suggest>

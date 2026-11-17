@@ -46,4 +46,28 @@ public class OrdersController : Controller
         TempData[result.Succeeded ? "Success" : "Error"] = result.Message ?? "Không có thay đổi.";
         return RedirectToAction(nameof(Detail), new { id });
     }
+
+    // GET: /Orders/Confirm/5
+    // Link xác nhận nhanh: trang gọn chỉ có tóm tắt đơn và một nút, không cần mở trang chi tiết.
+    // Mở link chưa đổi gì cả; đơn chỉ được xác nhận khi bấm nút (POST có chống giả mạo).
+    public async Task<IActionResult> Confirm(int id)
+    {
+        var order = await _orders.GetByIdAsync(id);
+        if (order == null) return NotFound();
+        return View(order);
+    }
+
+    // POST: /Orders/Confirm/5
+    [HttpPost, ActionName(nameof(Confirm))]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmPost(int id, string? returnUrl)
+    {
+        var result = await _orders.ConfirmAsync(id);
+        TempData[result.Succeeded ? "Success" : "Error"] = result.Message;
+
+        // Bấm từ danh sách thì quay lại đúng trang đang xem
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
+        return RedirectToAction(nameof(Index), new { status = OrderStatus.Pending });
+    }
 }

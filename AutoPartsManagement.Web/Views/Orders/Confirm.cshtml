@@ -1,0 +1,39 @@
+@model Order
+@using AutoPartsManagement.Data.Models.Enums
+@{
+    ViewData["Title"] = $"Xác nhận đơn #{Model.Id}";
+    var pending = Model.Status == OrderStatus.Pending;
+}
+
+<div class="card shadow-sm mx-auto" style="max-width:520px">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Đơn hàng #@Model.Id</span>
+        <span class="badge @OrderUi.Badge(Model.Status)"><i class="bi @OrderUi.Icon(Model.Status)"></i> @OrderUi.Label(Model.Status)</span>
+    </div>
+    <div class="card-body">
+        <p class="mb-1 fw-semibold">@Model.Customer?.Name</p>
+        <p class="mb-1"><i class="bi bi-telephone"></i> @Model.Customer?.Phone</p>
+        <p class="mb-1"><i class="bi bi-geo-alt"></i> @Model.Customer?.Address</p>
+        <p class="mb-3 small text-muted">Đặt lúc @Format.DateAndTime(Model.OrderDate)</p>
+
+        <div class="d-flex justify-content-between border-top pt-3 mb-3">
+            <span>@Model.OrderDetails.Sum(d => d.Quantity) sản phẩm</span>
+            <strong class="text-danger fs-5">@Format.Money(Model.TotalAmount)</strong>
+        </div>
+
+        @if (pending)
+        {
+            <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check2-circle"></i> Xác nhận đơn</button>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-secondary mb-0">Đơn này không còn chờ xác nhận nên không cần xác nhận nữa.</div>
+        }
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <a asp-action="Index" asp-route-status="@OrderStatus.Pending">Các đơn chờ xác nhận</a>
+        <a asp-action="Detail" asp-route-id="@Model.Id">Xem chi tiết đơn</a>
+    </div>
+</div>

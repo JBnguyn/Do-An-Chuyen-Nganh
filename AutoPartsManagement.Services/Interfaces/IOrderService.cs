@@ -31,6 +31,9 @@ public interface IOrderService
     /// <summary>Admin đổi trạng thái đơn. Hủy đơn sẽ hoàn lại tồn kho.</summary>
     Task<ServiceResult> UpdateStatusAsync(int id, OrderStatus newStatus);
 
+    /// <summary>Admin xác nhận nhanh đơn đang "Chờ xác nhận" (chuyển sang "Đang chuẩn bị").</summary>
+    Task<ServiceResult> ConfirmAsync(int id);
+
     /// <summary>Khách tự hủy đơn của mình (chỉ khi đơn còn "Chờ xác nhận").</summary>
     Task<ServiceResult> CancelByUserAsync(int id, string userId);
 }

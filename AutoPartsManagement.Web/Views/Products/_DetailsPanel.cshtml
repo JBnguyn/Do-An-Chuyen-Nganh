@@ -1,0 +1,16 @@
+@model Product
+@* Nội dung ngăn kéo chi tiết phụ tùng (tải bằng fetch từ trang danh sách) *@
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <div class="image-preview product-drawer-img mb-3">
+        <img src="@Model.ImageUrl" alt="@Model.Name" />
+    </div>
+}
+
+<partial name="_ProductInfo" model="Model" />
+
+<div class="d-flex flex-wrap gap-2 border-top pt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil"></i> Sửa</a>
+    <a asp-controller="Imports" asp-action="Create" asp-route-productId="@Model.Id" class="btn btn-success"><i class="bi bi-box-arrow-in-down"></i> Nhập thêm hàng</a>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-up-right"></i> Mở trang chi tiết</a>
+</div>

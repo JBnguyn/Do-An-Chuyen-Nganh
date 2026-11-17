@@ -26,56 +26,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <h3>@Model.Name</h3>
-                <p class="mb-3">
-                    <code class="fs-6">@Model.PartNumber</code>
-                    @if (Model.IsActive)
-                    {
-                        <span class="badge bg-success ms-2">Đang kinh doanh</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary ms-2">Ngừng kinh doanh</span>
-                    }
-                </p>
-
-                <dl class="row">
-                    <dt class="col-sm-4">Giá bán</dt>
-                    <dd class="col-sm-8 fs-5 fw-bold text-danger">@Format.Money(Model.Price)</dd>
-
-                    <dt class="col-sm-4">Tồn kho</dt>
-                    <dd class="col-sm-8"><partial name="_StockBadge" model="Model.Stock" /></dd>
-
-                    <dt class="col-sm-4">Danh mục</dt>
-                    <dd class="col-sm-8">@Model.Category?.Name</dd>
-
-                    <dt class="col-sm-4">Hãng sản xuất</dt>
-                    <dd class="col-sm-8">@Model.Brand?.Name @(Model.Brand?.Country is string c ? $"({c})" : "")</dd>
-
-                    <dt class="col-sm-4">Loại hàng</dt>
-                    <dd class="col-sm-8">@(Model.IsGenuine ? "Chính hãng xe (OEM)" : "Thương hiệu thay thế")</dd>
-
-                    <dt class="col-sm-4">Mã OEM</dt>
-                    <dd class="col-sm-8">@(Model.OemNumber ?? "—")</dd>
-
-                    <dt class="col-sm-4">Xuất xứ</dt>
-                    <dd class="col-sm-8">@(Model.Origin ?? "Đang cập nhật")</dd>
-
-                    <dt class="col-sm-4">Bảo hành</dt>
-                    <dd class="col-sm-8">@(Model.WarrantyMonths.HasValue ? $"{Model.WarrantyMonths} tháng" : "—")</dd>
-
-                    <dt class="col-sm-4">Ngày tạo</dt>
-                    <dd class="col-sm-8">@Format.DateAndTime(Model.CreatedAt)</dd>
-
-                    <dt class="col-sm-4">Cập nhật lần cuối</dt>
-                    <dd class="col-sm-8">@Format.DateAndTime(Model.UpdatedAt)</dd>
-                </dl>
-
-                @if (!string.IsNullOrEmpty(Model.Description))
-                {
-                    <h6>Mô tả</h6>
-                    <p class="text-pre-line">@Model.Description</p>
-                }
+                <partial name="_ProductInfo" model="Model" />
             </div>
         </div>
     </div>
