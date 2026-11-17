@@ -79,12 +79,13 @@ public class ChatAssistant : IChatAssistant
             fromContext = products.Count > 0;
         }
 
+      var setting = await _settings.GetAsync();
         var apiKey = _config["Anthropic:ApiKey"];
-        if (!string.IsNullOrWhiteSpace(apiKey))
+        if (setting.AiEnabled && !string.IsNullOrWhiteSpace(apiKey))
         {
             try
             {
-                var reply = await CallClaudeAsync(apiKey, messages, products, ct);
+                var reply = await CallClaudeAsync(apiKey, messages, products, setting, ct);
                 if (!string.IsNullOrWhiteSpace(reply))
                 {
                     // Chỉ hiện thẻ sản phẩm mà AI có nhắc tới (theo mã hoặc tên) -> chào hỏi thì không hiện thẻ
@@ -303,7 +304,8 @@ public class ChatAssistant : IChatAssistant
 
     // ===== Gọi Claude API =====
 
-    private async Task<string?> CallClaudeAsync(string apiKey, List<ChatMessage> messages, List<ChatProduct> products, CancellationToken ct)
+    private async Task<string?> CallClaudeAsync(string apiKey, List<ChatMessage> messages, List<ChatProduct> products,
+        BotSetting setting, CancellationToken ct)
     {
         var model = _config["Anthropic:Model"] ?? "claude-haiku-5-5";
 
@@ -311,7 +313,7 @@ public class ChatAssistant : IChatAssistant
         {
             model,
             max_tokens = 600,
-            system = BuildSystemPrompt(products),
+            system = BuildSystemPrompt(products ,setting),
             messages = messages.Select(m => new { role = m.Role, content = m.Content })
         };
         return await SendAsync(apiKey, body, ct);
@@ -343,27 +345,38 @@ public class ChatAssistant : IChatAssistant
             .Trim();
     }
 
-    private string BuildSystemPrompt(List<ChatProduct> products)
+   private string BuildSystemPrompt(List<ChatProduct> products, BotSetting s)
     {
         var vi = CultureInfo.GetCultureInfo("vi-VN");
+        var me = s.BotPronoun;
+        var you = s.CustomerPronoun;
+        var emoji = s.EmojiLevel switch
+        {
+            EmojiLevel.None => "Không dùng emoji.",
+            EmojiLevel.Many => "Dùng emoji thoải mái để tạo không khí vui vẻ (1-2 emoji mỗi tin).",
+            _ => "Thỉnh thoảng mới dùng 1 emoji, không dùng ở mọi tin."
+        };
+
         var sb = new StringBuilder();
-        sb.AppendLine("Bạn là nhân viên tư vấn của cửa hàng phụ tùng ô tô 3H AUTO, đang nhắn tin trực tiếp với khách.");
+        sb.AppendLine($"Bạn tên là \"{s.BotName}\", nhân viên tư vấn của cửa hàng phụ tùng ô tô 3H AUTO, đang nhắn tin trực tiếp với khách.");
         sb.AppendLine("Cách nói chuyện:");
-        sb.AppendLine("- Nói như người thật nhắn tin: tự nhiên, thân thiện, xưng \"mình\" và gọi khách là \"bạn\"; dùng từ đệm nhẹ như \"nha\", \"nè\", \"ạ\" vừa phải.");
-        sb.AppendLine("- Câu ngắn, thường 1-3 câu; không gạch đầu dòng, không markdown, không lặp lại câu hỏi của khách.");
-        sb.AppendLine("- Khách chào hỏi, cảm ơn, nói chuyện phiếm thì đáp lại tự nhiên rồi hỏi khách đang cần phụ tùng gì; không liệt kê sản phẩm khi khách chưa hỏi.");
+        sb.AppendLine($"- Xưng \"{me}\" và gọi khách là \"{you}\". Giọng điệu: {s.Tone}.");
+        sb.AppendLine("- Nói như người thật nhắn tin, câu ngắn, thường 1-3 câu; không gạch đầu dòng, không markdown, không lặp lại câu hỏi của khách.");
+        sb.AppendLine($"- {emoji}");
+        sb.AppendLine($"- Khách chào hỏi, cảm ơn, nói chuyện phiếm thì đáp lại tự nhiên rồi hỏi {you} đang cần phụ tùng gì; không liệt kê sản phẩm khi khách chưa hỏi.");
         sb.AppendLine("- Khi tư vấn, hỏi lại một câu cần thiết (dòng xe, đời xe) thay vì hỏi nhiều thứ cùng lúc.");
         sb.AppendLine("- Nhắc tên sản phẩm kèm mã phụ tùng khi giới thiệu để khách dễ tìm.");
         sb.AppendLine("Quy tắc:");
         sb.AppendLine("- Chỉ nêu giá, mã và tồn kho có trong DANH SÁCH SẢN PHẨM bên dưới. Không tự bịa sản phẩm, giá hay thông số.");
         sb.AppendLine("- Nếu không có sản phẩm phù hợp, nói rõ là cửa hàng chưa có trên web và mời khách gọi hotline " + Helpers.ShopUi.Hotline + ".");
-        sb.AppendLine("- Nếu khách chưa nói dòng xe / đời xe mà điều đó quan trọng, hãy hỏi lại để tư vấn đúng phụ tùng.");
         sb.AppendLine("- Không khẳng định phụ tùng chắc chắn lắp vừa xe nếu tên sản phẩm không ghi rõ dòng xe đó.");
         sb.AppendLine("- Cách mua: bấm 'Thêm vào giỏ', mở Giỏ hàng, bấm 'Đặt hàng', điền thông tin nhận hàng; thanh toán khi nhận hàng (COD).");
         sb.AppendLine("- Khách xem và hủy đơn (khi còn Chờ xác nhận) tại mục 'Đơn hàng của tôi'.");
+        sb.AppendLine("- Câu hỏi về chính sách (đổi trả, bảo hành, giao hàng) chỉ trả lời theo phần CHÍNH SÁCH bên dưới; không có thì mời khách gọi hotline.");
         sb.AppendLine("- Chỉ trả lời các câu hỏi liên quan đến phụ tùng ô tô và mua hàng tại cửa hàng; câu hỏi ngoài lề thì lịch sự từ chối.");
         sb.AppendLine();
-        sb.AppendLine("Thông tin cửa hàng: giờ làm việc 8:00 - 17:30, Thứ 2 - Thứ 7; giao hàng toàn quốc; bảo hành theo chính sách hãng; hotline " + Helpers.ShopUi.Hotline + ".");
+        sb.AppendLine($"Thông tin cửa hàng: giờ làm việc {s.WorkingHours}; hotline " + Helpers.ShopUi.Hotline + ".");
+        sb.AppendLine("CHÍNH SÁCH: " + (string.IsNullOrWhiteSpace(s.Policies) ? "(cửa hàng chưa nhập)" : s.Policies));
         sb.AppendLine();
         sb.AppendLine("DANH SÁCH SẢN PHẨM LIÊN QUAN (dữ liệu thật từ hệ thống):");
         if (products.Count == 0)
