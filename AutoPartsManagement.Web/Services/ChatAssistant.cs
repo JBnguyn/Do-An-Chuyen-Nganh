@@ -1,9 +1,11 @@
-using System.Globalization;
+    using System.Globalization;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoPartsManagement.Data.Context;
+using AutoPartsManagement.Data.Models;
+using AutoPartsManagement.Services.Interfaces;
 using AutoPartsManagement.Services.Common;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,14 +42,17 @@ public class ChatAssistant : IChatAssistant
     private readonly ApplicationDbContext _db;
     private readonly HttpClient _http;
     private readonly IConfiguration _config;
-    private readonly ILogger<ChatAssistant> _logger;
+   private readonly ILogger<ChatAssistant> _logger;
+    private readonly IBotSettingService _settings;
 
-    public ChatAssistant(ApplicationDbContext db, HttpClient http, IConfiguration config, ILogger<ChatAssistant> logger)
+    public ChatAssistant(ApplicationDbContext db, HttpClient http, IConfiguration config,
+        ILogger<ChatAssistant> logger, IBotSettingService settings)
     {
         _db = db;
         _http = http;
         _config = config;
         _logger = logger;
+        _settings = settings;
     }
 
     public async Task<ChatReply> AskAsync(IReadOnlyList<ChatMessage> history, CancellationToken ct = default)
