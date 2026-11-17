@@ -27,6 +27,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<UserVehicle> UserVehicles { get; set; }
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<BotSetting> BotSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
